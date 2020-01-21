@@ -1,0 +1,42 @@
+package com.king.app.plate.model.db
+
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import com.king.app.plate.PlateApplication
+import com.king.app.plate.model.db.dao.MatchDao
+import com.king.app.plate.model.db.dao.PlayerDao
+import com.king.app.plate.model.db.entity.*
+
+/**
+ * Desc:
+ * @author：Jing Yang
+ * @date: 2020/1/21 9:43
+ */
+@Database(entities = [Match::class, Player::class, Rank::class, Score::class
+    , Record::class, RecordPlayer::class, RecordScore::class], version = 1)
+abstract class AppDatabase:RoomDatabase() {
+
+    abstract fun getMatchDao(): MatchDao
+    abstract fun getPlayerDao(): PlayerDao
+
+    companion object {
+        val DATABASE_NAME = "buffet.db"
+        val DATABASE_JOURNAL = "buffet.db-journal"
+
+        var instance = Single.instance;
+
+        fun getDbPath(): String {
+            return PlateApplication.instance.getCacheDir().getParent() + "/databases/" + DATABASE_NAME
+        }
+    }
+
+    object Single {
+        val instance:AppDatabase= Room.databaseBuilder(
+            PlateApplication.instance,
+            AppDatabase::class.java,
+            DATABASE_NAME
+        ).allowMainThreadQueries()
+            .build()
+    }
+}
