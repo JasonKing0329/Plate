@@ -15,22 +15,22 @@ import io.reactivex.disposables.Disposable
  *
  * 创建时间: 2020/1/21 15:02
  */
-class BaseViewModel(application: Application) : AndroidViewModel(application) {
+abstract class BaseViewModel(application: Application) : AndroidViewModel(application) {
 
     private var compositeDisposable: CompositeDisposable = CompositeDisposable()
 
     var loadingObserver = MutableLiveData<Boolean>()
     var messageObserver = MutableLiveData<String>()
 
-    protected fun addDisposable(disposable: Disposable) {
+    fun addDisposable(disposable: Disposable) {
         compositeDisposable.add(disposable)
     }
 
-    protected fun dispatchCommonError(e: Throwable) {
+    fun dispatchCommonError(e: Throwable) {
         messageObserver.value = "Load error: " + e.message
     }
 
-    protected fun dispatchCommonError(errorTitle: String, e: Throwable) {
+    fun dispatchCommonError(errorTitle: String, e: Throwable) {
         messageObserver.value = errorTitle + ": " + e.message
     }
 
@@ -38,6 +38,10 @@ class BaseViewModel(application: Application) : AndroidViewModel(application) {
 
     fun onDestroy() {
         compositeDisposable.clear()
+    }
+
+    fun showLoading(show: Boolean){
+        loadingObserver.value=show
     }
 
 }

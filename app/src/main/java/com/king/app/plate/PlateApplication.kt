@@ -1,7 +1,6 @@
 package com.king.app.plate
 
 import android.app.Application
-import kotlin.properties.Delegates
 
 /**
  * Desc:
@@ -11,7 +10,7 @@ import kotlin.properties.Delegates
 class PlateApplication:Application() {
 
     companion object {
-        var instance:PlateApplication by Delegates.notNull()
+        lateinit var instance:PlateApplication
     }
 
     override fun onCreate() {

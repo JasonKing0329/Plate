@@ -1,4 +1,4 @@
-package com.king.app.plate.page
+package com.king.app.plate.page.login
 
 import android.hardware.fingerprint.FingerprintManager
 import android.view.LayoutInflater

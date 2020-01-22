@@ -42,11 +42,7 @@ abstract class RootActivity : AppCompatActivity() {
      * 仅LoginActivity不应用，单独覆写
      * @return
      */
-    protected fun updateStatusBarColor(): Boolean {
-        return true
-    }
-
-    protected abstract fun initView()
+    open fun updateStatusBarColor(): Boolean = true
 
     fun showConfirmMessage(msg: String, listener: DialogInterface.OnClickListener) {
         AlertDialog.Builder(this)

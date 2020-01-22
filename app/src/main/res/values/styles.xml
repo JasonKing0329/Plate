@@ -8,6 +8,13 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="CustomActionBarTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
     <!--透明Dialog-->
     <style name="BaseDialogFragment" parent="Theme.AppCompat.Dialog">
         <item name="android:windowFrame">@null</item>
@@ -33,5 +40,9 @@
         <item name="android:windowContentOverlay">@null</item>
     </style>
 
-    <color name="grayef">#efefef</color>
+    <style name="EtActionSearch" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorControlNormal">@color/actionbar_element</item>
+        <item name="colorControlActivated">@color/actionbar_element</item>
+    </style>
+
 </resources>

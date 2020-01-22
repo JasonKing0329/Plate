@@ -31,6 +31,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     dataBinding {
         enabled = true
     }
@@ -62,4 +67,5 @@ dependencies {
     /*rx permission*/
     implementation "com.tbruyelle.rxpermissions2:rxpermissions:${RXPERMISSION_VERSION}"
 
+    implementation 'com.king.lib:jactionbar:1.1.0'
 }
