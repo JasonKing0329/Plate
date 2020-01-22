@@ -10,11 +10,18 @@
     <color name="text_sub">#999999</color>
 
     <color name="grayef">#efefef</color>
-    <color name="actionbar_element">@color/text_main</color>
-    <color name="actionbar_bg">#ffffff</color>
+    <color name="actionbar_element">@color/white</color>
+    <color name="actionbar_bg">@color/colorPrimary</color>
 
     <color name="redC93437">#FFC93437</color>
     <color name="blue375BF1">#FF375BF1</color>
     <color name="yellowF7D23E">#FFF7D23E</color>
     <color name="green34A350">#FF34A350</color>
+
+    <color name="ripple_gray">#33111111</color>
+
+    <color name="home_sec_player">#E95D60</color>
+    <color name="home_sec_match">#3480B9</color>
+    <color name="home_sec_rank">#D54F24</color>
+    <color name="home_sec_h2h">#BDB626</color>
 </resources>

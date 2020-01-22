@@ -22,7 +22,7 @@
             app:showIconBack="false"
             app:title="Login"
             app:titleSize="18dp"
-            app:titleColor="@color/text_main"
+            app:titleColor="@color/white"
             app:supportSearch="false"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

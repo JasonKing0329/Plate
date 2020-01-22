@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="model"
+            type="com.king.app.plate.page.home.HomeViewModel" />
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.king.app.jactionbar.JActionbar
+            android:id="@+id/actionbar"
+            android:layout_width="0dp"
+            android:layout_height="?android:attr/actionBarSize"
+            android:background="@color/actionbar_bg"
+            android:theme="@style/EtActionSearch"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:showIconBack="false"
+            app:supportSearch="false"
+            app:menu="@menu/home"
+            app:title="Home"
+            app:titleColor="@color/white"
+            app:titleSize="18dp" />
+
+        <LinearLayout
+            android:id="@+id/v_temp"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="16dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:visibility="@{model.editVisibility}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/actionbar">
+            <ImageView
+                android:id="@+id/iv_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_edit_grey_600_24dp" />
+            <TextView
+                android:id="@+id/tv_temp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Recent Match"
+                android:textColor="@color/text_main"
+                android:textSize="24dp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_player"
+            style="@style/TvHomeSec"
+            android:text="Player"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/v_temp" />
+
+        <TextView
+            android:id="@+id/tv_match"
+            style="@style/TvHomeSec"
+            android:text="Match"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_player" />
+
+        <TextView
+            android:id="@+id/tv_rank"
+            style="@style/TvHomeSec"
+            android:text="Rank"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_match" />
+
+        <TextView
+            android:id="@+id/tv_h2h"
+            style="@style/TvHomeSec"
+            android:text="Head To Head"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_rank" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

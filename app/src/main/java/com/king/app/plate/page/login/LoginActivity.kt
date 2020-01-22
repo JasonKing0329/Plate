@@ -8,6 +8,7 @@ import com.king.app.plate.base.BaseActivity
 import com.king.app.plate.databinding.ActivityLoginBinding
 import com.king.app.plate.model.fingerprint.FingerprintHelper
 import com.king.app.plate.page.SettingsActivity
+import com.king.app.plate.page.home.HomeActivity
 import com.king.app.plate.utils.AppUtil
 import com.tbruyelle.rxpermissions2.RxPermissions
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -72,7 +73,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>() {
     }
 
     private fun superUser() {
-        showMessageLong("superUser")
+        startActivity(Intent().setClass(this, HomeActivity::class.java))
     }
 
 }
