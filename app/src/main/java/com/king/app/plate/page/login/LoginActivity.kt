@@ -74,6 +74,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>() {
 
     private fun superUser() {
         startActivity(Intent().setClass(this, HomeActivity::class.java))
+        finish()
     }
 
 }

@@ -13,7 +13,7 @@ import android.view.View;
  * @author：Jing Yang
  * @date: 2020/1/22 14:03
  */
-public class RippleUtil {
+public class DrawableUtil {
 
     public static void setRippleBackground(View view, int colorContent, int colorRipple) {
         GradientDrawable gd = new GradientDrawable();
@@ -25,5 +25,15 @@ public class RippleUtil {
                 )
         );
         view.setBackground(drawable);
+    }
+
+    public static void setGradientColor(View view, int color) {
+        try {
+            GradientDrawable drawable = (GradientDrawable) view.getBackground();
+            drawable.setColor(color);
+            view.setBackground(drawable);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

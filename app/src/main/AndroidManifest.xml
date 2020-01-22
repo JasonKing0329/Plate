@@ -49,6 +49,8 @@
         </activity>
         <activity android:name=".page.home.HomeActivity">
         </activity>
+        <activity android:name=".page.player.PlayerActivity">
+        </activity>
     </application>
 
 </manifest>

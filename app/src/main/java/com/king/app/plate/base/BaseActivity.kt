@@ -1,5 +1,6 @@
 package com.king.app.plate.base
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
@@ -52,5 +53,9 @@ abstract class BaseActivity<T : ViewDataBinding, VM : BaseViewModel> : RootActiv
     override fun onDestroy() {
         mModel?.onDestroy()
         super.onDestroy()
+    }
+
+    open fun<AC> startPage(target: Class<AC>) {
+        startActivity(Intent().setClass(this, target))
     }
 }

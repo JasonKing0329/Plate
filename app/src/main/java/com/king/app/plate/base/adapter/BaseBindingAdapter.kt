@@ -31,7 +31,7 @@ abstract class BaseBindingAdapter<V : ViewDataBinding, T> : RecyclerView.Adapter
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val binding: V = onCreateBind(LayoutInflater.from(parent.context))
+        val binding: V = onCreateBind(LayoutInflater.from(parent.context), parent)
         val holder = BindingHolder(binding.root)
         holder.itemView.setOnClickListener { v ->
             val position = holder.layoutPosition
@@ -47,7 +47,7 @@ abstract class BaseBindingAdapter<V : ViewDataBinding, T> : RecyclerView.Adapter
         return holder
     }
 
-    abstract fun onCreateBind(from: LayoutInflater?): V
+    abstract fun onCreateBind(inflater: LayoutInflater, parent: ViewGroup): V
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val binding = getBindingFromHolder(holder)
