@@ -51,6 +51,8 @@
         </activity>
         <activity android:name=".page.player.PlayerActivity">
         </activity>
+        <activity android:name=".page.match.DrawsActivity">
+        </activity>
     </application>
 
 </manifest>

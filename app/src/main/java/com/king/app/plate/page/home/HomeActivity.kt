@@ -4,6 +4,7 @@ import com.king.app.plate.R
 import com.king.app.plate.base.BaseActivity
 import com.king.app.plate.databinding.ActivityHomeBinding
 import com.king.app.plate.page.SettingsActivity
+import com.king.app.plate.page.match.DrawsActivity
 import com.king.app.plate.page.player.PlayerActivity
 import com.king.app.plate.utils.DrawableUtil
 
@@ -23,7 +24,7 @@ class HomeActivity: BaseActivity<ActivityHomeBinding, HomeViewModel>() {
         mBinding.tvH2h.setOnClickListener {  }
         mBinding.tvMatch.setOnClickListener {  }
         mBinding.tvRank.setOnClickListener {  }
-        mBinding.vTemp.setOnClickListener {  }
+        mBinding.vTemp.setOnClickListener { startPage(DrawsActivity::class.java) }
 
         DrawableUtil.setRippleBackground(mBinding.tvPlayer, resources.getColor(R.color.home_sec_player), resources.getColor(R.color.ripple_gray))
         DrawableUtil.setRippleBackground(mBinding.tvMatch, resources.getColor(R.color.home_sec_match), resources.getColor(R.color.ripple_gray))
