@@ -36,7 +36,16 @@ public class DebugLog {
         className = sElements[1].getFileName();
         methodName = sElements[1].getMethodName();
     }
- 
+
+    public static void e(){
+        if (!isDebug)
+            return;
+
+        // Throwable instance must be created before any methods
+        getMethodNames(new Throwable().getStackTrace());
+        Log.e(className, createLog(""));
+    }
+
     public static void e(String message){
         if (!isDebug)
             return;

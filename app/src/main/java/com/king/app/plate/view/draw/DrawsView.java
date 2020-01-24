@@ -4,8 +4,11 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.Nullable;
@@ -18,7 +21,7 @@ import com.king.app.plate.utils.ScreenUtils;
  * @description:
  * @date :2020/1/24 0024 9:55
  */
-public class DrawsView extends View {
+public class DrawsView extends View implements View.OnTouchListener {
     
     private Paint paint = new Paint();
     
@@ -26,12 +29,11 @@ public class DrawsView extends View {
     private int set = 3;
     private int cellWidth = ScreenUtils.dp2px(32);
     private int divider = ScreenUtils.dp2px(1);
+    private int focusBorderWidth = ScreenUtils.dp2px(2);
+    private int colorWinner = Color.CYAN;
+    private int colorFocus = Color.BLACK;
 
-    private int round;
-
-    private Rect[][] drawsMap;
-
-    private int[] colors = new int[] {
+    private int[] cellColors = new int[] {
             Color.parseColor("#89DAE9"),
             Color.parseColor("#E49F80"),
             Color.parseColor("#89E98B"),
@@ -39,7 +41,23 @@ public class DrawsView extends View {
             Color.parseColor("#F0F0F0")
     };
 
-    private int colorWinner = Color.CYAN;
+    private int round;
+
+    private Rect[][] drawsMap;
+
+    private Point focusPoint;
+
+    private boolean isEnableFocusItem = true;
+
+    private OnClickDrawItemListener onClickDrawItemListener;
+
+    public void setOnClickDrawItemListener(OnClickDrawItemListener onClickDrawItemListener) {
+        this.onClickDrawItemListener = onClickDrawItemListener;
+    }
+
+    public void setEnableFocusItem(boolean enableFocusItem) {
+        isEnableFocusItem = enableFocusItem;
+    }
 
     public DrawsView(Context context) {
         super(context);
@@ -59,6 +77,7 @@ public class DrawsView extends View {
     private void init(AttributeSet attrs) {
         round = (int) (Math.log(draws)/Math.log(2));
         drawsMap = new Rect[round * getRoundTotalCol() + 1][];// 1是winner
+        setOnTouchListener(this);
     }
 
     @Override
@@ -126,6 +145,9 @@ public class DrawsView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         drawTable(canvas);
+        if (isEnableFocusItem) {
+            drawFocusCell(canvas);
+        }
         paint.reset();
         super.onDraw(canvas);
     }
@@ -205,8 +227,24 @@ public class DrawsView extends View {
 
     private void drawCell(int row, int col, Rect rect, Canvas canvas) {
         paint.setColor(getColor(row, col));
-        DebugLog.e("[" + rect.left + ", " + rect.top + ", " + rect.right + ", " + rect.bottom + "]");
         canvas.drawRect(rect, paint);
+    }
+
+    private void drawFocusCell(Canvas canvas) {
+        if (focusPoint != null) {
+            Rect rect = drawsMap[focusPoint.x][focusPoint.y];
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setColor(colorFocus);
+            paint.setStrokeWidth(focusBorderWidth);
+            Path path = new Path();
+            path.moveTo(rect.left, rect.top);
+            path.lineTo(rect.right, rect.top);
+            path.lineTo(rect.right, rect.bottom);
+            path.lineTo(rect.left, rect.bottom);
+            path.lineTo(rect.left, rect.top);
+            path.close();
+            canvas.drawPath(path, paint);
+        }
     }
 
     private int getColor(int hor, int ver) {
@@ -217,15 +255,85 @@ public class DrawsView extends View {
         else {
             int index = ver / 2;
             if (index % 2 == 0) {
-                return colors[hor / getRoundTotalCol()];
+                return cellColors[hor / getRoundTotalCol()];
             }
             else {
-                return colors[colors.length - 1];
+                return cellColors[cellColors.length - 1];
             }
         }
     }
 
     private int getRoundTotalCol() {
         return set + 1;
+    }
+
+    private long startTime;
+    private float startX, startY;
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        // 相对控件原点的位置（能超过屏幕）
+//        DebugLog.e("getX=" + event.getX() + ", getY=" + event.getY());
+        // 相对屏幕原点的位置（不超过屏幕）
+//        DebugLog.e("getRawX=" + event.getRawX() + ", getRawY=" + event.getRawY());
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                startTime = System.currentTimeMillis();
+                startX = event.getX();
+                startY = event.getY();
+                break;
+            case MotionEvent.ACTION_UP:
+                long time = System.currentTimeMillis();
+                float x = event.getX();
+                float y = event.getY();
+                if (time - startTime < 500 && Math.abs(x - startX) < 30 && Math.abs(y - startY) < 30) {
+                    doClick(x, y);
+                }
+                break;
+        }
+        return true;
+    }
+
+    private void doClick(float x, float y) {
+        for (int i = 0; i < drawsMap.length; i ++) {
+            Rect rect = drawsMap[i][0];
+            if (x >= rect.left && x <= rect.right) {
+                for (int j = 0; j < drawsMap[i].length; j ++) {
+                    rect = drawsMap[i][j];
+                    if (y <= rect.bottom && y >= rect.top) {
+                        onClick(i, j);
+                    }
+                }
+            }
+        }
+    }
+
+    private void onClick(int x, int y) {
+        DebugLog.e(x + ", " + y);
+        // 已聚焦，取消聚焦
+        if (focusPoint != null && focusPoint.x == x && focusPoint.y == y) {
+            focusPoint = null;
+        }
+        else {
+            focusPoint = new Point();
+            focusPoint.x = x;
+            focusPoint.y = y;
+        }
+
+        if (isEnableFocusItem) {
+            invalidate();
+        }
+
+        if (onClickDrawItemListener != null) {
+            onClickDrawItemListener.onClickDrawItem(x, y);
+        }
+    }
+
+    public Point getFocusPoint() {
+        return focusPoint;
+    }
+
+    public interface OnClickDrawItemListener {
+        void onClickDrawItem(int x, int y);
     }
 }
