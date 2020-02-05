@@ -22,18 +22,22 @@ import com.king.app.plate.utils.ScreenUtils;
  * @date :2020/1/24 0024 9:55
  */
 public class DrawsView extends View implements View.OnTouchListener {
-    
+
     private Paint paint = new Paint();
-    
+
+    private Paint textPaint = new Paint();
+
     private int draws = 32;
     private int set = 3;
-    private int cellWidth = ScreenUtils.dp2px(32);
+    private int cellWidth = ScreenUtils.dp2px(36);
     private int divider = ScreenUtils.dp2px(1);
     private int focusBorderWidth = ScreenUtils.dp2px(2);
     private int colorWinner = Color.CYAN;
     private int colorFocus = Color.BLACK;
+    private int colorText = Color.parseColor("#333333");
+    private int textSize = ScreenUtils.dp2px(14);
 
-    private int[] cellColors = new int[] {
+    private int[] cellColors = new int[]{
             Color.parseColor("#89DAE9"),
             Color.parseColor("#E49F80"),
             Color.parseColor("#89E98B"),
@@ -50,6 +54,8 @@ public class DrawsView extends View implements View.OnTouchListener {
     private boolean isEnableFocusItem = true;
 
     private OnClickDrawItemListener onClickDrawItemListener;
+
+    private AbsDrawAdapter adapter;
 
     public void setOnClickDrawItemListener(OnClickDrawItemListener onClickDrawItemListener) {
         this.onClickDrawItemListener = onClickDrawItemListener;
@@ -75,9 +81,21 @@ public class DrawsView extends View implements View.OnTouchListener {
     }
 
     private void init(AttributeSet attrs) {
-        round = (int) (Math.log(draws)/Math.log(2));
+        round = (int) (Math.log(draws) / Math.log(2));
         drawsMap = new Rect[round * getRoundTotalCol() + 1][];// 1是winner
         setOnTouchListener(this);
+    }
+
+    public void setAdapter(AbsDrawAdapter adapter) {
+        this.adapter = adapter;
+        if (adapter != null) {
+            adapter.setNotifyObserver(new NotifyObserver() {
+                @Override
+                public void notifyDataSetChanged() {
+                    invalidate();
+                }
+            });
+        }
     }
 
     @Override
@@ -95,16 +113,17 @@ public class DrawsView extends View implements View.OnTouchListener {
      * specMode判断控件设置的layout_width
      * 1. 本view layout_width指定为固定值，specMode=固定值
      * 2. 本view嵌套在HorizontalScrollView中，HorizontalScrollView作用于横向滚动
-     *      --> 无论本view layout_width设置的是match_parent还是wrap_content，specMode=UNSPECIFIED
-     *          为支持嵌入HorizontalScrollView滚动视图，在UNSPECIFIED里计算本view应该有的宽度
+     * --> 无论本view layout_width设置的是match_parent还是wrap_content，specMode=UNSPECIFIED
+     * 为支持嵌入HorizontalScrollView滚动视图，在UNSPECIFIED里计算本view应该有的宽度
      * 3. 本view嵌套在其他没有横向滚动功能的ViewGroup中
-     *      --> ViewGroup宽度已知（指定过大小，或match_parent，parent已知大小，比如整个屏幕）
-     *          --> 无论本view layout_width设置的是match_parent还是wrap_content，specMode=AT_MOST
-     *              所以这里选择在AT_MOST也运用本view应该有的宽度，也可以改为运用parent的宽度
-     *      --> ViewGroup宽度未知（不是说设置为wrap_content就是未知，而是比如嵌套在HorizontalScrollView中，导致ViewGroup的宽度也未知）
-     *          --> 同第2条
+     * --> ViewGroup宽度已知（指定过大小，或match_parent，parent已知大小，比如整个屏幕）
+     * --> 无论本view layout_width设置的是match_parent还是wrap_content，specMode=AT_MOST
+     * 所以这里选择在AT_MOST也运用本view应该有的宽度，也可以改为运用parent的宽度
+     * --> ViewGroup宽度未知（不是说设置为wrap_content就是未知，而是比如嵌套在HorizontalScrollView中，导致ViewGroup的宽度也未知）
+     * --> 同第2条
+     * <p>
+     * measureHeight同理，考虑layout_height与是否嵌入ScrollView
      *
-     *  measureHeight同理，考虑layout_height与是否嵌入ScrollView
      * @param defaultWidth
      * @param measureSpec
      * @return
@@ -135,6 +154,7 @@ public class DrawsView extends View implements View.OnTouchListener {
 
     /**
      * 总宽度等于 两端延长线的宽度+Y轴显示刻度文字的宽度+X轴所有刻度总宽度
+     *
      * @param defaultWidth
      * @return
      */
@@ -145,17 +165,19 @@ public class DrawsView extends View implements View.OnTouchListener {
     @Override
     protected void onDraw(Canvas canvas) {
         drawTable(canvas);
+        drawTableText(canvas);
         if (isEnableFocusItem) {
             drawFocusCell(canvas);
         }
         paint.reset();
+        textPaint.reset();
         super.onDraw(canvas);
     }
 
     private void drawTable(Canvas canvas) {
         createDrawMap();
-        for (int i = 0; i < drawsMap.length; i ++) {
-            for (int j = 0; j < drawsMap[i].length; j ++) {
+        for (int i = 0; i < drawsMap.length; i++) {
+            for (int j = 0; j < drawsMap[i].length; j++) {
                 drawCell(i, j, drawsMap[i][j], canvas);
             }
         }
@@ -164,38 +186,37 @@ public class DrawsView extends View implements View.OnTouchListener {
     private void createDrawMap() {
         int cell = draws;
         // 创建第一轮
-        for (int i = 0; i < getRoundTotalCol(); i ++) {
+        for (int i = 0; i < getRoundTotalCol(); i++) {
             drawsMap[i] = new Rect[cell];
         }
         HeightValue height = calcHeight(cell);
-        for (int row = 0; row < cell; row ++) {
+        for (int row = 0; row < cell; row++) {
             int h = height.average;
             // extra匀到尽可能多的cell
             if (row < height.extra) {
                 h += 1;
             }
-            for (int index = 0; index < getRoundTotalCol(); index ++) {
+            for (int index = 0; index < getRoundTotalCol(); index++) {
                 int left = index * (cellWidth + divider);
                 if (row > 0) {
                     Rect last = drawsMap[index][row - 1];
-                    drawsMap[index][row] = new Rect(left, last.bottom + divider , left + cellWidth, last.bottom + divider + h);
-                }
-                else {
-                    drawsMap[index][row] = new Rect(left, 0, left + cellWidth,  h);
+                    drawsMap[index][row] = new Rect(left, last.bottom + divider, left + cellWidth, last.bottom + divider + h);
+                } else {
+                    drawsMap[index][row] = new Rect(left, 0, left + cellWidth, h);
                 }
             }
         }
         // 因为第一轮均摊了extra，所以后面的轮次需要在第一轮的基础上计算位置，否则会出现无法对齐的问题
-        for (int r = 1; r < round; r ++) {
+        for (int r = 1; r < round; r++) {
             cell /= 2;
             int startCol = r * getRoundTotalCol();
-            for (int i = startCol; i < (r + 1) * getRoundTotalCol(); i ++) {
+            for (int i = startCol; i < (r + 1) * getRoundTotalCol(); i++) {
                 drawsMap[i] = new Rect[cell];
             }
-            for (int row = 0; row < cell; row ++) {
+            for (int row = 0; row < cell; row++) {
                 Rect alignTopCell = drawsMap[r * getRoundTotalCol() - 1][row * 2];
                 Rect alignBottomCell = drawsMap[r * getRoundTotalCol() - 1][row * 2 + 1];
-                for (int index = 0; index < getRoundTotalCol(); index ++) {
+                for (int index = 0; index < getRoundTotalCol(); index++) {
                     int top = alignTopCell.top;
                     int bottom = alignBottomCell.bottom;
                     int left = alignTopCell.right + divider + index * (cellWidth + divider);
@@ -251,13 +272,11 @@ public class DrawsView extends View implements View.OnTouchListener {
         // 最后一列，winner
         if (hor == round * getRoundTotalCol()) {
             return colorWinner;
-        }
-        else {
+        } else {
             int index = ver / 2;
             if (index % 2 == 0) {
                 return cellColors[hor / getRoundTotalCol()];
-            }
-            else {
+            } else {
                 return cellColors[cellColors.length - 1];
             }
         }
@@ -295,26 +314,43 @@ public class DrawsView extends View implements View.OnTouchListener {
     }
 
     private void doClick(float x, float y) {
-        for (int i = 0; i < drawsMap.length; i ++) {
+        for (int i = 0; i < drawsMap.length; i++) {
             Rect rect = drawsMap[i][0];
             if (x >= rect.left && x <= rect.right) {
-                for (int j = 0; j < drawsMap[i].length; j ++) {
+                for (int j = 0; j < drawsMap[i].length; j++) {
                     rect = drawsMap[i][j];
                     if (y <= rect.bottom && y >= rect.top) {
-                        onClick(i, j);
+                        if (isScoreCell(x, y)) {
+                            onClickScore(i, j);
+                        }
+                        else {
+                            onClickDraw(i, j);
+                        }
                     }
                 }
             }
         }
     }
 
-    private void onClick(int x, int y) {
+    private boolean isScoreCell(float x, float y) {
+        if (x % (set + 1) == 0) {
+            return false;
+        }
+        return true;
+    }
+
+    private void onClickScore(int x, int y) {
+        if (onClickDrawItemListener != null) {
+            onClickDrawItemListener.onClickScoreItem(x, y, x - 1);
+        }
+    }
+
+    private void onClickDraw(int x, int y) {
         DebugLog.e(x + ", " + y);
         // 已聚焦，取消聚焦
         if (focusPoint != null && focusPoint.x == x && focusPoint.y == y) {
             focusPoint = null;
-        }
-        else {
+        } else {
             focusPoint = new Point();
             focusPoint.x = x;
             focusPoint.y = y;
@@ -333,7 +369,33 @@ public class DrawsView extends View implements View.OnTouchListener {
         return focusPoint;
     }
 
+    private void drawTableText(Canvas canvas) {
+        if (adapter != null) {
+            for (int i = 0; i < drawsMap.length; i++) {
+                for (int j = 0; j < drawsMap[i].length; j++) {
+                    drawText(adapter.getText(i, j), drawsMap[i][j], canvas);
+                }
+            }
+        }
+    }
+
+    private void drawText(String text, Rect rect, Canvas canvas) {
+        textPaint.setColor(colorText);
+        textPaint.setTextSize(textSize);
+        textPaint.setStyle(Paint.Style.FILL);
+        //设置基线上点对其方式
+        textPaint.setTextAlign(Paint.Align.CENTER);
+        Paint.FontMetrics fontMetrics = textPaint.getFontMetrics();
+        float top = fontMetrics.top;//为基线到字体上边框的距离
+        float bottom = fontMetrics.bottom;//为基线到字体下边框的距离
+        int baseLineY = (int) (rect.centerY() - top / 2 - bottom / 2);//基线中间点的y轴计算公式
+
+        canvas.drawText(text, rect.centerX(), baseLineY, textPaint);
+    }
+
     public interface OnClickDrawItemListener {
         void onClickDrawItem(int x, int y);
+
+        void onClickScoreItem(int x, int y, int round);
     }
 }

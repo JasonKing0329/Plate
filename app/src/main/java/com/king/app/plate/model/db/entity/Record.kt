@@ -11,9 +11,9 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "record")
 data class Record (
     @PrimaryKey(autoGenerate = true)
-    var id: Int?,
-    var matchId: Int?,
-    var round: Int?,
+    var id: Int,
+    var matchId: Int,
+    var round: Int,
     var winnerId: Int?,
-    var retireFlg: Int?
+    var retireFlg: Int
 )

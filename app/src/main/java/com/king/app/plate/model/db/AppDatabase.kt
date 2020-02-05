@@ -4,8 +4,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.king.app.plate.PlateApplication
-import com.king.app.plate.model.db.dao.MatchDao
-import com.king.app.plate.model.db.dao.PlayerDao
+import com.king.app.plate.model.db.dao.*
 import com.king.app.plate.model.db.entity.*
 
 /**
@@ -19,6 +18,9 @@ abstract class AppDatabase:RoomDatabase() {
 
     abstract fun getMatchDao(): MatchDao
     abstract fun getPlayerDao(): PlayerDao
+    abstract fun getRecordDao(): RecordDao
+    abstract fun getRecordPlayerDao(): RecordPlayerDao
+    abstract fun getRecordScoreDao(): RecordScoreDao
 
     companion object {
         val DATABASE_NAME = "buffet.db"

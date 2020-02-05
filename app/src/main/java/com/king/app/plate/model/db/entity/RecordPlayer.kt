@@ -1,6 +1,7 @@
 package com.king.app.plate.model.db.entity
 
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 
 /**
@@ -16,5 +17,8 @@ data class RecordPlayer (
     var playerId: Int?,
     var playerRank: Int?,
     var playerSeed: Int?,
-    var order: Int?
+    var order: Int?,
+
+    @Ignore
+    var player: Player?
 )
