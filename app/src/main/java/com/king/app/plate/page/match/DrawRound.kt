@@ -8,5 +8,6 @@ import com.king.app.plate.model.bean.RecordPack
  * @date :2020/2/2 0002 17:36
  */
 data class DrawRound (
-    var recordList: List<RecordPack>
+    var round: Int,
+    var recordList: MutableList<RecordPack>
 )

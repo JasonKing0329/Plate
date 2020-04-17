@@ -121,7 +121,7 @@ class DrawRepository: BaseRepository() {
                 }
             }
 
-            var firstRound = DrawRound(byeRecords)
+            var firstRound = DrawRound(0, byeRecords)
             list.add(firstRound)
             it.onNext(list)
             it.onComplete()

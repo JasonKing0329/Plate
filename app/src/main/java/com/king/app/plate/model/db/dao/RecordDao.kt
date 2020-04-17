@@ -15,7 +15,7 @@ interface RecordDao:BaseDao<Record> {
     @Query("select * from `Record`")
     fun getRecords(): List<Record>
 
-    @Query("select * from `Record` where matchId=:matchId order by round, id")
+    @Query("select * from `Record` where matchId=:matchId order by round, orderInRound")
     fun getRecordsByMatch(matchId: Int): List<Record>
 
     @Query("select * from `record` where id=:id")

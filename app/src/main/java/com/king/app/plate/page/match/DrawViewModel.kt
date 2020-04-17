@@ -8,6 +8,7 @@ import com.king.app.plate.model.bean.DrawBody
 import com.king.app.plate.model.db.entity.Match
 import com.king.app.plate.model.repo.DrawRepository
 import com.king.app.plate.model.repo.PlayerRepository
+import com.king.app.plate.model.repo.RecordRepository
 import io.reactivex.ObservableSource
 
 /**
@@ -18,21 +19,29 @@ import io.reactivex.ObservableSource
 class DrawViewModel(application: Application): BaseViewModel(application) {
 
     var dataObserver: MutableLiveData<DrawData> = MutableLiveData()
-    var playerRepository = PlayerRepository()
-    var drawRepository = DrawRepository()
+    private var playerRepository = PlayerRepository()
+    private var drawRepository = DrawRepository()
+    private var recordRepository = RecordRepository()
     lateinit var match: Match
 
-    lateinit var drawBody: DrawBody
-    lateinit var drawData: DrawData
+    private var drawData: DrawData = DrawData()
 
     fun loadData(matchId: Int) {
         match = getDatabase().getMatchDao().getMatchById(matchId)
+        drawData.match = match
         createDrawBody()
     }
 
     private fun createDrawBody() {
-        drawRepository.createDrawBody()
-            .flatMap { toDrawData(mutableListOf(), it) }
+        recordRepository.getRoundRecords(match.id)
+            .flatMap {
+                drawData.roundList = it
+                drawRepository.createDrawBody()
+            }
+            .flatMap {
+                drawData.body = it
+                convertDrawData()
+            }
             .compose(applySchedulers())
             .subscribe(object : NextErrorObserver<DrawData>(getComposite()) {
                 override fun onNext(t: DrawData) {
@@ -50,7 +59,10 @@ class DrawViewModel(application: Application): BaseViewModel(application) {
     fun createDraw() {
         playerRepository.getRankPlayers()
             .flatMap { drawRepository.createPlayerDraw(it) }
-            .flatMap { toDrawData(it, drawBody) }
+            .flatMap {
+                drawData.roundList = it
+                convertDrawData()
+            }
             .compose(applySchedulers())
             .subscribe(object : NextErrorObserver<DrawData>(getComposite()) {
                 override fun onNext(t: DrawData) {
@@ -65,11 +77,9 @@ class DrawViewModel(application: Application): BaseViewModel(application) {
             })
     }
 
-    private fun toDrawData(rounds: List<DrawRound>, drawBody: DrawBody): ObservableSource<DrawData> = ObservableSource {
-        var data = DrawData(null, rounds, drawBody)
-        drawRepository.convertRoundsToBody(rounds, drawBody)
-        drawData = data;
-        it.onNext(data)
+    private fun convertDrawData(): ObservableSource<DrawData> = ObservableSource {
+        drawRepository.convertRoundsToBody(drawData.roundList, drawData.body!!)
+        it.onNext(drawData)
         it.onComplete()
     }
 

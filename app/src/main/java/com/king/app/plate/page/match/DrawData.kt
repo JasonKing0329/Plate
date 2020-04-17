@@ -8,8 +8,8 @@ import com.king.app.plate.model.db.entity.Match
  * @description:
  * @date :2020/1/25 0025 18:12
  */
-data class DrawData (
-    var match: Match?,
-    var roundList: List<DrawRound>,
-    var body: DrawBody
-)
+class DrawData {
+    var match: Match? = null
+    var roundList: List<DrawRound> = arrayListOf()
+    var body: DrawBody? = null
+}
