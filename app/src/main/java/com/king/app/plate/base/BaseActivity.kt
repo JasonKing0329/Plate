@@ -17,6 +17,10 @@ import com.king.app.plate.PlateApplication
  */
 abstract class BaseActivity<T : ViewDataBinding, VM : BaseViewModel> : RootActivity() {
 
+    companion object {
+        val KEY_BUNDLE = "bundle"
+    }
+
     lateinit var mBinding: T
 
     lateinit var mModel: VM
@@ -57,5 +61,11 @@ abstract class BaseActivity<T : ViewDataBinding, VM : BaseViewModel> : RootActiv
 
     open fun<AC> startPage(target: Class<AC>) {
         startActivity(Intent().setClass(this, target))
+    }
+
+    open fun<AC> startPage(target: Class<AC>, bundle: Bundle) {
+        var intent = Intent().setClass(this, target)
+        intent.putExtra(KEY_BUNDLE, bundle)
+        startActivity(intent)
     }
 }

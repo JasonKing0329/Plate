@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import com.king.app.plate.PlateApplication
 
 /**
  * Desc:
@@ -17,6 +19,8 @@ abstract class BaseFragment<T : ViewDataBinding, VM: BaseViewModel>: RootFragmen
     lateinit var mBinding: T
 
     lateinit var mModel: VM
+
+    fun generateViewModel(vm: Class<VM>) = ViewModelProvider(this, ViewModelFactory(PlateApplication.instance)).get(vm)
 
     override fun onCreateView(
         inflater: LayoutInflater,

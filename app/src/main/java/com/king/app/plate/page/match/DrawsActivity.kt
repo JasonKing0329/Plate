@@ -58,7 +58,15 @@ class DrawsActivity: BaseActivity<ActivityMatchDrawBinding, DrawViewModel>() {
 
     override fun initData() {
         mModel.dataObserver.observe(this, Observer { showDrawData(it) })
-        mModel.loadData(intent.getIntExtra(EXTRA_MATCH_ID, -1))
+        mModel.loadData(getMatchId())
+    }
+
+    private fun getMatchId(): Int {
+        var bundle = intent.getBundleExtra(BaseActivity.KEY_BUNDLE)
+        if (bundle != null) {
+            return bundle.getInt(EXTRA_MATCH_ID)
+        }
+        return 0;
     }
 
     private fun showDrawData(it: DrawData?) {

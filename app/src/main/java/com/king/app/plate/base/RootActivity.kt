@@ -55,7 +55,7 @@ abstract class RootActivity : AppCompatActivity() {
     fun showConfirmCancelMessage(
         msg: String,
         okListener: DialogInterface.OnClickListener,
-        cancelListener: DialogInterface.OnClickListener
+        cancelListener: DialogInterface.OnClickListener?
     ) {
         AlertDialog.Builder(this)
             .setTitle(null)

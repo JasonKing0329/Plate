@@ -5,6 +5,7 @@ import com.king.app.plate.base.BaseActivity
 import com.king.app.plate.databinding.ActivityHomeBinding
 import com.king.app.plate.page.SettingsActivity
 import com.king.app.plate.page.match.DrawsActivity
+import com.king.app.plate.page.match.MatchActivity
 import com.king.app.plate.page.player.PlayerActivity
 import com.king.app.plate.utils.DrawableUtil
 
@@ -22,7 +23,7 @@ class HomeActivity: BaseActivity<ActivityHomeBinding, HomeViewModel>() {
     override fun initView() {
         mBinding.tvPlayer.setOnClickListener { startPage(PlayerActivity::class.java) }
         mBinding.tvH2h.setOnClickListener {  }
-        mBinding.tvMatch.setOnClickListener {  }
+        mBinding.tvMatch.setOnClickListener { startPage(MatchActivity::class.java) }
         mBinding.tvRank.setOnClickListener {  }
         mBinding.vTemp.setOnClickListener { startPage(DrawsActivity::class.java) }
 

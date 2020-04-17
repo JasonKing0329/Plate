@@ -5,7 +5,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <EditText
             android:id="@+id/et_name"
@@ -16,14 +16,13 @@
             android:layout_marginEnd="16dp"
             android:ems="10"
             android:inputType="textPersonName"
-            android:text="Name"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/tv_name"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tv_name"
-            android:layout_width="60dp"
+            android:layout_width="50dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:text="Name"
@@ -42,7 +41,7 @@
 
         <TextView
             android:id="@+id/tv_date"
-            android:layout_width="60dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Date"
             app:layout_constraintBottom_toBottomOf="@+id/btn_date"
@@ -80,11 +79,52 @@
         <TextView
             android:id="@+id/tv_ok"
             style="@style/TvDialogOk"
+            android:layout_marginTop="32dp"
             android:text="Ok"
-            android:layout_marginTop="36dp"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/sp_type" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_period" />
+
+        <EditText
+            android:id="@+id/et_period"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            app:layout_constraintStart_toEndOf="@+id/tv_period"
+            app:layout_constraintTop_toBottomOf="@+id/sp_type" />
+
+        <TextView
+            android:id="@+id/tv_period"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Period"
+            app:layout_constraintBottom_toBottomOf="@+id/et_period"
+            app:layout_constraintStart_toStartOf="@+id/tv_type"
+            app:layout_constraintTop_toTopOf="@+id/et_period" />
+
+        <EditText
+            android:id="@+id/et_order"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            app:layout_constraintBottom_toBottomOf="@+id/et_period"
+            app:layout_constraintStart_toEndOf="@+id/tv_order"
+            app:layout_constraintTop_toTopOf="@+id/et_period" />
+
+        <TextView
+            android:id="@+id/tv_order"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="Order"
+            app:layout_constraintBottom_toBottomOf="@+id/et_period"
+            app:layout_constraintStart_toEndOf="@+id/et_period"
+            app:layout_constraintTop_toTopOf="@+id/et_period" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

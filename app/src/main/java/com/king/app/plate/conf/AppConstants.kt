@@ -13,5 +13,8 @@ class AppConstants {
 
         var cellTypePlayer = 0
         var cellTypeScore = 1
+
+        var matchLevelNormal = 0
+        var matchLevelFinal = 1
     }
 }
