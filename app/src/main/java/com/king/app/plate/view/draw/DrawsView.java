@@ -13,6 +13,7 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
+import com.king.app.plate.conf.AppConstants;
 import com.king.app.plate.utils.DebugLog;
 import com.king.app.plate.utils.ScreenUtils;
 
@@ -27,8 +28,8 @@ public class DrawsView extends View implements View.OnTouchListener {
 
     private Paint textPaint = new Paint();
 
-    private int draws = 32;
-    private int set = 3;
+    private int draws = AppConstants.Companion.getDraws();
+    private int set = AppConstants.Companion.getSet();
     private int cellWidth = ScreenUtils.dp2px(36);
     private int divider = ScreenUtils.dp2px(1);
     private int focusBorderWidth = ScreenUtils.dp2px(2);
@@ -320,12 +321,13 @@ public class DrawsView extends View implements View.OnTouchListener {
                 for (int j = 0; j < drawsMap[i].length; j++) {
                     rect = drawsMap[i][j];
                     if (y <= rect.bottom && y >= rect.top) {
-                        if (isScoreCell(x, y)) {
+                        if (isScoreCell(i, j)) {
                             onClickScore(i, j);
                         }
                         else {
                             onClickDraw(i, j);
                         }
+                        break;
                     }
                 }
             }
@@ -373,10 +375,25 @@ public class DrawsView extends View implements View.OnTouchListener {
         if (adapter != null) {
             for (int i = 0; i < drawsMap.length; i++) {
                 for (int j = 0; j < drawsMap[i].length; j++) {
-                    drawText(adapter.getText(i, j), drawsMap[i][j], canvas);
+                    String text = getTextFromAdapter(i, j);
+                    drawText(text, drawsMap[i][j], canvas);
                 }
             }
         }
+    }
+
+    private String getTextFromAdapter(int x, int y) {
+//        String text = "";
+//        int round = x / (set + 1);
+//        int roundSet = x % (set + 1);
+//        if (roundSet == 0) {
+//            text = adapter.getPlayerText(round, y);
+//        }
+//        else {
+//            text = adapter.getScoreText(round, roundSet, y);
+//        }
+//        return text;
+        return adapter.getText(x, y);
     }
 
     private void drawText(String text, Rect rect, Canvas canvas) {

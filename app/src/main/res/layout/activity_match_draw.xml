@@ -5,6 +5,15 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+        <com.king.app.jactionbar.JActionbar
+            android:id="@+id/action_bar"
+            style="@style/ActionBar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:showIconBack="false"
+            app:title="Draws"
+            app:menu="@menu/draw"/>
         <com.king.app.plate.view.draw.DrawKeyboard
             android:id="@+id/keyboard"
             android:layout_width="0dp"
@@ -19,7 +28,7 @@
             android:scrollbars="none"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/action_bar"
             app:layout_constraintBottom_toTopOf="@+id/keyboard">
             <com.king.app.plate.view.draw.DrawsView
                 android:id="@+id/draws"

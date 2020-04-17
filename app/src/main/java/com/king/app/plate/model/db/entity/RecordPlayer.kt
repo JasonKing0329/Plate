@@ -21,4 +21,6 @@ data class RecordPlayer (
 
     @Ignore
     var player: Player?
-)
+) {// 加入@Ignore后必须指定一个默认构造器
+    constructor() : this(null, null, null, null, null, null, null)
+}

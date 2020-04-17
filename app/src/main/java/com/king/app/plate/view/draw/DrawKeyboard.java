@@ -220,11 +220,12 @@ public class DrawKeyboard extends View implements View.OnTouchListener {
     private void doClick(float x, float y) {
         for (int i = 0; i < keyRects.length; i++) {
             Rect rect = keyRects[i][0];
-            if (x >= rect.left && x <= rect.right) {
+            if (y <= rect.bottom && y >= rect.top) {
                 for (int j = 0; j < keyRects[i].length; j++) {
                     rect = keyRects[i][j];
-                    if (y <= rect.bottom && y >= rect.top) {
+                    if (x >= rect.left && x <= rect.right) {
                         onClick(i, j);
+                        break;
                     }
                 }
             }

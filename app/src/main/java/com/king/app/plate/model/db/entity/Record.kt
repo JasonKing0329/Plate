@@ -15,5 +15,6 @@ data class Record (
     var matchId: Int,
     var round: Int,
     var winnerId: Int?,
-    var retireFlg: Int
+    var retireFlg: Int,
+    var isBye: Boolean
 )

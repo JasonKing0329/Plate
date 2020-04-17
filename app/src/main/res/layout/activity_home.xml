@@ -14,19 +14,14 @@
 
         <com.king.app.jactionbar.JActionbar
             android:id="@+id/actionbar"
-            android:layout_width="0dp"
-            android:layout_height="?android:attr/actionBarSize"
-            android:background="@color/actionbar_bg"
-            android:theme="@style/EtActionSearch"
+            style="@style/ActionBar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:showIconBack="false"
             app:supportSearch="false"
             app:menu="@menu/home"
-            app:title="Home"
-            app:titleColor="@color/white"
-            app:titleSize="18dp" />
+            app:title="Home" />
 
         <LinearLayout
             android:id="@+id/v_temp"

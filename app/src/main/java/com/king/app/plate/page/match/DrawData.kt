@@ -1,5 +1,6 @@
 package com.king.app.plate.page.match
 
+import com.king.app.plate.model.bean.DrawBody
 import com.king.app.plate.model.db.entity.Match
 
 /**
@@ -9,5 +10,6 @@ import com.king.app.plate.model.db.entity.Match
  */
 data class DrawData (
     var match: Match?,
-    var roundList: List<DrawRound>?
+    var roundList: List<DrawRound>,
+    var body: DrawBody
 )

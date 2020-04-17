@@ -15,4 +15,6 @@ interface RecordScoreDao:BaseDao<RecordScore> {
     @Query("select * from `record_score` where recordId=:recordId")
     fun getScoresByRecord(recordId: Int): List<RecordScore>
 
+    @Query("delete from record_score where recordId=:recordId")
+    fun deleteByRecord(recordId: Int);
 }

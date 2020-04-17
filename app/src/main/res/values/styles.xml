@@ -58,4 +58,23 @@
         <item name="android:textColor">@color/white</item>
     </style>
 
+    <style name="ActionBar">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">?android:attr/actionBarSize</item>
+        <item name="android:background">@color/actionbar_bg</item>
+        <item name="android:theme">@style/EtActionSearch</item>
+        <item name="titleColor">@color/white</item>
+        <item name="titleSize">18dp</item>
+    </style>
+
+    <style name="TvDialogOk">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:textColor">@color/text_main</item>
+        <item name="android:textSize">20dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+    </style>
+
 </resources>

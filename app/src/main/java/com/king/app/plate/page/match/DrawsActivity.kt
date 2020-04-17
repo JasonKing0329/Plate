@@ -1,6 +1,7 @@
 package com.king.app.plate.page.match
 
 import android.graphics.Point
+import androidx.lifecycle.Observer
 import com.king.app.plate.R
 import com.king.app.plate.base.BaseActivity
 import com.king.app.plate.databinding.ActivityMatchDrawBinding
@@ -39,6 +40,14 @@ class DrawsActivity: BaseActivity<ActivityMatchDrawBinding, DrawViewModel>() {
             var point: Point? = mBinding.draws.focusPoint
             if (point != null) {
                 adapter.updateText(point.x, point.y, it)
+                mBinding.draws.invalidate()
+            }
+        }
+
+        mBinding.actionBar.setOnMenuItemListener { menuId ->
+            when (menuId) {
+                R.id.menu_create -> mModel.createDraw()
+                R.id.menu_save -> mModel.saveDraw()
             }
         }
     }
@@ -48,6 +57,12 @@ class DrawsActivity: BaseActivity<ActivityMatchDrawBinding, DrawViewModel>() {
     }
 
     override fun initData() {
+        mModel.dataObserver.observe(this, Observer { showDrawData(it) })
         mModel.loadData(intent.getIntExtra(EXTRA_MATCH_ID, -1))
+    }
+
+    private fun showDrawData(it: DrawData?) {
+        adapter.setData(it)
+        adapter.notifyDataSetChanged()
     }
 }

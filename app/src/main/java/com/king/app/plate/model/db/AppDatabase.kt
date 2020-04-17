@@ -21,6 +21,7 @@ abstract class AppDatabase:RoomDatabase() {
     abstract fun getRecordDao(): RecordDao
     abstract fun getRecordPlayerDao(): RecordPlayerDao
     abstract fun getRecordScoreDao(): RecordScoreDao
+    abstract fun getRankDao(): RankDao
 
     companion object {
         val DATABASE_NAME = "buffet.db"
