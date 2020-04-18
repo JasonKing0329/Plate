@@ -1,5 +1,6 @@
 package com.king.app.plate.page.match
 
+import android.content.DialogInterface
 import android.graphics.Point
 import androidx.lifecycle.Observer
 import com.king.app.plate.R
@@ -46,7 +47,9 @@ class DrawsActivity: BaseActivity<ActivityMatchDrawBinding, DrawViewModel>() {
 
         mBinding.actionBar.setOnMenuItemListener { menuId ->
             when (menuId) {
-                R.id.menu_create -> mModel.createDraw()
+                R.id.menu_create -> showConfirmCancelMessage("Create draw will clear all existed data of current match, continue?"
+                    , DialogInterface.OnClickListener { dialogInterface, i ->  mModel.createNewDraw()}
+                    , null)
                 R.id.menu_save -> mModel.saveDraw()
             }
         }
@@ -61,12 +64,12 @@ class DrawsActivity: BaseActivity<ActivityMatchDrawBinding, DrawViewModel>() {
         mModel.loadData(getMatchId())
     }
 
-    private fun getMatchId(): Int {
-        var bundle = intent.getBundleExtra(BaseActivity.KEY_BUNDLE)
+    private fun getMatchId(): Long {
+        var bundle = intent.getBundleExtra(KEY_BUNDLE)
         if (bundle != null) {
-            return bundle.getInt(EXTRA_MATCH_ID)
+            return bundle.getLong(EXTRA_MATCH_ID)
         }
-        return 0;
+        return 0
     }
 
     private fun showDrawData(it: DrawData?) {

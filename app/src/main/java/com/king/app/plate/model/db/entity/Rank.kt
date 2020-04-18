@@ -11,8 +11,8 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "rank")
 data class Rank (
     @PrimaryKey(autoGenerate = true)
-    var id: Int?,
-    var matchId: Int?,
-    var playerId: Int?,
-    var rank: Int?
+    var id: Long,
+    var matchId: Long,
+    var playerId: Long,
+    var rank: Int
 )

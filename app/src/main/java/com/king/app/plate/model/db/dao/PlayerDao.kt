@@ -16,5 +16,5 @@ interface PlayerDao:BaseDao<Player> {
     fun getPlayers(): List<Player>
 
     @Query("select * from `player` where id=:id")
-    fun getPlayerById(id: Int): Player
+    fun getPlayerById(id: Long): Player
 }

@@ -28,7 +28,7 @@ class PlayerRepository : BaseRepository() {
         it.onComplete()
     }
 
-    private fun getLatestMatchId(): Int? {
-        return 0;
+    private fun getLatestMatchId(): Long {
+        return 0
     }
 }

@@ -13,6 +13,9 @@ import com.king.app.plate.model.db.entity.RecordPlayer
 interface RecordPlayerDao:BaseDao<RecordPlayer> {
 
     @Query("select * from `record_player` where recordId=:recordId")
-    fun getPlayersByRecord(recordId: Int): List<RecordPlayer>
+    fun getPlayersByRecord(recordId: Long): MutableList<RecordPlayer>
+
+    @Query("delete from `record_player` where recordId=:recordId")
+    fun deletePlayersByRecord(recordId: Long)
 
 }

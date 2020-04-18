@@ -13,5 +13,5 @@ import com.king.app.plate.model.db.entity.Rank
 interface RankDao:BaseDao<Rank> {
 
     @Query("select * from `rank` where playerId =:playerId and matchId =:matchId")
-    fun getPlayerRank(playerId: Int?, matchId: Int?): Rank
+    fun getPlayerRank(playerId: Long, matchId: Long): Rank
 }

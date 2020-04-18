@@ -11,12 +11,12 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "record_score")
 data class RecordScore (
     @PrimaryKey(autoGenerate = true)
-    var id: Int?,
-    var recordId: Int?,
-    var set: Int?,
-    var score1: Int?,
-    var score2: Int?,
-    var isTiebreak: Boolean?,
-    var scoreTie1: Int?,
-    var scoreTie2: Int?
+    var id: Long,
+    var recordId: Long,
+    var set: Int,
+    var score1: Int,
+    var score2: Int,
+    var isTiebreak: Boolean,
+    var scoreTie1: Int,
+    var scoreTie2: Int
 )

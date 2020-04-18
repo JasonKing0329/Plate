@@ -16,5 +16,5 @@ interface MatchDao:BaseDao<Match> {
     fun getMatches(): List<Match>
 
     @Query("select * from `match` where id=:id")
-    fun getMatchById(id: Int): Match
+    fun getMatchById(id: Long): Match
 }

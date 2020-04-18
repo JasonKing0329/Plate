@@ -63,7 +63,7 @@ class PlayerViewModel(application: Application): BaseViewModel(application) {
         for (index in 'A'..'Z') {
             if (index == 'I' || index == 'O')
                 continue
-            var player = Player(null, index.toString(), null)
+            var player = Player(0, index.toString(), null)
             list.add(player)
         }
         getDatabase().getPlayerDao().insertAll(list)

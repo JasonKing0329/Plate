@@ -72,7 +72,7 @@ class MatchActivity: BaseActivity<ActivityMatchBinding, MatchViewModel>() {
             adapter.setOnItemClickListener(object : BaseBindingAdapter.OnItemClickListener<Match> {
                 override fun onClickItem(view: View, position: Int, data: Match) {
                     var bundle = Bundle()
-                    bundle.putInt(DrawsActivity.EXTRA_MATCH_ID, data.id)
+                    bundle.putLong(DrawsActivity.EXTRA_MATCH_ID, data.id)
                     startPage(DrawsActivity::class.java, bundle)
                 }
             })

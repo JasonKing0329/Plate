@@ -11,10 +11,6 @@ public abstract class AbsDrawAdapter {
 
     private NotifyObserver notifyObserver;
 
-    public abstract String getPlayerText(int round, int indexInRound);
-
-    public abstract String getScoreText(int round, int set, int indexInRound);
-
     public abstract String getText(int x, int y);
 
     public void notifyDataSetChanged() {

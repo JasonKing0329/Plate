@@ -11,7 +11,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "match")
 data class Match (
     @PrimaryKey(autoGenerate = true)
-    var id: Int,
+    var id: Long,
     var period: Int?,
     var order: Int,
     var orderInPeriod: Int?,

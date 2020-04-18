@@ -11,7 +11,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "player")
 data class Player (
     @PrimaryKey(autoGenerate = true)
-    var id: Int?,
+    var id: Long,
     var name: String?,
     var defColor: Int?
 )

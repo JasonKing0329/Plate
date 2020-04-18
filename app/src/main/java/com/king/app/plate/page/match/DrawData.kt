@@ -11,5 +11,5 @@ import com.king.app.plate.model.db.entity.Match
 class DrawData {
     var match: Match? = null
     var roundList: List<DrawRound> = arrayListOf()
-    var body: DrawBody? = null
+    var body: DrawBody = DrawBody()
 }

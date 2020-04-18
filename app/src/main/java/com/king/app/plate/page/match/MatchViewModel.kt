@@ -20,7 +20,7 @@ class MatchViewModel(application: Application): BaseViewModel(application) {
     }
 
     fun insertOrUpdate(match: Match) {
-        if (match.id == 0) {
+        if (match.id == 0.toLong()) {
             getDatabase().getMatchDao().insert(match)
         }
         else{

@@ -14,7 +14,7 @@ import com.king.app.plate.utils.DrawableUtil
  */
 class PlayerAdapter: BaseBindingAdapter<AdapterPlayerBinding, PlayerItem>() {
 
-    private var colorMap: MutableMap<Int?, Int?> = mutableMapOf()
+    private var colorMap: MutableMap<Long?, Int?> = mutableMapOf()
 
     override fun onCreateBind(inflater: LayoutInflater, parent: ViewGroup): AdapterPlayerBinding =
         // 必须有后两个，否则宽度只能占recyclerview的一半

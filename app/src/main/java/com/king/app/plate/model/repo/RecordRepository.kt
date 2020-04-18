@@ -11,7 +11,7 @@ import io.reactivex.Observable
  */
 class RecordRepository: BaseRepository() {
 
-    fun getRoundRecords(matchId: Int): Observable<List<DrawRound>> = Observable.create {
+    fun getRoundRecords(matchId: Long): Observable<List<DrawRound>> = Observable.create {
         var roundList = mutableListOf<DrawRound>()
         var recordList = getDatabase().getRecordDao().getRecordsByMatch(matchId)
         var drawRound: DrawRound? = null
@@ -22,11 +22,16 @@ class RecordRepository: BaseRepository() {
                 roundList.add(drawRound)
             }
             var playerList = getDatabase().getRecordPlayerDao().getPlayersByRecord(record.id)
+            if (playerList.size > 0) {
+                for (player in  playerList) {
+                    player.player = getDatabase().getPlayerDao().getPlayerById(player.playerId)
+                }
+            }
             var scoreList = getDatabase().getRecordScoreDao().getScoresByRecord(record.id)
             var pack = RecordPack(record, playerList, scoreList)
             drawRound.recordList.add(pack)
         }
         it.onNext(roundList)
         it.onComplete()
-    };
+    }
 }

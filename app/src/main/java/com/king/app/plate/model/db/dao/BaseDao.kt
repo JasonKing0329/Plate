@@ -14,7 +14,7 @@ interface BaseDao<T> {
     fun insertAll(list: MutableList<T>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(list: T)
+    fun insert(list: T): Long
 
     @Delete
     fun delete(element: T)

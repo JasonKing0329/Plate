@@ -4,9 +4,9 @@ import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import com.king.app.plate.base.BaseViewModel
 import com.king.app.plate.base.observer.NextErrorObserver
-import com.king.app.plate.model.bean.DrawBody
 import com.king.app.plate.model.db.entity.Match
 import com.king.app.plate.model.repo.DrawRepository
+import com.king.app.plate.model.repo.MatchRepository
 import com.king.app.plate.model.repo.PlayerRepository
 import com.king.app.plate.model.repo.RecordRepository
 import io.reactivex.ObservableSource
@@ -22,11 +22,12 @@ class DrawViewModel(application: Application): BaseViewModel(application) {
     private var playerRepository = PlayerRepository()
     private var drawRepository = DrawRepository()
     private var recordRepository = RecordRepository()
+    private var matchRepository = MatchRepository()
     lateinit var match: Match
 
     private var drawData: DrawData = DrawData()
 
-    fun loadData(matchId: Int) {
+    fun loadData(matchId: Long) {
         match = getDatabase().getMatchDao().getMatchById(matchId)
         drawData.match = match
         createDrawBody()
@@ -56,7 +57,8 @@ class DrawViewModel(application: Application): BaseViewModel(application) {
             })
     }
 
-    fun createDraw() {
+    fun createNewDraw() {
+        matchRepository.deleteMatchDetails(match.id)
         playerRepository.getRankPlayers()
             .flatMap { drawRepository.createPlayerDraw(it) }
             .flatMap {
@@ -84,7 +86,19 @@ class DrawViewModel(application: Application): BaseViewModel(application) {
     }
 
     fun saveDraw() {
+        drawRepository.saveDraw(drawData)
+            .compose(applySchedulers())
+            .subscribe(object : NextErrorObserver<DrawData>(getComposite()) {
 
+                override fun onNext(t: DrawData) {
+                    messageObserver.value = "success"
+                }
+
+                override fun onError(e: Throwable) {
+                    e.printStackTrace()
+                    messageObserver.value = e.message
+                }
+
+            })
     }
-
 }

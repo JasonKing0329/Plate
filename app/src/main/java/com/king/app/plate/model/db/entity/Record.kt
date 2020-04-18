@@ -11,10 +11,10 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "record")
 data class Record (
     @PrimaryKey(autoGenerate = true)
-    var id: Int,
-    var matchId: Int,
+    var id: Long,
+    var matchId: Long,
     var round: Int,
-    var winnerId: Int?,
+    var winnerId: Long?,
     var retireFlg: Int,
     var isBye: Boolean,
     var orderInRound: Int

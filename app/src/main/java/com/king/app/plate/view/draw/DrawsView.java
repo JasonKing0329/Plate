@@ -342,12 +342,20 @@ public class DrawsView extends View implements View.OnTouchListener {
     }
 
     private void onClickScore(int x, int y) {
+        focusCell(x, y);
         if (onClickDrawItemListener != null) {
             onClickDrawItemListener.onClickScoreItem(x, y, x - 1);
         }
     }
 
     private void onClickDraw(int x, int y) {
+        focusCell(x, y);
+        if (onClickDrawItemListener != null) {
+            onClickDrawItemListener.onClickDrawItem(x, y);
+        }
+    }
+
+    private void focusCell(int x, int y) {
         DebugLog.e(x + ", " + y);
         // 已聚焦，取消聚焦
         if (focusPoint != null && focusPoint.x == x && focusPoint.y == y) {
@@ -360,10 +368,6 @@ public class DrawsView extends View implements View.OnTouchListener {
 
         if (isEnableFocusItem) {
             invalidate();
-        }
-
-        if (onClickDrawItemListener != null) {
-            onClickDrawItemListener.onClickDrawItem(x, y);
         }
     }
 

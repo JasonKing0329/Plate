@@ -11,8 +11,8 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "score")
 data class Score (
     @PrimaryKey(autoGenerate = true)
-    var id: Int?,
-    var matchId: Int?,
-    var playerId: Int?,
+    var id: Long,
+    var matchId: Long,
+    var playerId: Long,
     var score: Int?
 )

@@ -11,6 +11,6 @@ import com.king.app.plate.model.db.entity.RecordScore
  */
 data class RecordPack (
     var record: Record?,
-    var playerList: List<RecordPlayer>?,
-    var scoreList: List<RecordScore>?
+    var playerList: MutableList<RecordPlayer>?,
+    var scoreList: MutableList<RecordScore>?
 )

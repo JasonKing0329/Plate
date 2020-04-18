@@ -12,9 +12,9 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "record_player")
 data class RecordPlayer (
     @PrimaryKey(autoGenerate = true)
-    var id: Int?,
-    var recordId: Int?,
-    var playerId: Int?,
+    var id: Long,
+    var recordId: Long,
+    var playerId: Long,
     var playerRank: Int?,
     var playerSeed: Int?,
     var order: Int?,
@@ -22,5 +22,5 @@ data class RecordPlayer (
     @Ignore
     var player: Player?
 ) {// 加入@Ignore后必须指定一个默认构造器
-    constructor() : this(null, null, null, null, null, null, null)
+    constructor() : this(0, 0, 0, null, null, null, null)
 }
