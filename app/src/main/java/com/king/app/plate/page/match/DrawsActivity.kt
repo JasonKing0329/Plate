@@ -6,6 +6,7 @@ import androidx.lifecycle.Observer
 import com.king.app.plate.R
 import com.king.app.plate.base.BaseActivity
 import com.king.app.plate.databinding.ActivityMatchDrawBinding
+import com.king.app.plate.view.draw.DrawKeyboard
 import com.king.app.plate.view.draw.DrawsView
 
 /**
@@ -37,13 +38,31 @@ class DrawsActivity: BaseActivity<ActivityMatchDrawBinding, DrawViewModel>() {
             }
         })
 
-        mBinding.keyboard.setOnClickKeyListener {
-            var point: Point? = mBinding.draws.focusPoint
-            if (point != null) {
-                adapter.updateText(point.x, point.y, it)
-                mBinding.draws.invalidate()
+        mBinding.keyboard.setOnClickKeyListener(object: DrawKeyboard.OnClickKeyListener{
+            override fun onKey(key: String?) {
+                var point: Point? = mBinding.draws.focusPoint
+                if (point != null) {
+                    adapter.updateText(point.x, point.y, key)
+                    mBinding.draws.invalidate()
+                }
             }
-        }
+
+            override fun onClear() {
+                var point: Point? = mBinding.draws.focusPoint
+                if (point != null) {
+                    adapter.clearText(point.x, point.y)
+                    mBinding.draws.invalidate()
+                }
+            }
+
+            override fun onDelete() {
+                var point: Point? = mBinding.draws.focusPoint
+                if (point != null) {
+                    adapter.deleteText(point.x, point.y)
+                    mBinding.draws.invalidate()
+                }
+            }
+        })
 
         mBinding.actionBar.setOnMenuItemListener { menuId ->
             when (menuId) {

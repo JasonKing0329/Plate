@@ -27,7 +27,25 @@ class DrawsAdapter : AbsDrawAdapter() {
     fun updateText(x: Int, y: Int, text: String?) {
         try {
             var colList: MutableList<BodyCell> = data?.body?.bodyData!![x]
-            colList[y].text = text!!
+            colList[y].text = colList[y].text + text!!
+            colList[y].isModified = true
+        } catch (e: Exception) {
+        }
+    }
+
+    fun clearText(x: Int, y: Int) {
+        try {
+            var colList: MutableList<BodyCell> = data?.body?.bodyData!![x]
+            colList[y].text = ""
+            colList[y].isModified = true
+        } catch (e: Exception) {
+        }
+    }
+
+    fun deleteText(x: Int, y: Int) {
+        try {
+            var colList: MutableList<BodyCell> = data?.body?.bodyData!![x]
+            colList[y].text = colList[y].text.substring(0, colList[y].text.length - 1)
             colList[y].isModified = true
         } catch (e: Exception) {
         }

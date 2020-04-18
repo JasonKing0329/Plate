@@ -181,16 +181,15 @@ class DrawRepository: BaseRepository() {
     private fun getScoreText(score: RecordScore, index: Int): String {
         return if (score.isTiebreak!!) {
             if (index == 0) {
-                "${score.score1}(${score.scoreTie1})"
+                if (score.score1 == 7) "7"
+                else "${score.score1}(${score.scoreTie1})"
             } else {
-                "${score.score2}(${score.scoreTie2})"
+                if (score.score2 == 7) "7"
+                else "${score.score2}(${score.scoreTie2})"
             }
         } else {
-            if (index == 0) {
-                score.score1!!.toString()
-            } else {
-                score.score2!!.toString()
-            }
+            if (index == 0) score.score1!!.toString()
+            else score.score2!!.toString()
         }
     }
 
@@ -319,7 +318,7 @@ class DrawRepository: BaseRepository() {
             if (setScore1.text.isNotEmpty()) {
                 if (setScore1.text.contains("(")) {
                     recordScore.isTiebreak = true
-                    recordScore.score1 = setScore1.text[0].toInt()
+                    recordScore.score1 = setScore1.text.substring(0, 1).toInt()
                     recordScore.scoreTie1 = setScore1.text.substring(setScore1.text.indexOf('(') + 1, setScore1.text.indexOf(')')).toInt()
                 }
                 else {
@@ -329,12 +328,17 @@ class DrawRepository: BaseRepository() {
             if (setScore2.text.isNotEmpty()) {
                 if (setScore2.text.contains("(")) {
                     recordScore.isTiebreak = true
-                    recordScore.score2 = setScore2.text[0].toInt()
+                    recordScore.score2 = setScore2.text.substring(0, 1).toInt()
                     recordScore.scoreTie2 = setScore2.text.substring(setScore2.text.indexOf('(') + 1, setScore2.text.indexOf(')')).toInt()
                 }
                 else {
                     recordScore.score2 = setScore2.text.toInt()
                 }
+            }
+            // 7-6(2)这样的比分，7的一方scoreTie需要重算
+            if (recordScore.isTiebreak) {
+                if (recordScore.score1 == 7) recordScore.scoreTie1 = if (recordScore.scoreTie2 < 6) 7 else recordScore.scoreTie2 + 2
+                else if (recordScore.score2 == 7) recordScore.scoreTie2 = if (recordScore.scoreTie1 < 6) 7 else recordScore.scoreTie1 + 2
             }
             return recordScore
         }

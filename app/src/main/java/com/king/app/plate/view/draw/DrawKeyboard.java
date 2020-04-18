@@ -34,11 +34,12 @@ public class DrawKeyboard extends View implements View.OnTouchListener {
 
     private Rect[][] keyRects;
 
-    public static final String KEY_DEL = "Del";
+    public static final String KEY_DEL = "←";
+    public static final String KEY_CLS = "C";
 
     private String keyTexts[][] = new String[][] {
-            {"4", "5", "6", "7", "8", "9"},
-            {"0", "1", "2", "3", "(", ")", KEY_DEL}
+            {"0", "2", "4", "6", "8", "(", ")"},
+            {"1", "3", "5", "7", "9", KEY_DEL, KEY_CLS}
     };
 
     private OnClickKeyListener onClickKeyListener;
@@ -235,11 +236,21 @@ public class DrawKeyboard extends View implements View.OnTouchListener {
     private void onClick(int x, int y) {
         DebugLog.e(x + ", " + y);
         if (onClickKeyListener != null) {
-            onClickKeyListener.onClickKey(keyTexts[x][y]);
+            if (keyTexts[x][y].equals(KEY_CLS)) {
+                onClickKeyListener.onClear();
+            }
+            else if (keyTexts[x][y].equals(KEY_DEL)) {
+                onClickKeyListener.onDelete();
+            }
+            else {
+                onClickKeyListener.onKey(keyTexts[x][y]);
+            }
         }
     }
 
     public interface OnClickKeyListener {
-        void onClickKey(String key);
+        void onKey(String key);
+        void onClear();
+        void onDelete();
     }
 }
