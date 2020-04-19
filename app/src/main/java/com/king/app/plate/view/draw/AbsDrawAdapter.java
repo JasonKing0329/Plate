@@ -13,6 +13,8 @@ public abstract class AbsDrawAdapter {
 
     public abstract String getText(int x, int y);
 
+    public abstract int getTextColor(int x, int y);
+
     public void notifyDataSetChanged() {
         notifyObserver.notifyDataSetChanged();
     }

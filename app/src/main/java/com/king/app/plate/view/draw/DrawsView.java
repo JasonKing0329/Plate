@@ -380,28 +380,23 @@ public class DrawsView extends View implements View.OnTouchListener {
             for (int i = 0; i < drawsMap.length; i++) {
                 for (int j = 0; j < drawsMap[i].length; j++) {
                     String text = getTextFromAdapter(i, j);
-                    drawText(text, drawsMap[i][j], canvas);
+                    int color = getTextColorFromAdapter(i, j);
+                    drawText(text, color, drawsMap[i][j], canvas);
                 }
             }
         }
     }
 
+    private int getTextColorFromAdapter(int x, int y) {
+        return adapter.getTextColor(x, y);
+    }
+
     private String getTextFromAdapter(int x, int y) {
-//        String text = "";
-//        int round = x / (set + 1);
-//        int roundSet = x % (set + 1);
-//        if (roundSet == 0) {
-//            text = adapter.getPlayerText(round, y);
-//        }
-//        else {
-//            text = adapter.getScoreText(round, roundSet, y);
-//        }
-//        return text;
         return adapter.getText(x, y);
     }
 
-    private void drawText(String text, Rect rect, Canvas canvas) {
-        textPaint.setColor(colorText);
+    private void drawText(String text, int color, Rect rect, Canvas canvas) {
+        textPaint.setColor(color);
         textPaint.setTextSize(textSize);
         textPaint.setStyle(Paint.Style.FILL);
         //设置基线上点对其方式

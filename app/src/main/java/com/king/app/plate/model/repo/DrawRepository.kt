@@ -18,6 +18,9 @@ import kotlin.math.ln
  */
 class DrawRepository: BaseRepository() {
 
+    /**
+     * 初始化按照32签5轮，RecordPack 16-8-4-2-1 逐个填空
+     */
     fun createDrawBody(): Observable<DrawBody> = Observable.create {
         var drawBody = DrawBody()
         var data = mutableListOf<MutableList<BodyCell>>()
@@ -132,22 +135,28 @@ class DrawRepository: BaseRepository() {
             it.onComplete()
         }
 
+    /**
+     * 将轮次record数据转化为DrawBody
+     */
     fun convertRoundsToBody(rounds: List<DrawRound>?, drawBody: DrawBody) {
         if (rounds != null) {
             var draw = AppConstants.draws
             var recordColumn = AppConstants.set + 1
+            // 轮次
             for (i in rounds.indices) {
                 var records = rounds[i].recordList
                 var index = 0
                 var recordIndex = 0
+                // 每轮生产相应的record签表数据
                 while (index < draw && recordIndex < records.size) {
                     var pack = records[recordIndex]
+                    // 肯定有至少一个player
                     if (pack.playerList.size > 0) {
-                        var playerIndex = 0
                         // player
+                        var playerIndex = 0// 用于控制轮空格
                         var playerColumn = i * recordColumn
                         var recordPlayer = pack.playerList!![playerIndex]
-                        if (recordPlayer != null && recordPlayer.order == index) {
+                        if (recordPlayer.order == index) {
                             var bodyCell = drawBody.bodyData!![playerColumn][index]
                             bodyCell.text = getPlayerText(recordPlayer)
                             bodyCell.player = recordPlayer
@@ -157,7 +166,7 @@ class DrawRepository: BaseRepository() {
                         index++
                         if (playerIndex < pack.playerList!!.size) {
                             recordPlayer = pack.playerList!![playerIndex]
-                            if (recordPlayer != null && recordPlayer.order == index) {
+                            if (recordPlayer.order == index) {
                                 var bodyCell = drawBody.bodyData!![playerColumn][index]
                                 bodyCell.text = getPlayerText(recordPlayer)
                                 bodyCell.player = recordPlayer
@@ -301,6 +310,9 @@ class DrawRepository: BaseRepository() {
             if (cells.bodyCells[0][0].isModified || cells.bodyCells[1][0].isModified) {
                 getDatabase().getRecordPlayerDao().deletePlayersByRecord(recordId)
                 if (recordPack.playerList != null) {
+                    for (rp in recordPack.playerList) {
+                        rp.recordId = recordId
+                    }
                     getDatabase().getRecordPlayerDao().insertAll(recordPack.playerList!!)
                 }
             }

@@ -1,5 +1,6 @@
 package com.king.app.plate.page.match
 
+import android.graphics.Color
 import com.king.app.plate.model.bean.BodyCell
 import com.king.app.plate.view.draw.AbsDrawAdapter
 
@@ -11,6 +12,8 @@ import com.king.app.plate.view.draw.AbsDrawAdapter
 class DrawsAdapter : AbsDrawAdapter() {
 
     private var data: DrawData? = null
+    private val colorDefault = Color.parseColor("#333333")
+    private val colorModify = Color.parseColor("#ff0000")
 
     fun setData(data: DrawData?) {
         this.data = data
@@ -22,6 +25,16 @@ class DrawsAdapter : AbsDrawAdapter() {
         } catch (e: Exception) {
         }
         return ""
+    }
+
+    override fun getTextColor(x: Int, y: Int): Int {
+        try {
+            if (data?.body?.bodyData?.get(x)?.get(y)?.isModified!!) {
+                return colorModify
+            }
+        } catch (e: Exception) {
+        }
+        return colorDefault
     }
 
     fun updateText(x: Int, y: Int, text: String?) {
