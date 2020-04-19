@@ -21,6 +21,9 @@ interface RecordDao:BaseDao<Record> {
     @Query("select * from `record` where id=:id")
     fun getRecord(id: Long): Record
 
+    @Query("select * from `record` where matchId=:matchId and round=:round and orderInRound=:orderInRound")
+    fun getRecord(matchId: Long, round: Int, orderInRound: Int): Record
+
     @Query("delete from `record` where matchId=:matchId")
     fun deleteByMatch(matchId: Long)
 }

@@ -23,12 +23,17 @@ class DrawRepository: BaseRepository() {
         var data = mutableListOf<MutableList<BodyCell>>()
         var round = (ln(AppConstants.draws.toDouble()) / ln(2.0)).toInt()
         var row = AppConstants.draws
+        var recordPack: RecordPack? = null
         for (i in 0 until round) {
             for (j in 0 until (AppConstants.set + 1)) {
                 var colList = mutableListOf<BodyCell>()
                 for (n in 0 until row) {
+                    // 每2行为一个record
+                    if (n % 2 == 0) {
+                        recordPack = RecordPack(null, mutableListOf(), mutableListOf())
+                    }
                     var type = if (j == 0) AppConstants.cellTypePlayer else AppConstants.cellTypeScore
-                    colList.add(newBodyData(type))
+                    colList.add(newBodyData(n, type, recordPack))
                 }
                 data.add(colList)
             }
@@ -36,7 +41,7 @@ class DrawRepository: BaseRepository() {
         }
         // 加一列winner
         var winner = mutableListOf<BodyCell>()
-        winner.add(newBodyData(AppConstants.cellTypePlayer))
+        winner.add(newBodyData(0, AppConstants.cellTypePlayer, recordPack))
         data.add(winner)
         drawBody.bodyData = data
 
@@ -44,10 +49,12 @@ class DrawRepository: BaseRepository() {
         it.onComplete()
     }
 
-    private fun newBodyData(type: Int): BodyCell {
+    private fun newBodyData(raw: Int, type: Int, recordPack: RecordPack?): BodyCell {
         var data = BodyCell()
+        data.raw = raw
         data.text = ""
         data.type = type
+        data.pack = recordPack
         return data
     }
 
@@ -76,7 +83,7 @@ class DrawRepository: BaseRepository() {
                     1,
                     player
                 )
-                var pack = RecordPack(null, mutableListOf(rp), null)
+                var pack = RecordPack(null, mutableListOf(rp), mutableListOf())
                 byeRecords.add(pack)
             }
             for (i in AppConstants.bye - 1 downTo 0) {
@@ -104,7 +111,7 @@ class DrawRepository: BaseRepository() {
                     2,
                     player2
                 )
-                var pack = RecordPack(null, arrayListOf(rp1, rp2), null)
+                var pack = RecordPack(null, arrayListOf(rp1, rp2), mutableListOf())
                 normalRecords.add(pack)
                 unSeeds.removeAt(0)
                 unSeeds.removeAt(0)
@@ -113,9 +120,9 @@ class DrawRepository: BaseRepository() {
             byeRecords.shuffle()
             for (i in 0 until byeRecords.size) {
                 var pl = byeRecords?.get(i)?.playerList!!
-                pl[0]?.order = 2 * i;
+                pl[0]?.order = 2 * i
                 if (pl!!.size > 1) {
-                    pl[1]?.order = 2 * i + 1;
+                    pl[1]?.order = 2 * i + 1
                 }
             }
 
@@ -133,24 +140,26 @@ class DrawRepository: BaseRepository() {
                 var records = rounds[i].recordList
                 var index = 0
                 var recordIndex = 0
-                while (index < draw) {
+                while (index < draw && recordIndex < records.size) {
                     var pack = records[recordIndex]
-                    if (pack.playerList != null) {
+                    if (pack.playerList.size > 0) {
+                        var playerIndex = 0
                         // player
-                        var playerColumn = i * recordColumn;
-                        var recordPlayer = pack.playerList!![0]
+                        var playerColumn = i * recordColumn
+                        var recordPlayer = pack.playerList!![playerIndex]
                         if (recordPlayer != null && recordPlayer.order == index) {
                             var bodyCell = drawBody.bodyData!![playerColumn][index]
-                            bodyCell.text = recordPlayer.player?.name!!
+                            bodyCell.text = getPlayerText(recordPlayer)
                             bodyCell.player = recordPlayer
                             bodyCell.pack = pack
+                            playerIndex ++
                         }
                         index++
-                        if (pack.playerList!!.size > 1) {
-                            recordPlayer = pack.playerList!![1]
+                        if (playerIndex < pack.playerList!!.size) {
+                            recordPlayer = pack.playerList!![playerIndex]
                             if (recordPlayer != null && recordPlayer.order == index) {
                                 var bodyCell = drawBody.bodyData!![playerColumn][index]
-                                bodyCell.text = recordPlayer.player?.name!!
+                                bodyCell.text = getPlayerText(recordPlayer)
                                 bodyCell.player = recordPlayer
                                 bodyCell.pack = pack
                             }
@@ -160,7 +169,7 @@ class DrawRepository: BaseRepository() {
                         var scores = pack.scoreList
                         if (scores != null && scores.isNotEmpty()) {
                             for (score in scores) {
-                                var set = score.set!!;
+                                var set = score.set!!
                                 var bodyCell1 = drawBody.bodyData!![playerColumn + set][index - 2]
                                 bodyCell1.text = getScoreText(score, 0)
                                 bodyCell1.pack = pack
@@ -176,6 +185,17 @@ class DrawRepository: BaseRepository() {
                 }
             }
         }
+    }
+
+    private fun getPlayerText(player: RecordPlayer): String {
+        var result = ""
+        if (player.player != null) {
+            result = if (player.playerSeed!! > 0)
+                "[${player.playerSeed}]${player.player!!.name}"
+            else
+                player.player!!.name!!
+        }
+        return result
     }
 
     private fun getScoreText(score: RecordScore, index: Int): String {
@@ -238,10 +258,10 @@ class DrawRepository: BaseRepository() {
     private fun updateRecordCellsData(matchId: Long, round: Int, orderInRound: Int, cells: RecordCells) {
         var recordPack = cells.bodyCells[0][0].pack
         // new
-        if (recordPack.record == null) {
+        if (recordPack!!.record == null) {
             // 如果两个player只要存在一个，就创建record
             var players = recordPack.playerList
-            if (players != null) {
+            if (players.size > 0) {
                 var record = Record(0, matchId, round, null, 0, false, orderInRound)
                 if (players.size == 1) {
                     record.isBye = true

@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import com.king.app.plate.base.BaseViewModel
 import com.king.app.plate.model.db.entity.Match
+import com.king.app.plate.model.repo.MatchRepository
 
 /**
  * Desc:
@@ -13,6 +14,7 @@ import com.king.app.plate.model.db.entity.Match
 class MatchViewModel(application: Application): BaseViewModel(application) {
 
     var matchesObserver = MutableLiveData<List<Match>>()
+    var repository = MatchRepository()
 
     fun loadMatches() {
         var list = getDatabase().getMatchDao().getMatches().reversed()
@@ -30,7 +32,7 @@ class MatchViewModel(application: Application): BaseViewModel(application) {
     }
 
     fun deleteMatch(bean: Match) {
-        getDatabase().getMatchDao().delete(bean)
+        repository.deleteMatch(bean)
         loadMatches()
     }
 }

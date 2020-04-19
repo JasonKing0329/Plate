@@ -68,4 +68,14 @@ abstract class BaseActivity<T : ViewDataBinding, VM : BaseViewModel> : RootActiv
         intent.putExtra(KEY_BUNDLE, bundle)
         startActivity(intent)
     }
+
+    open fun<AC> startPageForResult(target: Class<AC>, bundle: Bundle, requestCode: Int) {
+        var intent = Intent().setClass(this, target)
+        intent.putExtra(KEY_BUNDLE, bundle)
+        startActivityForResult(intent, requestCode)
+    }
+
+    open fun getIntentBundle(): Bundle? {
+        return intent.getBundleExtra(KEY_BUNDLE)
+    }
 }

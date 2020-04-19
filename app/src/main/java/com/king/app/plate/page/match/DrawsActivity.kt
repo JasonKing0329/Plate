@@ -1,11 +1,17 @@
 package com.king.app.plate.page.match
 
+import android.app.Activity
 import android.content.DialogInterface
+import android.content.Intent
 import android.graphics.Point
+import android.os.Bundle
 import androidx.lifecycle.Observer
 import com.king.app.plate.R
 import com.king.app.plate.base.BaseActivity
 import com.king.app.plate.databinding.ActivityMatchDrawBinding
+import com.king.app.plate.page.player.PlayerActivity
+import com.king.app.plate.view.dialog.AlertDialogFragment
+import com.king.app.plate.view.dialog.SimpleDialogs
 import com.king.app.plate.view.draw.DrawKeyboard
 import com.king.app.plate.view.draw.DrawsView
 
@@ -20,6 +26,8 @@ class DrawsActivity: BaseActivity<ActivityMatchDrawBinding, DrawViewModel>() {
         var EXTRA_MATCH_ID: String = "match_id"
     }
 
+    val REQUEST_PLAYER = 1
+
     private var adapter: DrawsAdapter = DrawsAdapter()
 
     override fun getContentView(): Int = R.layout.activity_match_draw
@@ -30,11 +38,11 @@ class DrawsActivity: BaseActivity<ActivityMatchDrawBinding, DrawViewModel>() {
         mBinding.draws.setAdapter(adapter)
         mBinding.draws.setOnClickDrawItemListener(object : DrawsView.OnClickDrawItemListener {
             override fun onClickDrawItem(x: Int, y: Int) {
-
+                onClickDrawCell(x, y)
             }
 
             override fun onClickScoreItem(x: Int, y: Int, round: Int) {
-                editScore(round)
+
             }
         })
 
@@ -74,8 +82,32 @@ class DrawsActivity: BaseActivity<ActivityMatchDrawBinding, DrawViewModel>() {
         }
     }
 
-    private fun editScore(round: Int) {
-        
+    private fun onClickDrawCell(x: Int, y: Int) {
+        var items = arrayOf<CharSequence>("Select player", "Set seed", "Remove")
+        AlertDialogFragment()
+            .setItems(items, DialogInterface.OnClickListener { dialogInterface, i ->
+                when(i) {
+                    0 -> selectPlayer(x, y)
+                    1 -> setPlayerSeed(x, y)
+                    2 -> {
+                        mModel.deletePlayer(x, y)
+                        mBinding.draws.invalidate()
+                    }
+                }
+            })
+            .show(supportFragmentManager, "AlertDialogFragment")
+
+    }
+
+    private fun setPlayerSeed(x: Int, y: Int) {
+        SimpleDialogs().openInputDialog(this, "input seed") { mModel.updatePlayerSeed(x, y, it) }
+    }
+
+    private fun selectPlayer(x: Int, y: Int) {
+        mModel.setForResultBodyCell(x, y)
+        var bundle = Bundle()
+        bundle.putBoolean(PlayerActivity.EXTRA_SELECT_MODE, true)
+        startPageForResult(PlayerActivity::class.java, bundle, REQUEST_PLAYER)
     }
 
     override fun initData() {
@@ -84,7 +116,7 @@ class DrawsActivity: BaseActivity<ActivityMatchDrawBinding, DrawViewModel>() {
     }
 
     private fun getMatchId(): Long {
-        var bundle = intent.getBundleExtra(KEY_BUNDLE)
+        var bundle = getIntentBundle()
         if (bundle != null) {
             return bundle.getLong(EXTRA_MATCH_ID)
         }
@@ -94,5 +126,18 @@ class DrawsActivity: BaseActivity<ActivityMatchDrawBinding, DrawViewModel>() {
     private fun showDrawData(it: DrawData?) {
         adapter.setData(it)
         adapter.notifyDataSetChanged()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when(requestCode) {
+            REQUEST_PLAYER -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    var playerId = data?.getLongExtra(PlayerActivity.RESP_PLAYER_ID, 0)
+                    mModel.updateForResultPlayer(playerId!!)
+                    mBinding.draws.invalidate()
+                }
+            }
+        }
     }
 }

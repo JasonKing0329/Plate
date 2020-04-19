@@ -10,6 +10,7 @@ class AppConstants {
         var draws = 32
         var set = 3
         var bye = 8
+        var round = 5
 
         var cellTypePlayer = 0
         var cellTypeScore = 1
