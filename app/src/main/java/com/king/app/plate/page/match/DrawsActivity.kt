@@ -38,7 +38,7 @@ class DrawsActivity: BaseActivity<ActivityMatchDrawBinding, DrawViewModel>() {
         mBinding.draws.setAdapter(adapter)
         mBinding.draws.setOnClickDrawItemListener(object : DrawsView.OnClickDrawItemListener {
             override fun onClickDrawItem(x: Int, y: Int) {
-                onClickDrawCell(x, y)
+                onClickPlayerCell(x, y)
             }
 
             override fun onClickScoreItem(x: Int, y: Int, round: Int) {
@@ -82,8 +82,8 @@ class DrawsActivity: BaseActivity<ActivityMatchDrawBinding, DrawViewModel>() {
         }
     }
 
-    private fun onClickDrawCell(x: Int, y: Int) {
-        var items = arrayOf<CharSequence>("Select player", "Set seed", "Remove")
+    private fun onClickPlayerCell(x: Int, y: Int) {
+        var items = arrayOf<CharSequence>("Select player", "Set seed", "Remove", "Get winner")
         AlertDialogFragment()
             .setItems(items, DialogInterface.OnClickListener { dialogInterface, i ->
                 when(i) {
@@ -91,6 +91,10 @@ class DrawsActivity: BaseActivity<ActivityMatchDrawBinding, DrawViewModel>() {
                     1 -> setPlayerSeed(x, y)
                     2 -> {
                         mModel.deletePlayer(x, y)
+                        mBinding.draws.invalidate()
+                    }
+                    3 -> {
+                        mModel.getWinnerFor(x, y)
                         mBinding.draws.invalidate()
                     }
                 }

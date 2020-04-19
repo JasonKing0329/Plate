@@ -62,7 +62,7 @@ class DrawRepository: BaseRepository() {
 
     private fun newBodyData(raw: Int, type: Int, recordPack: RecordPack?): BodyCell {
         var data = BodyCell()
-        data.raw = raw
+        data.row = raw
         data.text = ""
         data.type = type
         data.pack = recordPack
@@ -410,14 +410,17 @@ class DrawRepository: BaseRepository() {
                 win2 ++
             }
         }
-        // 修改winnerId
-        if (win1 > win2) {
-            recordPack.record!!.winnerId = recordPack.playerList[0].playerId
-            getDatabase().getRecordDao().update(recordPack.record!!)
-        }
-        else if (win1 < win2) {
-            recordPack.record!!.winnerId = recordPack.playerList[1].playerId
-            getDatabase().getRecordDao().update(recordPack.record!!)
+        // 只有某一方获胜盘数达到2才算分出胜负
+        if (win1 == 2 || win2 == 2) {
+            // 修改winnerId
+            if (win1 > win2) {
+                recordPack.record!!.winnerId = recordPack.playerList[0].playerId
+                getDatabase().getRecordDao().update(recordPack.record!!)
+            }
+            else {
+                recordPack.record!!.winnerId = recordPack.playerList[1].playerId
+                getDatabase().getRecordDao().update(recordPack.record!!)
+            }
         }
         // 其他情况，胜负未分，置winnerId为0
         else{

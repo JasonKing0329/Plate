@@ -130,15 +130,25 @@ class DrawViewModel(application: Application): BaseViewModel(application) {
     }
 
     fun updateForResultPlayer(playerId: Long) {
+        fillCellPlayer(forResultBodyCell!!, playerId, 0)
+    }
+
+    private fun fillCellPlayer(cell: BodyCell, playerId: Long, seed: Int) {
         var player = getDatabase().getPlayerDao().getPlayerById(playerId)
-        var recordPlayer = RecordPlayer(0 ,0 ,playerId, 0 ,0 ,forResultBodyCell?.raw , player)
-        var recordPack = forResultBodyCell?.pack
+        var recordPlayer = RecordPlayer(0 ,0 ,playerId, seed ,seed ,cell.row , player)
+        var recordPack = cell.pack
         // delete current
-        recordPack!!.playerList.remove(forResultBodyCell?.player)
+        recordPack!!.playerList.remove(cell.player)
         recordPack!!.playerList.add(recordPlayer)
-        forResultBodyCell?.player = recordPlayer
-        forResultBodyCell?.text = player.name!!
-        forResultBodyCell?.isModified = true
+        cell.player = recordPlayer
+        cell.text = player.name!!
+        cell.isModified = true
+        if (seed > 0) {
+            cell.text = "[$seed]${recordPlayer.player!!.name!!}"
+        }
+        else{
+            cell.text = recordPlayer.player!!.name!!
+        }
     }
 
     fun deletePlayer(x: Int, y: Int) {
@@ -156,6 +166,21 @@ class DrawViewModel(application: Application): BaseViewModel(application) {
                 cell.text = "[${seed.toInt()}]${cell.player!!.player!!.name}"
                 cell.isModified = true
             } catch (e: Exception) {}
+        }
+    }
+
+    fun getWinnerFor(x: Int, y: Int) {
+        if (x > 0) {
+            var targetCell = drawData.body.bodyData[x][y]
+            try {
+                var recordPack = drawData.body.bodyData[x - (AppConstants.set + 1)][y * 2].pack
+                for (player in recordPack!!.playerList) {
+                    if (player.playerId == recordPack!!.record?.winnerId) {
+                        fillCellPlayer(targetCell, player.playerId, player.playerSeed!!)
+                        return
+                    }
+                }
+            } catch (e: Exception) {e.printStackTrace()}
         }
     }
 }

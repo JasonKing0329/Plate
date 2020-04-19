@@ -11,7 +11,7 @@ class DrawBody {
     var bodyData: MutableList<MutableList<BodyCell>> = mutableListOf()
 }
 class BodyCell {
-    var raw: Int = 0
+    var row: Int = 0
     var text: String = ""
     var type: Int = 0
     var pack: RecordPack? = null
