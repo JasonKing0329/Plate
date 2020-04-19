@@ -9,7 +9,9 @@ import com.king.app.plate.page.match.DrawData
 import com.king.app.plate.page.match.DrawRound
 import io.reactivex.Observable
 import io.reactivex.ObservableSource
+import kotlin.math.abs
 import kotlin.math.ln
+import kotlin.math.max
 
 /**
  * @author Jing
@@ -25,22 +27,28 @@ class DrawRepository: BaseRepository() {
         var drawBody = DrawBody()
         var data = mutableListOf<MutableList<BodyCell>>()
         var round = (ln(AppConstants.draws.toDouble()) / ln(2.0)).toInt()
-        var row = AppConstants.draws
+        var maxRow = AppConstants.draws
         var recordPack: RecordPack? = null
         for (i in 0 until round) {
             for (j in 0 until (AppConstants.set + 1)) {
                 var colList = mutableListOf<BodyCell>()
-                for (n in 0 until row) {
-                    // 每2行为一个record
-                    if (n % 2 == 0) {
-                        recordPack = RecordPack(null, mutableListOf(), mutableListOf())
+                data.add(colList)
+                for (row in 0 until maxRow) {
+                    // 每2行(set + 1)列为一个record，第(0,0)格创建RecordPack，其他格共享这一个RecordPack
+                    recordPack = if (row % 2 == 0 && j == 0) {
+                        RecordPack(null, mutableListOf(), mutableListOf())
+                    } else{
+                        if (row % 2 == 0) {
+                            data[i * (AppConstants.set + 1)][row].pack
+                        } else{
+                            data[i * (AppConstants.set + 1)][row - 1].pack
+                        }
                     }
                     var type = if (j == 0) AppConstants.cellTypePlayer else AppConstants.cellTypeScore
-                    colList.add(newBodyData(n, type, recordPack))
+                    colList.add(newBodyData(row, type, recordPack))
                 }
-                data.add(colList)
             }
-            row /= 2
+            maxRow /= 2
         }
         // 加一列winner
         var winner = mutableListOf<BodyCell>()
@@ -156,21 +164,24 @@ class DrawRepository: BaseRepository() {
                         var playerIndex = 0// 用于控制轮空格
                         var playerColumn = i * recordColumn
                         var recordPlayer = pack.playerList!![playerIndex]
+                        // cell1-player1
+                        var bodyCell = drawBody.bodyData!![playerColumn][index]
+                        bodyCell.pack = pack
                         if (recordPlayer.order == index) {
-                            var bodyCell = drawBody.bodyData!![playerColumn][index]
                             bodyCell.text = getPlayerText(recordPlayer)
                             bodyCell.player = recordPlayer
-                            bodyCell.pack = pack
                             playerIndex ++
                         }
                         index++
+
+                        // cell2-player2
+                        bodyCell = drawBody.bodyData!![playerColumn][index]
+                        bodyCell.pack = pack
                         if (playerIndex < pack.playerList!!.size) {
                             recordPlayer = pack.playerList!![playerIndex]
                             if (recordPlayer.order == index) {
-                                var bodyCell = drawBody.bodyData!![playerColumn][index]
                                 bodyCell.text = getPlayerText(recordPlayer)
                                 bodyCell.player = recordPlayer
-                                bodyCell.pack = pack
                             }
                         }
                         index++
@@ -265,12 +276,14 @@ class DrawRepository: BaseRepository() {
      * 每4列2行为一个Record记录
      */
     private fun updateRecordCellsData(matchId: Long, round: Int, orderInRound: Int, cells: RecordCells) {
+        var isScoreModified = false
         var recordPack = cells.bodyCells[0][0].pack
         // new
         if (recordPack!!.record == null) {
             // 如果两个player只要存在一个，就创建record
             var players = recordPack.playerList
             if (players.size > 0) {
+                // insert record
                 var record = Record(0, matchId, round, null, 0, false, orderInRound)
                 if (players.size == 1) {
                     record.isBye = true
@@ -280,11 +293,15 @@ class DrawRepository: BaseRepository() {
                     record.isBye = false
                 }
                 var recordId = getDatabase().getRecordDao().insert(record)
+                record.id = recordId
+
+                // insert players
                 for (player in players) {
                     player.recordId = recordId
                 }
                 getDatabase().getRecordPlayerDao().insertAll(recordPack.playerList!!)
 
+                // insert scores
                 var set1 = getRecordSet(recordId, 1, cells.bodyCells[0][1], cells.bodyCells[1][1])
                 var set2 = getRecordSet(recordId, 2, cells.bodyCells[0][2], cells.bodyCells[1][2])
                 var set3 = getRecordSet(recordId, 3, cells.bodyCells[0][3], cells.bodyCells[1][3])
@@ -299,6 +316,7 @@ class DrawRepository: BaseRepository() {
                     recordPack.scoreList!!.add(set3)
                 }
                 if (recordPack.scoreList!!.size > 0) {
+                    isScoreModified = true
                     getDatabase().getRecordScoreDao().insertAll(recordPack.scoreList!!)
                 }
             }
@@ -309,16 +327,22 @@ class DrawRepository: BaseRepository() {
             // player part
             if (cells.bodyCells[0][0].isModified || cells.bodyCells[1][0].isModified) {
                 getDatabase().getRecordPlayerDao().deletePlayersByRecord(recordId)
+
                 if (recordPack.playerList != null) {
                     for (rp in recordPack.playerList) {
                         rp.recordId = recordId
                     }
                     getDatabase().getRecordPlayerDao().insertAll(recordPack.playerList!!)
                 }
+                // 重新查询
+                recordPack.playerList = getDatabase().getRecordPlayerDao().getPlayersByRecord(recordId)
+                // player发生改变也会造成胜负关系改变
+                isScoreModified = true
             }
             // score part
             // set 1
             if (cells.bodyCells[0][1].isModified || cells.bodyCells[1][1].isModified) {
+                isScoreModified = true
                 getDatabase().getRecordScoreDao().deleteByRecordAndSet(recordId, 1)
                 var set1 = getRecordSet(recordId, 1, cells.bodyCells[0][1], cells.bodyCells[1][1])
                 if (set1 != null) {
@@ -327,6 +351,7 @@ class DrawRepository: BaseRepository() {
             }
             // set 2
             if (cells.bodyCells[0][2].isModified || cells.bodyCells[1][2].isModified) {
+                isScoreModified = true
                 getDatabase().getRecordScoreDao().deleteByRecordAndSet(recordId, 2)
                 var set2 = getRecordSet(recordId, 2, cells.bodyCells[0][2], cells.bodyCells[1][2])
                 if (set2 != null) {
@@ -335,6 +360,7 @@ class DrawRepository: BaseRepository() {
             }
             // set 3
             if (cells.bodyCells[0][3].isModified || cells.bodyCells[1][3].isModified) {
+                isScoreModified = true
                 getDatabase().getRecordScoreDao().deleteByRecordAndSet(recordId, 3)
                 var set3 = getRecordSet(recordId, 3, cells.bodyCells[0][3], cells.bodyCells[1][3])
                 if (set3 != null) {
@@ -342,6 +368,80 @@ class DrawRepository: BaseRepository() {
                 }
             }
         }
+        if (isScoreModified) {
+            // scoreList可能发生了增减，重新查询
+            recordPack.scoreList = getDatabase().getRecordScoreDao().getScoresByRecord(recordPack.record!!.id)
+            try {
+                defineWinner(recordPack)
+            } catch (e: Exception) {}
+        }
+    }
+
+    private fun defineWinner(recordPack: RecordPack) {
+        // 不够两盘，不可判胜负
+        if (recordPack.scoreList.size < 2) {
+            recordPack.record!!.winnerId = 0
+            getDatabase().getRecordDao().update(recordPack.record!!)
+            return
+        }
+        var win1 = 0
+        var win2 = 0
+        var set1Index = getSetWinIndex(recordPack.scoreList[0])
+        if (set1Index == 1) {
+            win1 ++
+        }
+        else if (set1Index == 2) {
+            win2 ++
+        }
+        var set2Index = getSetWinIndex(recordPack.scoreList[1])
+        if (set2Index == 1) {
+            win1 ++
+        }
+        else if (set2Index == 2) {
+            win2 ++
+        }
+        if (win1 == win2) {
+            // 决胜盘
+            var set3Index = getSetWinIndex(recordPack.scoreList[2])
+            if (set3Index == 1) {
+                win1 ++
+            }
+            else if (set3Index == 2) {
+                win2 ++
+            }
+        }
+        // 修改winnerId
+        if (win1 > win2) {
+            recordPack.record!!.winnerId = recordPack.playerList[0].playerId
+            getDatabase().getRecordDao().update(recordPack.record!!)
+        }
+        else if (win1 < win2) {
+            recordPack.record!!.winnerId = recordPack.playerList[1].playerId
+            getDatabase().getRecordDao().update(recordPack.record!!)
+        }
+        // 其他情况，胜负未分，置winnerId为0
+        else{
+            recordPack.record!!.winnerId = 0
+            getDatabase().getRecordDao().update(recordPack.record!!)
+        }
+    }
+
+    private fun getSetWinIndex(recordScore: RecordScore): Int {
+        // 抢七
+        if (recordScore.isTiebreak) {
+            // 净胜分大于等于2，且最大分大于等于7，可判胜负
+            if (abs(recordScore.scoreTie1 - recordScore.scoreTie2) >= 2 && max(recordScore.scoreTie1, recordScore.scoreTie2) >= 7) {
+                return if (recordScore.scoreTie1 > recordScore.scoreTie2) 1 else 2
+            }
+        }
+        // 非抢七
+        else {
+            // 净胜局大于等于2，且最大局数大于等于6，可判胜负
+            if (abs(recordScore.score1 - recordScore.score2) >= 2 && max(recordScore.score1, recordScore.score2) >= 6) {
+                return if (recordScore.score1 > recordScore.score2) 1 else 2
+            }
+        }
+        return 0
     }
 
     private fun getRecordSet(recordId: Long, set: Int, setScore1: BodyCell, setScore2: BodyCell): RecordScore? {
@@ -375,9 +475,5 @@ class DrawRepository: BaseRepository() {
             return recordScore
         }
         return null
-    }
-
-    private fun deleteScores(recordId: Long) {
-        getDatabase().getRecordScoreDao().deleteByRecord(recordId)
     }
 }

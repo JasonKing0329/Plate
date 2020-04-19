@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import com.king.app.plate.base.BaseViewModel
 import com.king.app.plate.base.observer.NextErrorObserver
+import com.king.app.plate.conf.AppConstants
 import com.king.app.plate.model.bean.BodyCell
 import com.king.app.plate.model.db.entity.Match
 import com.king.app.plate.model.db.entity.RecordPlayer
@@ -84,7 +85,25 @@ class DrawViewModel(application: Application): BaseViewModel(application) {
     }
 
     private fun convertDrawData(): ObservableSource<DrawData> = ObservableSource {
-        drawRepository.convertRoundsToBody(drawData.roundList, drawData.body!!)
+        drawRepository.convertRoundsToBody(drawData.roundList, drawData.body)
+        // 显示winner
+        var finalRecord = getDatabase().getRecordDao().getRecord(match.id, AppConstants.round - 1, 0)
+        if (finalRecord?.winnerId != null) {
+            var recordPlayers = getDatabase().getRecordPlayerDao().getPlayersByRecord(finalRecord.id)
+            for (recordPlayer in recordPlayers) {
+                if (recordPlayer.playerId == finalRecord.winnerId) {
+                    var column = AppConstants.round * (AppConstants.set + 1)
+                    recordPlayer.player = getDatabase().getPlayerDao().getPlayerById(recordPlayer.playerId)
+                    if (recordPlayer.playerSeed!! > 0) {
+                        drawData.body.bodyData[column][0].text = "[${recordPlayer.playerSeed}]${recordPlayer.player!!.name!!}"
+                    }
+                    else{
+                        drawData.body.bodyData[column][0].text = recordPlayer.player!!.name!!
+                    }
+                    break
+                }
+            }
+        }
         it.onNext(drawData)
         it.onComplete()
     }

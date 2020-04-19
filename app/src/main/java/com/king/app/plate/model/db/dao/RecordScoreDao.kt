@@ -12,7 +12,7 @@ import com.king.app.plate.model.db.entity.RecordScore
 @Dao
 interface RecordScoreDao:BaseDao<RecordScore> {
 
-    @Query("select * from `record_score` where recordId=:recordId")
+    @Query("select * from `record_score` where recordId=:recordId order by `set` asc")
     fun getScoresByRecord(recordId: Long): MutableList<RecordScore>
 
     @Query("delete from record_score where recordId=:recordId")
