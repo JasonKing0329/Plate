@@ -294,6 +294,7 @@ class DrawRepository: BaseRepository() {
                 }
                 var recordId = getDatabase().getRecordDao().insert(record)
                 record.id = recordId
+                recordPack.record = record
 
                 // insert players
                 for (player in players) {
@@ -328,7 +329,14 @@ class DrawRepository: BaseRepository() {
             if (cells.bodyCells[0][0].isModified || cells.bodyCells[1][0].isModified) {
                 getDatabase().getRecordPlayerDao().deletePlayersByRecord(recordId)
 
-                if (recordPack.playerList != null) {
+                // 没有player了，删掉所有record相关
+                if (recordPack.playerList.size == 0) {
+                    getDatabase().getRecordPlayerDao().deletePlayersByRecord(recordId)
+                    getDatabase().getRecordScoreDao().deleteByRecord(recordId)
+                    getDatabase().getRecordDao().delete(recordPack.record!!)
+                    return
+                }
+                else{
                     for (rp in recordPack.playerList) {
                         rp.recordId = recordId
                     }

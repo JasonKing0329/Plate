@@ -56,7 +56,7 @@ class DrawViewModel(application: Application): BaseViewModel(application) {
 
                 override fun onError(e: Throwable) {
                     e.printStackTrace()
-                    messageObserver.value = e.message
+                    messageObserver.value = "create error: $e"
                 }
 
             })
@@ -78,7 +78,7 @@ class DrawViewModel(application: Application): BaseViewModel(application) {
 
                 override fun onError(e: Throwable) {
                     e.printStackTrace()
-                    messageObserver.value = e.message
+                    messageObserver.value = "create error: $e"
                 }
 
             })
@@ -119,7 +119,7 @@ class DrawViewModel(application: Application): BaseViewModel(application) {
 
                 override fun onError(e: Throwable) {
                     e.printStackTrace()
-                    messageObserver.value = e.message
+                    messageObserver.value = "save error: $e"
                 }
 
             })
@@ -153,6 +153,7 @@ class DrawViewModel(application: Application): BaseViewModel(application) {
 
     fun deletePlayer(x: Int, y: Int) {
         var cell = drawData.body.bodyData[x][y]
+        cell.pack!!.playerList.remove(cell.player)
         cell.player = null
         cell.text = ""
         cell.isModified = true
