@@ -9,6 +9,10 @@ import com.king.app.plate.model.db.entity.Match
  */
 class MatchRepository: BaseRepository() {
 
+    fun getLatestMatch(): Match? {
+        return getDatabase().getMatchDao().getLastRankMatch()
+    }
+
     fun deleteMatch(bean: Match) {
         deleteMatchDetails(bean.id)
         getDatabase().getMatchDao().delete(bean)

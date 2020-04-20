@@ -17,4 +17,10 @@ interface MatchDao:BaseDao<Match> {
 
     @Query("select * from `match` where id=:id")
     fun getMatchById(id: Long): Match
+
+    @Query("select * from `match` where isRankCreated=1 order by id desc limit 0,1")
+    fun getLastRankMatch(): Match
+
+    @Query("select * from `match` order by id desc limit 0,1")
+    fun getLastMatch(): Match
 }

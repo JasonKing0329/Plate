@@ -9,5 +9,6 @@ import com.king.app.plate.model.db.entity.Player
  */
 data class RankPlayer (
     var player:Player?,
-    var rank:Int
+    var rank:Int,
+    var score:Int
 )

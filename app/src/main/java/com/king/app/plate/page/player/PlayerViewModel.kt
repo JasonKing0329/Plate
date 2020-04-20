@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.king.app.plate.base.BaseViewModel
 import com.king.app.plate.base.observer.NextErrorObserver
 import com.king.app.plate.model.db.entity.Player
+import com.king.app.plate.model.repo.RankRepository
 import com.king.app.plate.model.repo.ScoreRepository
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.ObservableSource
@@ -19,6 +20,8 @@ class PlayerViewModel(application: Application): BaseViewModel(application) {
     var playersObserver = MutableLiveData<List<PlayerItem>>()
 
     var scoreRepository = ScoreRepository();
+
+    var rankRepository = RankRepository();
 
     fun loadPlayers() {
         showLoading(true)
@@ -53,9 +56,13 @@ class PlayerViewModel(application: Application): BaseViewModel(application) {
 
     private fun toPlayerItems(list: List<Player>): ObservableSource<List<PlayerItem>> = ObservableSource {
         var items: ArrayList<PlayerItem> = arrayListOf()
+        var matchId = getDatabase().getMatchDao().getLastRankMatch()?.id
         for (bean in list) {
             var score = scoreRepository.sumPlayerScore(bean.id)
-            var item = PlayerItem(bean, "Current Rank (Score $score)", "Highest/Lowest Rank")
+            var rank = rankRepository.getPlayerRank(matchId, bean.id)
+            var high = rankRepository.getPlayerHighRank(bean.id)
+            var low = rankRepository.getPlayerLowRank(bean.id)
+            var item = PlayerItem(bean, "Current Rank $rank (Score $score)", "Highest/Lowest Rank $high/$low")
             items.add(item)
         }
         it.onNext(items)

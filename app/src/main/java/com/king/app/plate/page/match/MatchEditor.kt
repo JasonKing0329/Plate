@@ -48,7 +48,10 @@ class MatchEditor: PopupContent<FragmentMatchEditorBinding, EmptyViewModel>() {
     override fun initData() {
         if (match == null) {
             date = dateManager.dateFormat.format(Date())
-            match = Match(0, 0, 0, 0, date, date, 0, AppConstants.draws, AppConstants.bye, 0)
+            match = Match(0, 0, 0, 0, date, date, 0, AppConstants.draws, AppConstants.bye, 0,
+                isRankCreated = false,
+                isScoreCreated = false
+            )
         }
         date = match!!.date
         mBinding.etName.setText(match!!.name)

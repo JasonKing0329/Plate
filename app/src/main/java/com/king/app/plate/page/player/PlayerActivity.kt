@@ -2,13 +2,16 @@ package com.king.app.plate.page.player
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Rect
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.king.app.plate.R
 import com.king.app.plate.base.BaseActivity
 import com.king.app.plate.base.adapter.BaseBindingAdapter
 import com.king.app.plate.databinding.ActivityPlayerBinding
+import com.king.app.plate.utils.ScreenUtils
 
 /**
  * Desc:
@@ -31,7 +34,11 @@ class PlayerActivity: BaseActivity<ActivityPlayerBinding, PlayerViewModel>() {
 
     override fun initView() {
         mBinding.rvList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-
+        mBinding.rvList.addItemDecoration(object : RecyclerView.ItemDecoration(){
+            override fun getItemOffsets(outRect: Rect, itemPosition: Int, parent: RecyclerView) {
+                outRect.top = ScreenUtils.dp2px(8f)
+            }
+        })
     }
 
     override fun initData() {

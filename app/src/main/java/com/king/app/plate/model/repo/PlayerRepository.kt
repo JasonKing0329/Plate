@@ -21,7 +21,7 @@ class PlayerRepository : BaseRepository() {
                 } catch (e: Exception) {
                     0
                 }
-            var rp = RankPlayer(player, rank!!)
+            var rp = RankPlayer(player, rank!!, 0)
             list.add(rp)
         }
         it.onNext(list)

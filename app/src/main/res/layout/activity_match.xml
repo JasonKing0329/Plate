@@ -5,7 +5,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/white_bg">
 
         <com.king.app.jactionbar.JActionbar
             android:id="@+id/actionbar"
@@ -31,7 +32,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/actionbar"
             app:layout_constraintBottom_toBottomOf="parent"
-            tools:listitem="@layout/adapter_player"/>
+            tools:listitem="@layout/adapter_match_item"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

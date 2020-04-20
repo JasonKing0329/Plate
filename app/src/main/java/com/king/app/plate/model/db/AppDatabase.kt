@@ -3,6 +3,8 @@ package com.king.app.plate.model.db
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.king.app.plate.PlateApplication
 import com.king.app.plate.model.db.dao.*
 import com.king.app.plate.model.db.entity.*
@@ -13,7 +15,7 @@ import com.king.app.plate.model.db.entity.*
  * @date: 2020/1/21 9:43
  */
 @Database(entities = [Match::class, Player::class, Rank::class, Score::class
-    , Record::class, RecordPlayer::class, RecordScore::class], version = 1)
+    , Record::class, RecordPlayer::class, RecordScore::class], version = 2)
 abstract class AppDatabase:RoomDatabase() {
 
     abstract fun getMatchDao(): MatchDao
@@ -41,6 +43,12 @@ abstract class AppDatabase:RoomDatabase() {
             AppDatabase::class.java,
             DATABASE_NAME
         ).allowMainThreadQueries()
+            .addMigrations(object :Migration(1, 2) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL("alter table 'match' add column isRankCreated INTEGER NOT NULL default 0")
+                    database.execSQL("alter table 'match' add column isScoreCreated INTEGER NOT NULL default 0")
+                }
+            })
             .build()
     }
 }

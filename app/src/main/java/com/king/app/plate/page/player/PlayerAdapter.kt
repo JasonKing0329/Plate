@@ -1,11 +1,14 @@
 package com.king.app.plate.page.player
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import com.king.app.plate.R
 import com.king.app.plate.base.adapter.BaseBindingAdapter
 import com.king.app.plate.databinding.AdapterPlayerBinding
 import com.king.app.plate.utils.ColorUtils
 import com.king.app.plate.utils.DrawableUtil
+import com.king.app.plate.utils.RippleUtil
 
 /**
  * Desc:
@@ -21,6 +24,9 @@ class PlayerAdapter: BaseBindingAdapter<AdapterPlayerBinding, PlayerItem>() {
         AdapterPlayerBinding.inflate(inflater, parent, false)
 
     override fun onBindItem(binding: AdapterPlayerBinding?, position: Int, bean: PlayerItem) {
+        binding!!.clGroup.background = RippleUtil.getRippleBackground(
+            Color.WHITE
+            , binding!!.clGroup.resources.getColor(R.color.ripple_color))
         binding!!.bean = bean
 
         var key = bean?.bean?.id

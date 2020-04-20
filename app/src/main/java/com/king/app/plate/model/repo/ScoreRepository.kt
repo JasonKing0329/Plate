@@ -12,7 +12,7 @@ import io.reactivex.rxjava3.core.Observable
  */
 class ScoreRepository: BaseRepository() {
 
-    private val SCORE_STEP = listOf(10, 45, 90, 180, 250, 500)
+    private val SCORE_STEP = listOf(10, 45, 90, 180, 300, 500)
 
     fun createMatchScores(matchId: Long): Observable<Boolean> = Observable.create{
         var scores = mutableListOf<Score>()
@@ -25,24 +25,35 @@ class ScoreRepository: BaseRepository() {
                 if (record.round < AppConstants.round - 1) {
                     if (player.playerId != record.winnerId) {
                         scoreBean = defineScore(player, record.round, false)
+                        if (scoreBean != null) {
+                            scoreBean.matchId = matchId
+                            scores.add(scoreBean)
+                        }
                         break;
                     }
                 }
                 // 决赛，胜负方都判定
                 else{
                     scoreBean = defineScore(player, record.round, player.playerId == record.winnerId)
+                    if (scoreBean != null) {
+                        scoreBean.matchId = matchId
+                        scores.add(scoreBean)
+                    }
                 }
-            }
-            if (scoreBean != null) {
-                scoreBean.matchId = matchId
-                scores.add(scoreBean)
             }
         }
 
-        getDatabase().getScoreDao().deleteAll()
+        var match = getDatabase().getMatchDao().getMatchById(matchId)
+
+        getDatabase().getScoreDao().deleteMatchScore(matchId)
+        match.isScoreCreated = false
         if (scores.size > 0) {
+            match.isScoreCreated = true
             getDatabase().getScoreDao().insertAll(scores)
         }
+
+        // update match info
+        getDatabase().getMatchDao().update(match)
 
         it.onNext(true)
         it.onComplete()

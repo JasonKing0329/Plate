@@ -11,4 +11,7 @@
     <item android:id="@+id/menu_create_score"
         android:title="Create Score"
         app:showAsAction="never"/>
+    <item android:id="@+id/menu_create_rank"
+        android:title="Create Rank"
+        app:showAsAction="never"/>
 </menu>

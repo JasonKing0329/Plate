@@ -24,6 +24,7 @@ class DrawViewModel(application: Application): BaseViewModel(application) {
     private var recordRepository = RecordRepository()
     private var matchRepository = MatchRepository()
     private var scoreRepository = ScoreRepository()
+    private var rankRepository = RankRepository()
     lateinit var match: Match
 
     private var drawData: DrawData = DrawData()
@@ -31,9 +32,13 @@ class DrawViewModel(application: Application): BaseViewModel(application) {
     var forResultBodyCell: BodyCell? = null
 
     fun loadData(matchId: Long) {
+        loadMatch(matchId)
+        createDrawBody()
+    }
+
+    private fun loadMatch(matchId: Long) {
         match = getDatabase().getMatchDao().getMatchById(matchId)
         drawData.match = match
-        createDrawBody()
     }
 
     private fun createDrawBody() {
@@ -190,11 +195,30 @@ class DrawViewModel(application: Application): BaseViewModel(application) {
 
                 override fun onNext(t: Boolean) {
                     messageObserver.value = "success"
+                    loadMatch(match.id)
                 }
 
                 override fun onError(e: Throwable) {
                     e.printStackTrace()
-                    messageObserver.value = "save error: $e"
+                    messageObserver.value = "create error: $e"
+                }
+
+            })
+    }
+
+    fun createRank() {
+        rankRepository.createRank(match.id)
+            .compose(applySchedulers())
+            .subscribe(object : NextErrorObserver<Boolean>(getComposite()) {
+
+                override fun onNext(t: Boolean) {
+                    messageObserver.value = "success"
+                    loadMatch(match.id)
+                }
+
+                override fun onError(e: Throwable) {
+                    e.printStackTrace()
+                    messageObserver.value = "create error: $e"
                 }
 
             })

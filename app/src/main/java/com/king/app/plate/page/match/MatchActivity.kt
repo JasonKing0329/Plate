@@ -1,15 +1,18 @@
 package com.king.app.plate.page.match
 
 import android.content.DialogInterface
+import android.graphics.Rect
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.king.app.plate.R
 import com.king.app.plate.base.BaseActivity
 import com.king.app.plate.base.adapter.BaseBindingAdapter
 import com.king.app.plate.databinding.ActivityMatchBinding
 import com.king.app.plate.model.db.entity.Match
+import com.king.app.plate.utils.ScreenUtils
 import com.king.app.plate.view.dialog.PopupDialog
 
 /**
@@ -34,6 +37,18 @@ class MatchActivity: BaseActivity<ActivityMatchBinding, MatchViewModel>() {
         }
 
         mBinding.rvList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        mBinding.rvList.addItemDecoration(object : RecyclerView.ItemDecoration(){
+            override fun getItemOffsets(outRect: Rect, itemPosition: Int, parent: RecyclerView) {
+                outRect.top = ScreenUtils.dp2px(8f)
+            }
+        })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (mModel != null) {
+            mModel.loadMatches()
+        }
     }
 
     private fun editMatch(match: Match?) {

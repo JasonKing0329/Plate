@@ -1,5 +1,7 @@
 package com.king.app.plate.page.home
 
+import android.os.Bundle
+import androidx.lifecycle.Observer
 import com.king.app.plate.R
 import com.king.app.plate.base.BaseActivity
 import com.king.app.plate.databinding.ActivityHomeBinding
@@ -27,7 +29,7 @@ class HomeActivity: BaseActivity<ActivityHomeBinding, HomeViewModel>() {
         mBinding.tvH2h.setOnClickListener {  }
         mBinding.tvMatch.setOnClickListener { startPage(MatchActivity::class.java) }
         mBinding.tvRank.setOnClickListener {  }
-        mBinding.vTemp.setOnClickListener { startPage(DrawsActivity::class.java) }
+        mBinding.vTemp.setOnClickListener { mModel.getLastMatch() }
 
         DrawableUtil.setRippleBackground(mBinding.tvPlayer, resources.getColor(R.color.home_sec_player), resources.getColor(R.color.ripple_gray))
         DrawableUtil.setRippleBackground(mBinding.tvMatch, resources.getColor(R.color.home_sec_match), resources.getColor(R.color.ripple_gray))
@@ -41,6 +43,14 @@ class HomeActivity: BaseActivity<ActivityHomeBinding, HomeViewModel>() {
                 R.id.menu_setting -> startPage(SettingsActivity::class.java)
             }
         }
+
+        mModel.showLastMatchDraw.observe(this, Observer { showLastDraw(it) })
+    }
+
+    private fun showLastDraw(matchId: Long) {
+        var bundle = Bundle()
+        bundle.putLong(DrawsActivity.EXTRA_MATCH_ID, matchId)
+        startPage(DrawsActivity::class.java, bundle)
     }
 
     private fun loadFrom() {

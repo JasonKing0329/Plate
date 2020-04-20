@@ -1,10 +1,13 @@
 package com.king.app.plate.page.match
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import com.king.app.plate.R
 import com.king.app.plate.base.adapter.BaseBindingAdapter
 import com.king.app.plate.databinding.AdapterMatchItemBinding
 import com.king.app.plate.model.db.entity.Match
+import com.king.app.plate.utils.RippleUtil
 
 /**
  * Desc:
@@ -23,6 +26,8 @@ class MatchItemAdapter: BaseBindingAdapter<AdapterMatchItemBinding, Match>() {
     AdapterMatchItemBinding.inflate(inflater, parent, false)
 
     override fun onBindItem(binding: AdapterMatchItemBinding?, position: Int, bean: Match) {
+        binding!!.clGroup.background = RippleUtil.getRippleBackground(Color.WHITE
+            , binding!!.clGroup.resources.getColor(R.color.ripple_color))
         binding?.bean = bean
         binding?.ivDelete?.setOnClickListener { onActionListener?.onDeleteItem(position, bean) }
         binding?.ivEdit?.setOnClickListener { onActionListener?.onEditItem(position, bean) }

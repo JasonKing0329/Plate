@@ -4,6 +4,7 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
     <color name="white">#ffffff</color>
+    <color name="white_bg">#efefef</color>
 
     <color name="text_main">#333333</color>
     <color name="text_second">#666666</color>
@@ -24,4 +25,7 @@
     <color name="home_sec_match">#3480B9</color>
     <color name="home_sec_rank">#D54F24</color>
     <color name="home_sec_h2h">#BDB626</color>
+
+    <color name="text_complete">#E95D60</color>
+    <color name="ripple_color">#22000000</color>
 </resources>

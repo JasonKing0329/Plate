@@ -78,9 +78,26 @@ class DrawsActivity: BaseActivity<ActivityMatchDrawBinding, DrawViewModel>() {
                     , DialogInterface.OnClickListener { dialogInterface, i ->  mModel.createNewDraw()}
                     , null)
                 R.id.menu_save -> mModel.saveDraw()
-                R.id.menu_create_score -> showConfirmCancelMessage("Create score will clear all existed score of current match, continue?"
-                    , DialogInterface.OnClickListener { dialogInterface, i ->  mModel.createScore()}
-                    , null)
+                R.id.menu_create_score -> {
+                    if (mModel.match.isScoreCreated) {
+                        showConfirmCancelMessage("Create score will clear all existed scores of current match, continue?"
+                            , DialogInterface.OnClickListener { dialogInterface, i ->  mModel.createScore()}
+                            , null)
+                    }
+                    else{
+                        mModel.createScore()
+                    }
+                }
+                R.id.menu_create_rank -> {
+                    if (mModel.match.isRankCreated) {
+                        showConfirmCancelMessage("Create rank will clear all existed ranks of current match, continue?"
+                            , DialogInterface.OnClickListener { dialogInterface, i ->  mModel.createRank()}
+                            , null)
+                    }
+                    else{
+                        mModel.createRank()
+                    }
+                }
             }
         }
     }

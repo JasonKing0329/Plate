@@ -20,5 +20,7 @@ data class Match (
     var level: Int,
     var draws: Int,
     var byeDraws: Int,
-    var qualifyDraws: Int
+    var qualifyDraws: Int,
+    var isRankCreated: Boolean,
+    var isScoreCreated: Boolean
 )

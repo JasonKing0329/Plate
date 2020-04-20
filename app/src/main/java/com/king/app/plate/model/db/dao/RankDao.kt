@@ -14,4 +14,13 @@ interface RankDao:BaseDao<Rank> {
 
     @Query("select * from `rank` where playerId =:playerId and matchId =:matchId")
     fun getPlayerRank(playerId: Long, matchId: Long): Rank
+
+    @Query("select min(rank) from `rank` where playerId =:playerId")
+    fun getPlayerHighRank(playerId: Long): Int
+
+    @Query("select max(rank) from `rank` where playerId =:playerId")
+    fun getPlayerLowRank(playerId: Long): Int
+
+    @Query("delete from rank where matchId=:matchId")
+    fun deleteMatchRank(matchId: Long);
 }

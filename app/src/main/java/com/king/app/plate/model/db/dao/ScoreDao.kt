@@ -12,8 +12,8 @@ import com.king.app.plate.model.db.entity.Score
 @Dao
 interface ScoreDao: BaseDao<Score> {
 
-    @Query("delete from score")
-    fun deleteAll()
+    @Query("delete from score where matchId=:matchId")
+    fun deleteMatchScore(matchId: Long)
 
     @Query("select sum(score) from score where playerId=:playerId")
     fun sumScore(playerId: Long): Int
