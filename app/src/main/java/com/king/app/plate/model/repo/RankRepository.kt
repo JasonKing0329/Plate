@@ -50,8 +50,9 @@ class RankRepository: BaseRepository() {
     }
 
     fun getPlayerCurrentRank(playerId: Long): Int {
-        var matchId = getDatabase().getMatchDao().getLastRankMatch()?.id
-        return getPlayerRank(matchId, playerId)
+        var match = getDatabase().getMatchDao().getLastRankMatch()
+        return if (match == null) 0
+        else getPlayerRank(match.id, playerId)
     }
 
     private fun getPlayerRank(matchId: Long, playerId: Long): Int {
