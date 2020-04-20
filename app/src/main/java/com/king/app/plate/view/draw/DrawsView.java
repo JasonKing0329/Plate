@@ -375,6 +375,13 @@ public class DrawsView extends View implements View.OnTouchListener {
         return focusPoint;
     }
 
+    public Rect getFocusRect() {
+        if (focusPoint != null) {
+            return drawsMap[focusPoint.x][focusPoint.y];
+        }
+        return null;
+    }
+
     private void drawTableText(Canvas canvas) {
         if (adapter != null) {
             for (int i = 0; i < drawsMap.length; i++) {

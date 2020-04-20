@@ -2,4 +2,5 @@
 <resources>
     <dimen name="dlg_fingerprint_width">320dp</dimen>
     <dimen name="dlg_fingerprint_height">200dp</dimen>
+    <dimen name="popup_keyboard_margin">3dp</dimen>
 </resources>

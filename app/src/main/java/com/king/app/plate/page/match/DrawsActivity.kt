@@ -30,6 +30,8 @@ class DrawsActivity: BaseActivity<ActivityMatchDrawBinding, DrawViewModel>() {
 
     private var adapter: DrawsAdapter = DrawsAdapter()
 
+    private var popupKeyboard = PopupKeyboard()
+
     override fun getContentView(): Int = R.layout.activity_match_draw
 
     override fun createViewModel(): DrawViewModel = generateViewModel(DrawViewModel::class.java)
@@ -42,11 +44,11 @@ class DrawsActivity: BaseActivity<ActivityMatchDrawBinding, DrawViewModel>() {
             }
 
             override fun onClickScoreItem(x: Int, y: Int, round: Int) {
-
+                popupEditScore(x, y)
             }
         })
 
-        mBinding.keyboard.setOnClickKeyListener(object: DrawKeyboard.OnClickKeyListener{
+        popupKeyboard.onKeyActionListener = object: DrawKeyboard.OnClickKeyListener{
             override fun onKey(key: String?) {
                 var point: Point? = mBinding.draws.focusPoint
                 if (point != null) {
@@ -70,7 +72,7 @@ class DrawsActivity: BaseActivity<ActivityMatchDrawBinding, DrawViewModel>() {
                     mBinding.draws.invalidate()
                 }
             }
-        })
+        }
 
         mBinding.actionBar.setOnMenuItemListener { menuId ->
             when (menuId) {
@@ -109,6 +111,13 @@ class DrawsActivity: BaseActivity<ActivityMatchDrawBinding, DrawViewModel>() {
                     }
                 }
             }
+        }
+    }
+
+    private fun popupEditScore(x: Int, y: Int) {
+        if (mBinding.draws.focusRect != null) {
+            var scrollX = mBinding.scrollView.scrollX
+            popupKeyboard.show(this, mBinding.draws.focusRect, scrollX, mBinding.draws)
         }
     }
 

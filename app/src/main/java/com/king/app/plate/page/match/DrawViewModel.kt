@@ -171,9 +171,14 @@ class DrawViewModel(application: Application): BaseViewModel(application) {
     fun updatePlayerSeed(x: Int, y: Int, seed: String) {
         var cell = drawData.body.bodyData[x][y]
         if (cell.player != null && cell.player!!.player != null) {
-            cell.player!!.playerSeed = seed.toInt()
             try {
-                cell.text = "[${seed.toInt()}]${cell.player!!.player!!.name}"
+                cell.player!!.playerSeed = seed.toInt()
+                if (seed.toInt() > 0) {
+                    cell.text = "[${seed.toInt()}]${cell.player!!.player!!.name}"
+                }
+                else{
+                    cell.text = cell.player!!.player!!.name!!
+                }
                 cell.isModified = true
             } catch (e: Exception) {}
         }

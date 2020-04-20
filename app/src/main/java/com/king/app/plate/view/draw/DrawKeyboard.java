@@ -21,7 +21,7 @@ import com.king.app.plate.utils.ScreenUtils;
  */
 public class DrawKeyboard extends View implements View.OnTouchListener {
 
-    private int keyHeight = ScreenUtils.dp2px(40);
+    public static int keyHeight = ScreenUtils.dp2px(40);
     private int textColor = Color.parseColor("#333333");
     private int keyBg = Color.WHITE;
     private int dividerColor = Color.parseColor("#cecece");
@@ -37,10 +37,17 @@ public class DrawKeyboard extends View implements View.OnTouchListener {
     public static final String KEY_DEL = "←";
     public static final String KEY_CLS = "C";
 
-    private String keyTexts[][] = new String[][] {
-            {"0", "2", "4", "6", "8", "(", ")"},
-            {"1", "3", "5", "7", "9", KEY_DEL, KEY_CLS}
+    public static String keyTexts[][] = new String[][] {
+            {"7", "8", "9"},
+            {"4", "5", "6"},
+            {"1", "2", "3"},
+            {"0", "(", ")", KEY_CLS}
     };
+
+//    private String keyTexts[][] = new String[][] {
+//            {"0", "2", "4", "6", "8", "(", ")"},
+//            {"1", "3", "5", "7", "9", KEY_DEL, KEY_CLS}
+//    };
 
     private OnClickKeyListener onClickKeyListener;
 
