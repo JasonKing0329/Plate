@@ -287,7 +287,7 @@ class DrawRepository: BaseRepository() {
                 var record = Record(0, matchId, round, null, 0, false, orderInRound)
                 if (players.size == 1) {
                     record.isBye = true
-                    record.winnerId = players[0].id
+                    record.winnerId = players[0].playerId
                 }
                 else{
                     record.isBye = false
@@ -341,6 +341,8 @@ class DrawRepository: BaseRepository() {
                         rp.recordId = recordId
                     }
                     getDatabase().getRecordPlayerDao().insertAll(recordPack.playerList!!)
+
+                    recordPack.record!!.isBye = recordPack.playerList.size == 1
                 }
                 // 重新查询
                 recordPack.playerList = getDatabase().getRecordPlayerDao().getPlayersByRecord(recordId)
@@ -386,6 +388,14 @@ class DrawRepository: BaseRepository() {
     }
 
     private fun defineWinner(recordPack: RecordPack) {
+        // 轮空
+        if (recordPack.record?.isBye!!) {
+            if (recordPack.playerList.size == 1) {
+                recordPack.record!!.winnerId = recordPack.playerList[0].playerId
+                getDatabase().getRecordDao().update(recordPack.record!!)
+            }
+            return
+        }
         // 不够两盘，不可判胜负
         if (recordPack.scoreList.size < 2) {
             recordPack.record!!.winnerId = 0

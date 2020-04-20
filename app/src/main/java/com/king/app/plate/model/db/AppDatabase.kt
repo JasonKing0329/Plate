@@ -22,6 +22,7 @@ abstract class AppDatabase:RoomDatabase() {
     abstract fun getRecordPlayerDao(): RecordPlayerDao
     abstract fun getRecordScoreDao(): RecordScoreDao
     abstract fun getRankDao(): RankDao
+    abstract fun getScoreDao(): ScoreDao
 
     companion object {
         val DATABASE_NAME = "plate.db"

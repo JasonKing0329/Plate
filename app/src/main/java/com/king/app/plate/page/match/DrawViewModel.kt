@@ -8,10 +8,7 @@ import com.king.app.plate.conf.AppConstants
 import com.king.app.plate.model.bean.BodyCell
 import com.king.app.plate.model.db.entity.Match
 import com.king.app.plate.model.db.entity.RecordPlayer
-import com.king.app.plate.model.repo.DrawRepository
-import com.king.app.plate.model.repo.MatchRepository
-import com.king.app.plate.model.repo.PlayerRepository
-import com.king.app.plate.model.repo.RecordRepository
+import com.king.app.plate.model.repo.*
 import io.reactivex.rxjava3.core.ObservableSource
 
 /**
@@ -26,6 +23,7 @@ class DrawViewModel(application: Application): BaseViewModel(application) {
     private var drawRepository = DrawRepository()
     private var recordRepository = RecordRepository()
     private var matchRepository = MatchRepository()
+    private var scoreRepository = ScoreRepository()
     lateinit var match: Match
 
     private var drawData: DrawData = DrawData()
@@ -183,5 +181,22 @@ class DrawViewModel(application: Application): BaseViewModel(application) {
                 }
             } catch (e: Exception) {e.printStackTrace()}
         }
+    }
+
+    fun createScore() {
+        scoreRepository.createMatchScores(match.id)
+            .compose(applySchedulers())
+            .subscribe(object : NextErrorObserver<Boolean>(getComposite()) {
+
+                override fun onNext(t: Boolean) {
+                    messageObserver.value = "success"
+                }
+
+                override fun onError(e: Throwable) {
+                    e.printStackTrace()
+                    messageObserver.value = "save error: $e"
+                }
+
+            })
     }
 }

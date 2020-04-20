@@ -78,6 +78,9 @@ class DrawsActivity: BaseActivity<ActivityMatchDrawBinding, DrawViewModel>() {
                     , DialogInterface.OnClickListener { dialogInterface, i ->  mModel.createNewDraw()}
                     , null)
                 R.id.menu_save -> mModel.saveDraw()
+                R.id.menu_create_score -> showConfirmCancelMessage("Create score will clear all existed score of current match, continue?"
+                    , DialogInterface.OnClickListener { dialogInterface, i ->  mModel.createScore()}
+                    , null)
             }
         }
     }
