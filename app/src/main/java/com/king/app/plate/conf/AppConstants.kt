@@ -17,5 +17,8 @@ class AppConstants {
 
         var matchLevelNormal = 0
         var matchLevelFinal = 1
+
+        var playerSortName = 0
+        var playerSortRank = 1
     }
 }

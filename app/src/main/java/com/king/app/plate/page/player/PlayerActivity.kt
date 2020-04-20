@@ -3,13 +3,17 @@ package com.king.app.plate.page.player
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Rect
+import android.view.MenuItem
 import android.view.View
+import android.widget.PopupMenu
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.king.app.jactionbar.PopupMenuProvider
 import com.king.app.plate.R
 import com.king.app.plate.base.BaseActivity
 import com.king.app.plate.base.adapter.BaseBindingAdapter
+import com.king.app.plate.conf.AppConstants
 import com.king.app.plate.databinding.ActivityPlayerBinding
 import com.king.app.plate.utils.ScreenUtils
 
@@ -39,6 +43,28 @@ class PlayerActivity: BaseActivity<ActivityPlayerBinding, PlayerViewModel>() {
                 outRect.top = ScreenUtils.dp2px(8f)
             }
         })
+
+        mBinding.actionbar.setOnBackListener { onBackPressed() }
+        mBinding.actionbar.registerPopupMenu(R.id.menu_sort)
+        mBinding.actionbar.setPopupMenuProvider { iconMenuId, anchorView ->
+            when(iconMenuId) {
+                R.id.menu_sort -> getSortPopup(anchorView!!)
+                else -> null
+            }
+        }
+    }
+
+    private fun getSortPopup(anchorView: View): PopupMenu? {
+        val menu = PopupMenu(this, anchorView)
+        menu.menuInflater.inflate(R.menu.player_sort, menu.menu)
+        menu.setOnMenuItemClickListener { item: MenuItem ->
+            when (item.itemId) {
+                R.id.menu_sort_name -> mModel.onSortTypeChanged(AppConstants.playerSortName)
+                R.id.menu_sort_rank -> mModel.onSortTypeChanged(AppConstants.playerSortRank)
+            }
+            true
+        }
+        return menu
     }
 
     override fun initData() {

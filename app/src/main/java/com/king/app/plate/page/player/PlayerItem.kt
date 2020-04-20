@@ -10,5 +10,6 @@ import com.king.app.plate.model.db.entity.Player
 data class PlayerItem (
     var bean: Player?,
     var currentDesc: String,
-    var highDesc: String
+    var highDesc: String,
+    var rank: Int
 )

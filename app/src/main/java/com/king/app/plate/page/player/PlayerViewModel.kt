@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import com.king.app.plate.base.BaseViewModel
 import com.king.app.plate.base.observer.NextErrorObserver
+import com.king.app.plate.conf.AppConstants
 import com.king.app.plate.model.db.entity.Player
 import com.king.app.plate.model.repo.RankRepository
 import com.king.app.plate.model.repo.ScoreRepository
@@ -22,6 +23,8 @@ class PlayerViewModel(application: Application): BaseViewModel(application) {
     var scoreRepository = ScoreRepository();
 
     var rankRepository = RankRepository();
+
+    var sortType = AppConstants.playerSortName
 
     fun loadPlayers() {
         showLoading(true)
@@ -55,14 +58,20 @@ class PlayerViewModel(application: Application): BaseViewModel(application) {
     }
 
     private fun toPlayerItems(list: List<Player>): ObservableSource<List<PlayerItem>> = ObservableSource {
-        var items: ArrayList<PlayerItem> = arrayListOf()
+        var items = mutableListOf<PlayerItem>()
         for (bean in list) {
             var score = scoreRepository.sumPlayerScore(bean.id)
             var rank = rankRepository.getPlayerCurrentRank(bean.id)
             var high = rankRepository.getPlayerHighRank(bean.id)
             var low = rankRepository.getPlayerLowRank(bean.id)
-            var item = PlayerItem(bean, "Current Rank $rank (Score $score)", "Highest/Lowest Rank $high/$low")
+            var item = PlayerItem(bean, "Current Rank $rank (Score $score)", "Highest/Lowest Rank $high/$low", rank)
             items.add(item)
+        }
+        if (sortType == AppConstants.playerSortRank) {
+            items.sortWith(Comparator<PlayerItem> { o1, o2 ->
+                var result = o1!!.rank - o2!!.rank
+                if (result > 0) 1 else if (result < 0) -1 else 0
+            })
         }
         it.onNext(items)
         it.onComplete()
@@ -77,5 +86,10 @@ class PlayerViewModel(application: Application): BaseViewModel(application) {
             list.add(player)
         }
         getDatabase().getPlayerDao().insertAll(list)
+    }
+
+    fun onSortTypeChanged(sortType: Int) {
+        this.sortType = sortType
+        loadPlayers()
     }
 }

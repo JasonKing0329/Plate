@@ -19,7 +19,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:showIconBack="true"
             app:supportSearch="false"
-            app:menu="@menu/home"
+            app:menu="@menu/player"
             app:title="Players"
             app:titleColor="@color/white"
             app:titleSize="18dp" />
