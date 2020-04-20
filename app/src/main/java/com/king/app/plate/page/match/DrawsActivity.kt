@@ -79,23 +79,33 @@ class DrawsActivity: BaseActivity<ActivityMatchDrawBinding, DrawViewModel>() {
                     , null)
                 R.id.menu_save -> mModel.saveDraw()
                 R.id.menu_create_score -> {
-                    if (mModel.match.isScoreCreated) {
-                        showConfirmCancelMessage("Create score will clear all existed scores of current match, continue?"
-                            , DialogInterface.OnClickListener { dialogInterface, i ->  mModel.createScore()}
-                            , null)
+                    if (mModel.isMatchCompleted()) {
+                        if (mModel.match.isScoreCreated) {
+                            showConfirmCancelMessage("Create score will clear all existed scores of current match, continue?"
+                                , DialogInterface.OnClickListener { dialogInterface, i ->  mModel.createScore()}
+                                , null)
+                        }
+                        else{
+                            mModel.createScore()
+                        }
                     }
                     else{
-                        mModel.createScore()
+                        showMessageShort("Current match is not completed")
                     }
                 }
                 R.id.menu_create_rank -> {
-                    if (mModel.match.isRankCreated) {
-                        showConfirmCancelMessage("Create rank will clear all existed ranks of current match, continue?"
-                            , DialogInterface.OnClickListener { dialogInterface, i ->  mModel.createRank()}
-                            , null)
+                    if (mModel.isMatchCompleted()) {
+                        if (mModel.match.isRankCreated) {
+                            showConfirmCancelMessage("Create rank will clear all existed ranks of current match, continue?"
+                                , DialogInterface.OnClickListener { dialogInterface, i ->  mModel.createRank()}
+                                , null)
+                        }
+                        else{
+                            mModel.createRank()
+                        }
                     }
                     else{
-                        mModel.createRank()
+                        showMessageShort("Current match is not completed")
                     }
                 }
             }

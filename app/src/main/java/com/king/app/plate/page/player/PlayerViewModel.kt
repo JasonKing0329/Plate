@@ -56,10 +56,9 @@ class PlayerViewModel(application: Application): BaseViewModel(application) {
 
     private fun toPlayerItems(list: List<Player>): ObservableSource<List<PlayerItem>> = ObservableSource {
         var items: ArrayList<PlayerItem> = arrayListOf()
-        var matchId = getDatabase().getMatchDao().getLastRankMatch()?.id
         for (bean in list) {
             var score = scoreRepository.sumPlayerScore(bean.id)
-            var rank = rankRepository.getPlayerRank(matchId, bean.id)
+            var rank = rankRepository.getPlayerCurrentRank(bean.id)
             var high = rankRepository.getPlayerHighRank(bean.id)
             var low = rankRepository.getPlayerLowRank(bean.id)
             var item = PlayerItem(bean, "Current Rank $rank (Score $score)", "Highest/Lowest Rank $high/$low")

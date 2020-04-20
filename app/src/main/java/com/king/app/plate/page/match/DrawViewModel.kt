@@ -118,6 +118,8 @@ class DrawViewModel(application: Application): BaseViewModel(application) {
 
                 override fun onNext(t: DrawData) {
                     messageObserver.value = "success"
+                    // 重新加载
+                    createDrawBody()
                 }
 
                 override fun onError(e: Throwable) {
@@ -133,7 +135,11 @@ class DrawViewModel(application: Application): BaseViewModel(application) {
     }
 
     fun updateForResultPlayer(playerId: Long) {
-        fillCellPlayer(forResultBodyCell!!, playerId, 0)
+        var seed = rankRepository.getPlayerCurrentRank(playerId)
+        if (seed > 8) {
+            seed = 0
+        }
+        fillCellPlayer(forResultBodyCell!!, playerId, seed)
     }
 
     private fun fillCellPlayer(cell: BodyCell, playerId: Long, seed: Int) {
@@ -222,5 +228,11 @@ class DrawViewModel(application: Application): BaseViewModel(application) {
                 }
 
             })
+    }
+
+    fun isMatchCompleted(): Boolean {
+        // 以决赛是否生成winnerId判定
+        var record = getDatabase().getRecordDao().getRecord(match.id, AppConstants.round - 1, 0)
+        return record != null && record.winnerId != 0.toLong()
     }
 }
