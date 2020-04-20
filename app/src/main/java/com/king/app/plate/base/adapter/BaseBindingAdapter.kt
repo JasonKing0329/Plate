@@ -61,7 +61,7 @@ abstract class BaseBindingAdapter<V : ViewDataBinding, T> : RecyclerView.Adapter
 
     protected abstract fun onBindItem(binding: V?, position: Int, bean: T)
 
-    protected fun onClickItem(v: View, position: Int) {
+    open fun onClickItem(v: View, position: Int) {
         if (listenerClick != null) {
             listenerClick!!.onClickItem(v, position, list!![position])
         }

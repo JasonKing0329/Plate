@@ -2,6 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <item android:id="@+id/menu_save"
+        android:title="Save"
+        app:showAsAction="never"/>
+    <item android:id="@+id/menu_load_from"
+        android:title="Load From"
+        app:showAsAction="never"/>
     <item android:id="@+id/menu_setting"
         android:title="Settings"
         app:showAsAction="never"/>

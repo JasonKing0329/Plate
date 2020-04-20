@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.king.app.plate.PlateApplication;
 import com.king.app.plate.conf.AppConfig;
+import com.king.app.plate.model.db.AppDatabase;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -11,6 +12,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class DBExporter {
 	
@@ -53,6 +56,23 @@ public class DBExporter {
 		out.close();
 		input.close();
 
+	}
+
+	public static void exportAsHistory() {
+
+		String dbPath = PlateApplication.instance.getFilesDir().getParent() + "/databases/" + AppDatabase.Companion.getDATABASE_NAME();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
+		String date = sdf.format(new Date());
+
+		StringBuffer target = new StringBuffer();
+		target.append(AppConfig.Companion.getHistoryPath()).append("/plate_");
+		target.append(date);
+		target.append(".db");
+		try {
+			copyFile(new File(dbPath), new File(target.toString()));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static void copyDirectiory(String sourceDir, String targetDir)

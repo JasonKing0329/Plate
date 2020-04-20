@@ -3,7 +3,7 @@ package com.king.app.plate.model.repo
 import com.king.app.plate.conf.AppConstants
 import com.king.app.plate.model.bean.RecordPack
 import com.king.app.plate.page.match.DrawRound
-import io.reactivex.Observable
+import io.reactivex.rxjava3.core.Observable
 import kotlin.math.pow
 
 /**

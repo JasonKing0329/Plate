@@ -24,8 +24,8 @@ abstract class AppDatabase:RoomDatabase() {
     abstract fun getRankDao(): RankDao
 
     companion object {
-        val DATABASE_NAME = "buffet.db"
-        val DATABASE_JOURNAL = "buffet.db-journal"
+        val DATABASE_NAME = "plate.db"
+        val DATABASE_JOURNAL = "plate.db-journal"
 
         var instance = Single.instance;
 

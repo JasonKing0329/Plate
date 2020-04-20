@@ -12,7 +12,7 @@ import com.king.app.plate.model.repo.DrawRepository
 import com.king.app.plate.model.repo.MatchRepository
 import com.king.app.plate.model.repo.PlayerRepository
 import com.king.app.plate.model.repo.RecordRepository
-import io.reactivex.ObservableSource
+import io.reactivex.rxjava3.core.ObservableSource
 
 /**
  * @author Jing

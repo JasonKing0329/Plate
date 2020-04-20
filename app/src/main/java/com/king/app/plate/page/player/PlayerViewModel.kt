@@ -5,8 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import com.king.app.plate.base.BaseViewModel
 import com.king.app.plate.base.observer.NextErrorObserver
 import com.king.app.plate.model.db.entity.Player
-import io.reactivex.Observable
-import io.reactivex.ObservableSource
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.ObservableSource
 
 /**
  * Desc:

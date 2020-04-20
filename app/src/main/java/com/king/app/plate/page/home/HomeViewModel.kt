@@ -4,6 +4,7 @@ import android.app.Application
 import android.view.View
 import androidx.databinding.ObservableInt
 import com.king.app.plate.base.BaseViewModel
+import com.king.app.plate.utils.DBExporter
 
 /**
  * Desc:
@@ -20,5 +21,10 @@ class HomeViewModel(application: Application): BaseViewModel(application) {
 
     private fun checkExistMatch() {
         editVisibility.set(View.VISIBLE)
+    }
+
+    fun saveDatabase() {
+        DBExporter.exportAsHistory()
+        messageObserver.value = "success"
     }
 }

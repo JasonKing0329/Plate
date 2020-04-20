@@ -37,6 +37,8 @@ open class PopupDialog: BaseDialogFragment(), PopupContentHolder {
 
     var maxDialogHeight = 0
 
+    var forceHeight = 0
+
     var onDismissListener: DialogInterface.OnDismissListener? = null
 
     override fun onSubCreateView(
@@ -98,11 +100,18 @@ open class PopupDialog: BaseDialogFragment(), PopupContentHolder {
     }
 
     private fun limitMaxHeight() {
-        val maxContentHeight: Int = getMaxHeight()
-        if (binding.groupFtContainer.height > maxContentHeight) {
+        if (forceHeight > 0) {
             val params = binding.groupFtContainer.layoutParams
-            params.height = maxContentHeight
+            params.height = forceHeight
             binding.groupFtContainer.layoutParams = params
+        }
+        else{
+            val maxContentHeight: Int = getMaxHeight()
+            if (binding.groupFtContainer.height > maxContentHeight) {
+                val params = binding.groupFtContainer.layoutParams
+                params.height = maxContentHeight
+                binding.groupFtContainer.layoutParams = params
+            }
         }
     }
 

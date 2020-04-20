@@ -7,8 +7,8 @@ import com.king.app.plate.model.db.entity.RecordPlayer
 import com.king.app.plate.model.db.entity.RecordScore
 import com.king.app.plate.page.match.DrawData
 import com.king.app.plate.page.match.DrawRound
-import io.reactivex.Observable
-import io.reactivex.ObservableSource
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.ObservableSource
 import kotlin.math.abs
 import kotlin.math.ln
 import kotlin.math.max

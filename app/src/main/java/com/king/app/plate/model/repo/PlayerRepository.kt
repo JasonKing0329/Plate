@@ -1,7 +1,7 @@
 package com.king.app.plate.model.repo
 
 import com.king.app.plate.model.bean.RankPlayer
-import io.reactivex.Observable
+import io.reactivex.rxjava3.core.Observable
 
 /**
  * Desc:

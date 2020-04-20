@@ -8,6 +8,8 @@ import com.king.app.plate.page.match.DrawsActivity
 import com.king.app.plate.page.match.MatchActivity
 import com.king.app.plate.page.player.PlayerActivity
 import com.king.app.plate.utils.DrawableUtil
+import com.king.app.plate.utils.ScreenUtils
+import com.king.app.plate.view.dialog.PopupDialog
 
 /**
  * Desc:
@@ -34,9 +36,25 @@ class HomeActivity: BaseActivity<ActivityHomeBinding, HomeViewModel>() {
 
         mBinding.actionbar.setOnMenuItemListener { menuId ->
             when (menuId) {
+                R.id.menu_save -> mModel.saveDatabase()
+                R.id.menu_load_from -> loadFrom()
                 R.id.menu_setting -> startPage(SettingsActivity::class.java)
             }
         }
+    }
+
+    private fun loadFrom() {
+        var content = LoadFromDialog()
+        content.onDatabaseChangedListener = object : LoadFromDialog.OnDatabaseChangedListener {
+            override fun onDatabaseChanged() {
+
+            }
+        }
+        var dialog = PopupDialog()
+        dialog.content = content
+        dialog.title = "Load From"
+        dialog.forceHeight = ScreenUtils.getScreenHeight() * 3 / 5
+        dialog.show(supportFragmentManager, "LoadFromDialog")
     }
 
     override fun initData() {

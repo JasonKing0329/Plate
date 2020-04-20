@@ -61,8 +61,8 @@ dependencies {
     implementation "com.google.code.gson:gson:${GSON_VERSION}"
 
     /*rxjava*/
-    implementation "io.reactivex.rxjava2:rxjava:${RXJAVA_VERSION}"
-    implementation "io.reactivex.rxjava2:rxandroid:${RXANDROID_VERSION}"
+    implementation "io.reactivex.rxjava3:rxjava:${RXJAVA_VERSION}"
+    implementation "io.reactivex.rxjava3:rxandroid:${RXANDROID_VERSION}"
 
     /*rx permission*/
     implementation "com.tbruyelle.rxpermissions2:rxpermissions:${RXPERMISSION_VERSION}"

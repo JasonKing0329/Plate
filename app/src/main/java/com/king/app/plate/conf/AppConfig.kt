@@ -11,8 +11,9 @@ class AppConfig {
 
     companion object {
         var sdcardPath = Environment.getExternalStorageDirectory().path
-        var appRootPath = "$sdcardPath/fileencrypt"
+        var appRootPath = "$sdcardPath/plate"
         var exportPath = "$appRootPath/export"
+        var historyPath = "$appRootPath/history"
         var confPath = "$appRootPath/conf"
         var prefPath = "$confPath/conf"
         var prefDefPath = "$prefPath/conf"
@@ -22,6 +23,7 @@ class AppConfig {
         var appDirectories = arrayOf(
             appRootPath,
             exportPath,
+            historyPath,
             confPath,
             prefPath,
             prefDefPath
