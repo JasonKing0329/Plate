@@ -39,6 +39,8 @@ class H2hActivity: BaseActivity<ActivityH2hBinding, H2hViewModel>() {
 
     override fun initData() {
         mModel.h2hItems.observe(this, Observer { showH2hItems(it) })
+
+        mModel.showLastH2h()
     }
 
     private fun selectPlayer(i: Int) {

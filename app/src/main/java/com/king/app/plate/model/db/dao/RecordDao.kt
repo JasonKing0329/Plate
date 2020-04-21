@@ -30,4 +30,7 @@ interface RecordDao:BaseDao<Record> {
     @Query("select r.* from record_player rp join record r on rp.recordId=r.id where rp.playerId=:player1Id and rp.recordId in (select recordId from record_player where playerId=:player2Id)")
     fun getH2hRecords(player1Id: Long, player2Id: Long): MutableList<Record>
 
+    @Query("select * from `record` where isBye=0 order by id desc limit 0, 1")
+    fun getLastRecordNotBye(): Record
+
 }

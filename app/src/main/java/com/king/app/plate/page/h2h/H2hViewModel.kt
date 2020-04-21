@@ -10,9 +10,8 @@ import com.king.app.plate.base.observer.NextErrorObserver
 import com.king.app.plate.model.db.entity.Player
 import com.king.app.plate.model.repo.H2hRepository
 import com.king.app.plate.model.repo.RankRepository
+import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.ObservableSource
-import io.reactivex.rxjava3.core.Observer
-import io.reactivex.rxjava3.disposables.Disposable
 
 /**
  * Desc:
@@ -40,6 +39,40 @@ class H2hViewModel(application: Application): BaseViewModel(application) {
     var player2: Player? = null
 
     var indexToReceivePlayer = -1
+
+    fun showLastH2h() {
+        getLastH2h()
+            .compose(applySchedulers())
+            .subscribe(object : NextErrorObserver<Boolean>(getComposite()) {
+                override fun onNext(t: Boolean?) {
+                    if (t!!) {
+                        onPlayer1Changed()
+                        onPlayer2Changed()
+                    }
+                }
+
+                override fun onError(e: Throwable?) {
+                    e?.printStackTrace()
+                    messageObserver.value = "error: $e"
+                }
+
+            })
+    }
+
+    private fun getLastH2h(): Observable<Boolean> = Observable.create {
+        var result = false
+        var record = getDatabase().getRecordDao().getLastRecordNotBye()
+        if (record != null) {
+            var players = getDatabase().getRecordPlayerDao().getPlayersByRecord(record.id)
+            if (players.size > 1) {
+                result = true
+                player1 = getDatabase().getPlayerDao().getPlayerById(players[0].playerId)
+                player2 = getDatabase().getPlayerDao().getPlayerById(players[1].playerId)
+            }
+        }
+        it.onNext(result)
+        it.onComplete()
+    }
 
     fun loadReceivePlayer(playerId: Long) {
         var player = getDatabase().getPlayerDao().getPlayerById(playerId)
