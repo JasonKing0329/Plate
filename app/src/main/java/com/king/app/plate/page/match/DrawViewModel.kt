@@ -7,7 +7,7 @@ import com.king.app.plate.base.observer.NextErrorObserver
 import com.king.app.plate.conf.AppConstants
 import com.king.app.plate.model.bean.BodyCell
 import com.king.app.plate.model.db.entity.Match
-import com.king.app.plate.model.db.entity.RecordPlayer
+import com.king.app.plate.model.detail.DrawModel
 import com.king.app.plate.model.repo.*
 import io.reactivex.rxjava3.core.ObservableSource
 
@@ -25,6 +25,7 @@ class DrawViewModel(application: Application): BaseViewModel(application) {
     private var matchRepository = MatchRepository()
     private var scoreRepository = ScoreRepository()
     private var rankRepository = RankRepository()
+    private var drawModel = DrawModel()
     lateinit var match: Match
 
     private var drawData: DrawData = DrawData()
@@ -67,12 +68,14 @@ class DrawViewModel(application: Application): BaseViewModel(application) {
 
     fun createNewDraw() {
         matchRepository.deleteMatchDetails(match.id)
-        playerRepository.getRankPlayers()
-            .flatMap { drawRepository.createPlayerDraw(it) }
+        recordRepository.getRoundRecords(match.id)
             .flatMap {
                 drawData.roundList = it
-                convertDrawData()
-            }
+                drawRepository.createDrawBody() }
+            .flatMap {
+                drawData.body = it
+                playerRepository.getRankPlayers() }
+            .flatMap { drawModel.randomNormalDraw(drawData, it) }
             .compose(applySchedulers())
             .subscribe(object : NextErrorObserver<DrawData>(getComposite()) {
                 override fun onNext(t: DrawData) {
@@ -139,25 +142,8 @@ class DrawViewModel(application: Application): BaseViewModel(application) {
         if (seed > 8) {
             seed = 0
         }
-        fillCellPlayer(forResultBodyCell!!, playerId, seed)
-    }
-
-    private fun fillCellPlayer(cell: BodyCell, playerId: Long, seed: Int) {
         var player = getDatabase().getPlayerDao().getPlayerById(playerId)
-        var recordPlayer = RecordPlayer(0 ,0 ,playerId, seed ,seed ,cell.row , player)
-        var recordPack = cell.pack
-        // delete current
-        recordPack!!.playerList.remove(cell.player)
-        recordPack!!.playerList.add(recordPlayer)
-        cell.player = recordPlayer
-        cell.text = player.name!!
-        cell.isModified = true
-        if (seed > 0) {
-            cell.text = "[$seed]${recordPlayer.player!!.name!!}"
-        }
-        else{
-            cell.text = recordPlayer.player!!.name!!
-        }
+        drawModel.fillCellPlayer(forResultBodyCell!!, player, seed)
     }
 
     fun deletePlayer(x: Int, y: Int) {
@@ -191,7 +177,7 @@ class DrawViewModel(application: Application): BaseViewModel(application) {
                 var recordPack = drawData.body.bodyData[x - (AppConstants.set + 1)][y * 2].pack
                 for (player in recordPack!!.playerList) {
                     if (player.playerId == recordPack!!.record?.winnerId) {
-                        fillCellPlayer(targetCell, player.playerId, player.playerSeed!!)
+                        drawModel.fillCellPlayer(targetCell, player.player!!, player.playerSeed!!)
                         return
                     }
                 }

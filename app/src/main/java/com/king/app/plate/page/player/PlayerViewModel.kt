@@ -68,10 +68,7 @@ class PlayerViewModel(application: Application): BaseViewModel(application) {
             items.add(item)
         }
         if (sortType == AppConstants.playerSortRank) {
-            items.sortWith(Comparator<PlayerItem> { o1, o2 ->
-                var result = o1!!.rank - o2!!.rank
-                if (result > 0) 1 else if (result < 0) -1 else 0
-            })
+            items.sortBy { it -> it.rank }
         }
         it.onNext(items)
         it.onComplete()

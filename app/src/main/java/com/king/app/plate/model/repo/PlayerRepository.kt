@@ -10,14 +10,14 @@ import io.reactivex.rxjava3.core.Observable
  */
 class PlayerRepository : BaseRepository() {
 
-    fun getRankPlayers(): Observable<List<RankPlayer>> = Observable.create {
-        var list = arrayListOf<RankPlayer>()
+    fun getRankPlayers(): Observable<MutableList<RankPlayer>> = Observable.create {
+        var list = mutableListOf<RankPlayer>()
         var players = getDatabase().getPlayerDao().getPlayers()
-        var matchId = getLatestMatchId()
+        var match = getDatabase().getMatchDao().getLastRankMatch()
         for (player in players) {
             var rank =
                 try {
-                    getDatabase().getRankDao().getPlayerRank(player.id, matchId).rank
+                    getDatabase().getRankDao().getPlayerRank(player.id, match.id).rank
                 } catch (e: Exception) {
                     0
                 }
@@ -26,9 +26,5 @@ class PlayerRepository : BaseRepository() {
         }
         it.onNext(list)
         it.onComplete()
-    }
-
-    private fun getLatestMatchId(): Long {
-        return 0
     }
 }
