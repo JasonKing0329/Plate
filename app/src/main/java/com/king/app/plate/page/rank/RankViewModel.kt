@@ -51,7 +51,7 @@ class RankViewModel(application: Application): BaseViewModel(application) {
     private fun loadRanks() {
         getRanks()
             .compose(applySchedulers())
-            .subscribe { object: NextErrorObserver<Boolean>(getComposite()) {
+            .subscribe(object: NextErrorObserver<Boolean>(getComposite()) {
                 override fun onError(e: Throwable) {
                     e.printStackTrace()
                     messageObserver.value = "error: $e"
@@ -60,7 +60,7 @@ class RankViewModel(application: Application): BaseViewModel(application) {
                 override fun onNext(t: Boolean) {
 
                 }
-            } }
+            })
         nextArrowVisibility.set(if (matchIndex + 2 >= matchList.size) View.INVISIBLE else View.VISIBLE)
         lastArrowVisibility.set(if (matchIndex - 1 < 0) View.INVISIBLE else View.VISIBLE)
     }

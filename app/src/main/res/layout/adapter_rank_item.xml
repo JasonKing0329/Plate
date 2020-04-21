@@ -37,14 +37,12 @@
 
         <TextView
             android:id="@+id/tv_name"
+            style="@style/TvPlayerCircle"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="4dp"
-            android:background="@drawable/shape_player_bg"
-            android:gravity="center"
-            android:textColor="@color/white"
             android:text="@{bean.player.name}"
             android:textSize="14dp"
             app:layout_constraintBottom_toBottomOf="parent"

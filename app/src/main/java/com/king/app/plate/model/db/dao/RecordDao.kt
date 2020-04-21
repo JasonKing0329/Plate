@@ -13,10 +13,10 @@ import com.king.app.plate.model.db.entity.Record
 interface RecordDao:BaseDao<Record> {
 
     @Query("select * from `Record`")
-    fun getRecords(): List<Record>
+    fun getRecords(): MutableList<Record>
 
     @Query("select * from `Record` where matchId=:matchId order by round, orderInRound")
-    fun getRecordsByMatch(matchId: Long): List<Record>
+    fun getRecordsByMatch(matchId: Long): MutableList<Record>
 
     @Query("select * from `record` where id=:id")
     fun getRecord(id: Long): Record
@@ -26,4 +26,8 @@ interface RecordDao:BaseDao<Record> {
 
     @Query("delete from `record` where matchId=:matchId")
     fun deleteByMatch(matchId: Long)
+
+    @Query("select r.* from record_player rp join record r on rp.recordId=r.id where rp.playerId=:player1Id and rp.recordId in (select recordId from record_player where playerId=:player2Id)")
+    fun getH2hRecords(player1Id: Long, player2Id: Long): MutableList<Record>
+
 }

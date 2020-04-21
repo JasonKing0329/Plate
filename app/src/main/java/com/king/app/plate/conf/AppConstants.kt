@@ -20,5 +20,21 @@ class AppConstants {
 
         var playerSortName = 0
         var playerSortRank = 1
+
+        /**
+         * 0: no retire
+         * 1: retire with score
+         * 2: retire before match(W/0)
+         */
+        const val RETIRE_NONE = 0
+        const val RETIRE_WITH_SCORE = 1
+        const val RETIRE_WO = 2
+
+        const val SCORE_RETIRE = "W/O"
+        const val SCORE_RETIRE_NORMAL = "(对手退赛)"
+
+        val ROUND_NORMAL = arrayOf("R32", "R16", "QF", "SF", "Final")
+
+        val MATCH_LEVEL = arrayOf("Normal", "Final")
     }
 }

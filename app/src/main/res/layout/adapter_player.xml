@@ -20,14 +20,12 @@
 
         <TextView
             android:id="@+id/tv_name"
+            style="@style/TvPlayerCircle"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginStart="16dp"
-            android:background="@drawable/shape_player_bg"
-            android:gravity="center"
-            android:textColor="@color/white"
-            android:textSize="20dp"
             android:text="@{bean.bean.name}"
+            android:textSize="20dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

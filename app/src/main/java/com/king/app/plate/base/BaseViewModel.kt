@@ -1,6 +1,7 @@
 package com.king.app.plate.base
 
 import android.app.Application
+import android.content.res.Resources
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.king.app.plate.model.db.AppDatabase
@@ -57,4 +58,6 @@ abstract class BaseViewModel(application: Application) : AndroidViewModel(applic
     fun <T> applySchedulers(): ObservableTransformer<T, T> {
         return former as ObservableTransformer<T, T>
     }
+
+    fun getResource(): Resources = getApplication<Application>().resources
 }

@@ -21,7 +21,7 @@ abstract class NextErrorObserver<T>: Observer<T> {
 
     }
 
-    override fun onSubscribe(d: Disposable) {
+    override fun onSubscribe(d: Disposable?) {
         composite.add(d)
     }
 }
