@@ -25,5 +25,7 @@ class MatchRepository: BaseRepository() {
             getDatabase().getRecordScoreDao().deleteByRecord(record.id)
         }
         getDatabase().getRecordDao().deleteByMatch(matchId)
+        getDatabase().getScoreDao().deleteMatchScore(matchId)
+        getDatabase().getRankDao().deleteMatchRank(matchId)
     }
 }

@@ -9,6 +9,7 @@ import com.king.app.plate.page.SettingsActivity
 import com.king.app.plate.page.match.DrawsActivity
 import com.king.app.plate.page.match.MatchActivity
 import com.king.app.plate.page.player.PlayerActivity
+import com.king.app.plate.page.rank.RankActivity
 import com.king.app.plate.utils.DrawableUtil
 import com.king.app.plate.utils.ScreenUtils
 import com.king.app.plate.view.dialog.PopupDialog
@@ -28,7 +29,7 @@ class HomeActivity: BaseActivity<ActivityHomeBinding, HomeViewModel>() {
         mBinding.tvPlayer.setOnClickListener { startPage(PlayerActivity::class.java) }
         mBinding.tvH2h.setOnClickListener {  }
         mBinding.tvMatch.setOnClickListener { startPage(MatchActivity::class.java) }
-        mBinding.tvRank.setOnClickListener {  }
+        mBinding.tvRank.setOnClickListener { startPage(RankActivity::class.java) }
         mBinding.vTemp.setOnClickListener { mModel.getLastMatch() }
 
         DrawableUtil.setRippleBackground(mBinding.tvPlayer, resources.getColor(R.color.home_sec_player), resources.getColor(R.color.ripple_gray))

@@ -14,6 +14,7 @@
     <color name="actionbar_element">@color/white</color>
     <color name="actionbar_bg">@color/colorPrimary</color>
 
+    <color name="red">#FF0000</color>
     <color name="redC93437">#FFC93437</color>
     <color name="blue375BF1">#FF375BF1</color>
     <color name="yellowF7D23E">#FFF7D23E</color>

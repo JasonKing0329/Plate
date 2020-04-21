@@ -18,6 +18,9 @@ interface MatchDao:BaseDao<Match> {
     @Query("select * from `match` where id=:id")
     fun getMatchById(id: Long): Match
 
+    @Query("select * from `match` where isRankCreated=1 order by id desc")
+    fun getRankMatches(): MutableList<Match>
+
     @Query("select * from `match` where isRankCreated=1 order by id desc limit 0,1")
     fun getLastRankMatch(): Match
 

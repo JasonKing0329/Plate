@@ -17,4 +17,11 @@ interface ScoreDao: BaseDao<Score> {
 
     @Query("select sum(score) from score where playerId=:playerId")
     fun sumScore(playerId: Long): Int
+
+    @Query("select score from score where matchId=:matchId and playerId=:playerId")
+    fun getScore(matchId: Long, playerId: Long): Int
+
+    @Query("select sum(s.score) from score s join 'match' m on s.matchId = m.id and m.period=:period and m.orderInPeriod<=:orderInPeriod where s.playerId=:playerId")
+    fun sumScoreUntilMatch(period:Int, orderInPeriod:Int, playerId: Long): Int
+
 }

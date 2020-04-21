@@ -2,6 +2,7 @@ package com.king.app.plate.model.repo
 
 import com.king.app.plate.model.bean.RankPlayer
 import com.king.app.plate.model.db.entity.Rank
+import com.king.app.plate.page.rank.RankItem
 import io.reactivex.rxjava3.core.Observable
 
 /**

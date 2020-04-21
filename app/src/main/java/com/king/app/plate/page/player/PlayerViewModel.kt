@@ -64,7 +64,7 @@ class PlayerViewModel(application: Application): BaseViewModel(application) {
             var rank = rankRepository.getPlayerCurrentRank(bean.id)
             var high = rankRepository.getPlayerHighRank(bean.id)
             var low = rankRepository.getPlayerLowRank(bean.id)
-            var item = PlayerItem(bean, "Current Rank $rank (Score $score)", "Highest/Lowest Rank $high/$low", rank)
+            var item = PlayerItem(bean, "Rank $rank ($score)", "Highest/Lowest Rank $high/$low", rank)
             items.add(item)
         }
         if (sortType == AppConstants.playerSortRank) {
