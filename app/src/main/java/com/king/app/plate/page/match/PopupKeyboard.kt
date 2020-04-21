@@ -37,7 +37,7 @@ class PopupKeyboard {
     }
 
     /**
-     * 以弹框左侧贴紧在单元格右侧并顶端对齐为基准
+     * 以弹框左侧贴紧在单元格右侧（间隔一个单元格）并顶端对齐为基准
      * 若右侧区域不足，弹框整体右侧贴紧单元格左侧
      * 若底部区域不足，向上平移相应的位置
      * PopupWindow自带超出屏幕自动往回平移的功能，所以为了不遮住单元格并贴紧单元格，
@@ -57,12 +57,12 @@ class PopupKeyboard {
 
         var resultX = realX
         var resultY = realY
-        // 以弹框左侧贴紧在单元格右侧并顶端对齐为基准
+        // 以弹框左侧贴紧在单元格右侧（间隔一个单元格）并顶端对齐为基准
         // 若右侧区域不足，弹框整体右侧贴紧单元格左侧
-        resultX = if (realX + focusRect.width() + popupWidth > screenWidth) {
-            realX - popupWidth
+        resultX = if (realX + focusRect.width() * 2 + popupWidth > screenWidth) {
+            realX - popupWidth - focusRect.width()
         } else{
-            realX + focusRect.width()
+            realX + focusRect.width() * 2
         }
         // 若底部区域不足，向上平移相应的位置
         // popupWindow自带超出边界往回自动平移的功能，不需要再处理垂直方向

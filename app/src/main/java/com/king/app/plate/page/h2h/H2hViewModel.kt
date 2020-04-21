@@ -129,7 +129,7 @@ class H2hViewModel(application: Application): BaseViewModel(application) {
             if (item.recordPack.record!!.winnerId == player1!!.id) {
                 win1 ++
             }
-            else{
+            else if (item.recordPack.record!!.winnerId == player2!!.id) {
                 win2 ++
             }
         }

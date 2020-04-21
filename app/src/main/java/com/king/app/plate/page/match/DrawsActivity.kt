@@ -122,7 +122,8 @@ class DrawsActivity: BaseActivity<ActivityMatchDrawBinding, DrawViewModel>() {
     }
 
     private fun onClickPlayerCell(x: Int, y: Int) {
-        var items = arrayOf<CharSequence>("Select player", "Set seed", "Remove", "Get winner")
+        var items = if(x == 0) arrayOf<CharSequence>("Select player", "Set seed", "Remove")
+        else arrayOf<CharSequence>("Select player", "Set seed", "Remove", "Get winner")
         AlertDialogFragment()
             .setItems(items, DialogInterface.OnClickListener { dialogInterface, i ->
                 when(i) {

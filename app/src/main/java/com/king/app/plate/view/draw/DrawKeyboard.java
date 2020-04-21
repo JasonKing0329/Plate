@@ -21,7 +21,7 @@ import com.king.app.plate.utils.ScreenUtils;
  */
 public class DrawKeyboard extends View implements View.OnTouchListener {
 
-    public static int keyHeight = ScreenUtils.dp2px(40);
+    public static int keyHeight = ScreenUtils.dp2px(32);
     private int textColor = Color.parseColor("#333333");
     private int keyBg = Color.WHITE;
     private int dividerColor = Color.parseColor("#cecece");

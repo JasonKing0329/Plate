@@ -27,7 +27,7 @@ interface RecordDao:BaseDao<Record> {
     @Query("delete from `record` where matchId=:matchId")
     fun deleteByMatch(matchId: Long)
 
-    @Query("select r.* from record_player rp join record r on rp.recordId=r.id where rp.playerId=:player1Id and rp.recordId in (select recordId from record_player where playerId=:player2Id)")
+    @Query("select r.* from record_player rp join record r on rp.recordId=r.id where rp.playerId=:player1Id and r.winnerId!=0 and rp.recordId in (select recordId from record_player where playerId=:player2Id)")
     fun getH2hRecords(player1Id: Long, player2Id: Long): MutableList<Record>
 
     @Query("select * from `record` where isBye=0 order by id desc limit 0, 1")
