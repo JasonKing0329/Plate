@@ -7,6 +7,7 @@ import com.king.app.plate.base.observer.NextErrorObserver
 import com.king.app.plate.conf.AppConstants
 import com.king.app.plate.model.bean.BodyCell
 import com.king.app.plate.model.db.entity.Match
+import com.king.app.plate.model.db.entity.RecordPlayer
 import com.king.app.plate.model.detail.DrawModel
 import com.king.app.plate.model.repo.*
 import io.reactivex.rxjava3.core.ObservableSource
@@ -225,5 +226,12 @@ class DrawViewModel(application: Application): BaseViewModel(application) {
         // 以决赛是否生成winnerId判定
         var record = getDatabase().getRecordDao().getRecord(match.id, AppConstants.round - 1, 0)
         return record != null && record.winnerId != 0.toLong()
+    }
+
+    fun getRecordPlayer(x: Int, y: Int, i: Int): RecordPlayer? {
+        try {
+            return drawData.body.bodyData[x][y].pack!!.playerList[i]
+        } catch (e: Exception) {}
+        return null
     }
 }

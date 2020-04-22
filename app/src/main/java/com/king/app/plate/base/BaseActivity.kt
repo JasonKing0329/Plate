@@ -76,6 +76,10 @@ abstract class BaseActivity<T : ViewDataBinding, VM : BaseViewModel> : RootActiv
     }
 
     open fun getIntentBundle(): Bundle? {
+        return getIntentBundle(intent)
+    }
+
+    open fun getIntentBundle(intent: Intent): Bundle? {
         return intent.getBundleExtra(KEY_BUNDLE)
     }
 }

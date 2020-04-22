@@ -19,6 +19,11 @@ import com.king.app.plate.utils.DrawableUtil
  */
 class H2hActivity: BaseActivity<ActivityH2hBinding, H2hViewModel>() {
 
+    companion object {
+        var EXTRA_PLAYER1_ID: String = "player1_id"
+        var EXTRA_PLAYER2_ID: String = "player2_id"
+    }
+
     private val REQUEST_PLAYER = 1
 
     var adapter = H2hItemAdapter()
@@ -31,6 +36,7 @@ class H2hActivity: BaseActivity<ActivityH2hBinding, H2hViewModel>() {
         mBinding.model = mModel
 
         mBinding.actionbar.setOnBackListener { onBackPressed() }
+        mBinding.tvAll.setOnClickListener { startPage(H2hTableActivity::class.java) }
 
         mBinding.tvPlayer1.setOnClickListener {selectPlayer(1)}
         mBinding.tvPlayer2.setOnClickListener {selectPlayer(2)}
@@ -38,9 +44,33 @@ class H2hActivity: BaseActivity<ActivityH2hBinding, H2hViewModel>() {
     }
 
     override fun initData() {
+        mModel.player1CircleColor.observe(this, Observer { DrawableUtil.setGradientColor(mBinding.tvPlayer1, it) })
+        mModel.player2CircleColor.observe(this, Observer { DrawableUtil.setGradientColor(mBinding.tvPlayer2, it) })
         mModel.h2hItems.observe(this, Observer { showH2hItems(it) })
 
-        mModel.showLastH2h()
+        init(intent)
+    }
+
+    private fun init(intent: Intent) {
+        var player1Id = getIntentPlayerId(getIntentBundle(intent), EXTRA_PLAYER1_ID)
+        var player2Id = getIntentPlayerId(getIntentBundle(intent), EXTRA_PLAYER2_ID)
+        if (player1Id != null && player2Id != null) {
+            mModel.initPlayers(player1Id, player2Id)
+        }
+        else {
+            mModel.showLastH2h()
+        }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        if (intent != null) {
+            init(intent)
+        }
+    }
+
+    private fun getIntentPlayerId(bundle: Bundle?, key: String): Long? {
+        return bundle?.getLong(key)
     }
 
     private fun selectPlayer(i: Int) {
@@ -57,12 +87,6 @@ class H2hActivity: BaseActivity<ActivityH2hBinding, H2hViewModel>() {
                 if (resultCode == Activity.RESULT_OK) {
                     var playerId = data?.getLongExtra(PlayerActivity.RESP_PLAYER_ID, 0)
                     mModel.loadReceivePlayer(playerId!!)
-                    if (mModel.indexToReceivePlayer == 1) {
-                        DrawableUtil.setGradientColor(mBinding.tvPlayer1, ColorUtils.randomWhiteTextBgColor());
-                    }
-                    else if (mModel.indexToReceivePlayer == 2) {
-                        DrawableUtil.setGradientColor(mBinding.tvPlayer2, ColorUtils.randomWhiteTextBgColor());
-                    }
                 }
             }
         }

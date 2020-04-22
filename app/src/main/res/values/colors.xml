@@ -29,4 +29,6 @@
 
     <color name="text_complete">#E95D60</color>
     <color name="ripple_color">#22000000</color>
+
+    <color name="h2h_focus_bg">#FFE372</color>
 </resources>

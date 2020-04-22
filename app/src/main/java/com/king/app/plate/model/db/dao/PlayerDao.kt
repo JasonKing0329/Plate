@@ -12,6 +12,9 @@ import com.king.app.plate.model.db.entity.Player
 @Dao
 interface PlayerDao:BaseDao<Player> {
 
+    @Query("select count(*) from `player`")
+    fun getCount(): Int
+
     @Query("select * from `player`")
     fun getPlayers(): List<Player>
 

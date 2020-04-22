@@ -57,7 +57,11 @@
         </activity>
         <activity android:name=".page.rank.RankActivity">
         </activity>
-        <activity android:name=".page.h2h.H2hActivity">
+        <activity android:name=".page.h2h.H2hActivity"
+            android:launchMode="singleInstance">
+        </activity>
+        <activity android:name=".page.h2h.H2hTableActivity"
+            android:launchMode="singleInstance">
         </activity>
     </application>
 

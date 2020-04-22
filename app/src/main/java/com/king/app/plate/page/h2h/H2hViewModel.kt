@@ -10,6 +10,7 @@ import com.king.app.plate.base.observer.NextErrorObserver
 import com.king.app.plate.model.db.entity.Player
 import com.king.app.plate.model.repo.H2hRepository
 import com.king.app.plate.model.repo.RankRepository
+import com.king.app.plate.utils.ColorUtils
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.ObservableSource
 
@@ -30,6 +31,8 @@ class H2hViewModel(application: Application): BaseViewModel(application) {
     var player2WinColor = ObservableInt()
 
     var h2hItems = MutableLiveData<List<H2hItem>>()
+    var player1CircleColor = MutableLiveData<Int>()
+    var player2CircleColor = MutableLiveData<Int>()
 
     private var rankRepository = RankRepository()
     private var h2hRepository = H2hRepository()
@@ -39,6 +42,13 @@ class H2hViewModel(application: Application): BaseViewModel(application) {
     var player2: Player? = null
 
     var indexToReceivePlayer = -1
+
+    fun initPlayers(player1Id: Long, player2Id: Long) {
+        player1 = getDatabase().getPlayerDao().getPlayerById(player1Id)
+        player2 = getDatabase().getPlayerDao().getPlayerById(player2Id)
+        onPlayer1Changed()
+        onPlayer2Changed()
+    }
 
     fun showLastH2h() {
         getLastH2h()
@@ -91,6 +101,7 @@ class H2hViewModel(application: Application): BaseViewModel(application) {
             player1Name.set(player1!!.name)
             var rank = rankRepository.getPlayerCurrentRank(player1!!.id)
             player1Rank.set("Rank $rank")
+            player1CircleColor.value = ColorUtils.randomWhiteTextBgColor()
             onH2hChanged()
         }
     }
@@ -100,6 +111,7 @@ class H2hViewModel(application: Application): BaseViewModel(application) {
             player2Name.set(player2!!.name)
             var rank = rankRepository.getPlayerCurrentRank(player2!!.id)
             player2Rank.set("Rank $rank")
+            player2CircleColor.value = ColorUtils.randomWhiteTextBgColor()
             onH2hChanged()
         }
     }
@@ -107,7 +119,7 @@ class H2hViewModel(application: Application): BaseViewModel(application) {
     private fun onH2hChanged() {
         if (player1 != null && player2 != null) {
             h2hRepository.getH2hItems(player1!!.id, player2!!.id)
-                .flatMap { calculateWin(it) }
+                .flatMap { calculateWin(it, player1!!.id, player2!!.id) }
                 .compose(applySchedulers())
                 .subscribe(object : NextErrorObserver<MutableList<H2hItem>>(getComposite()){
                     override fun onNext(t: MutableList<H2hItem>) {
@@ -122,30 +134,23 @@ class H2hViewModel(application: Application): BaseViewModel(application) {
         }
     }
 
-    private fun calculateWin(list: MutableList<H2hItem>): ObservableSource<MutableList<H2hItem>> = ObservableSource {
-        var win1 = 0
-        var win2 = 0
-        for (item in list) {
-            if (item.recordPack.record!!.winnerId == player1!!.id) {
-                win1 ++
+    private fun calculateWin(list: MutableList<H2hItem>, player1Id: Long, player2Id: Long): ObservableSource<MutableList<H2hItem>> = ObservableSource {
+        var h2hResult = getDatabase().getRecordDao().getH2hResult(player1Id, player2Id)
+        player1Win.set(h2hResult.player1Win.toString())
+        player2Win.set(h2hResult.player2Win.toString())
+        when {
+            h2hResult.player1Win > h2hResult.player2Win -> {
+                player1WinColor.set(player1CircleColor.value!!)
+                player2WinColor.set(getResource().getColor(R.color.text_sub))
             }
-            else if (item.recordPack.record!!.winnerId == player2!!.id) {
-                win2 ++
+            h2hResult.player2Win > h2hResult.player1Win -> {
+                player2WinColor.set(player2CircleColor.value!!)
+                player1WinColor.set(getResource().getColor(R.color.text_sub))
             }
-        }
-        player1Win.set(win1.toString())
-        player2Win.set(win2.toString())
-        if (win1 > win2) {
-            player1WinColor.set(getResource().getColor(R.color.red))
-            player2WinColor.set(getResource().getColor(R.color.text_sub))
-        }
-        else if (win2 > win1) {
-            player2WinColor.set(getResource().getColor(R.color.red))
-            player1WinColor.set(getResource().getColor(R.color.text_sub))
-        }
-        else{
-            player1WinColor.set(getResource().getColor(R.color.text_sub))
-            player2WinColor.set(getResource().getColor(R.color.text_sub))
+            else -> {
+                player1WinColor.set(getResource().getColor(R.color.text_sub))
+                player2WinColor.set(getResource().getColor(R.color.text_sub))
+            }
         }
         it.onNext(list)
         it.onComplete()

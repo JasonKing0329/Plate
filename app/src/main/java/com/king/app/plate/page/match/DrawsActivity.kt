@@ -9,6 +9,7 @@ import androidx.lifecycle.Observer
 import com.king.app.plate.R
 import com.king.app.plate.base.BaseActivity
 import com.king.app.plate.databinding.ActivityMatchDrawBinding
+import com.king.app.plate.page.h2h.H2hActivity
 import com.king.app.plate.page.player.PlayerActivity
 import com.king.app.plate.view.dialog.AlertDialogFragment
 import com.king.app.plate.view.dialog.SimpleDialogs
@@ -122,18 +123,19 @@ class DrawsActivity: BaseActivity<ActivityMatchDrawBinding, DrawViewModel>() {
     }
 
     private fun onClickPlayerCell(x: Int, y: Int) {
-        var items = if(x == 0) arrayOf<CharSequence>("Select player", "Set seed", "Remove")
-        else arrayOf<CharSequence>("Select player", "Set seed", "Remove", "Get winner")
+        var items = if(x == 0) arrayOf<CharSequence>("View H2H", "Select player", "Set seed", "Remove")
+        else arrayOf<CharSequence>("View H2H", "Select player", "Set seed", "Remove", "Get winner")
         AlertDialogFragment()
             .setItems(items, DialogInterface.OnClickListener { dialogInterface, i ->
                 when(i) {
-                    0 -> selectPlayer(x, y)
-                    1 -> setPlayerSeed(x, y)
-                    2 -> {
+                    0 -> viewH2h(x, y)
+                    1 -> selectPlayer(x, y)
+                    2 -> setPlayerSeed(x, y)
+                    3 -> {
                         mModel.deletePlayer(x, y)
                         mBinding.draws.invalidate()
                     }
-                    3 -> {
+                    4 -> {
                         mModel.getWinnerFor(x, y)
                         mBinding.draws.invalidate()
                     }
@@ -141,6 +143,17 @@ class DrawsActivity: BaseActivity<ActivityMatchDrawBinding, DrawViewModel>() {
             })
             .show(supportFragmentManager, "AlertDialogFragment")
 
+    }
+
+    private fun viewH2h(x: Int, y: Int) {
+        var player1 = mModel.getRecordPlayer(x, y, 0)
+        var player2 = mModel.getRecordPlayer(x, y, 1)
+        if (player1 != null && player2 != null) {
+            var bundle = Bundle()
+            bundle.putLong(H2hActivity.EXTRA_PLAYER1_ID, player1.playerId)
+            bundle.putLong(H2hActivity.EXTRA_PLAYER2_ID, player2.playerId)
+            startPage(H2hActivity::class.java, bundle)
+        }
     }
 
     private fun setPlayerSeed(x: Int, y: Int) {
