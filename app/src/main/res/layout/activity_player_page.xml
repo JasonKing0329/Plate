@@ -174,6 +174,23 @@
                         android:layout_height="wrap_content"
                         android:text="@{model.lowestRank}"/>
                 </LinearLayout>
+
+                <com.king.app.plate.view.widget.chart.LineChart
+                    android:id="@+id/chart_rank"
+                    android:layout_width="wrap_content"
+                    android:layout_height="200dp"
+                    android:paddingTop="10dp"
+                    android:paddingRight="30dp"
+                    app:axisXTextSize="8dp"
+                    app:axisYTextSize="8dp"
+                    app:axisYTextWidth="30dp"
+                    app:axisXExtendLineWidth="10dp"
+                    app:minXCellWidth="5dp"
+                    app:valueTextSize="8dp"
+                    app:lineColor="#3399ff"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/ll_low"/>
+
                 <LinearLayout
                     android:id="@+id/ll_result"
                     style="@style/GroupKeyValue"
@@ -181,7 +198,7 @@
                     android:paddingRight="10dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/ll_low">
+                    app:layout_constraintTop_toBottomOf="@+id/chart_rank">
                     <TextView
                         style="@style/TvGroupKey"
                         android:layout_width="wrap_content"

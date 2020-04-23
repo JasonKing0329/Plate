@@ -26,6 +26,8 @@ class H2hTableViewModel(application: Application): BaseViewModel(application) {
     var h2hBgColor: Int = 0
     var focusBgColor: Int = 0
 
+    var initFocusPlayerId: Long? = null
+
     private var focusRow = -1
     private var focusColPosition = -1
 
@@ -33,7 +35,8 @@ class H2hTableViewModel(application: Application): BaseViewModel(application) {
         return getDatabase().getPlayerDao().getCount() + 1
     }
 
-    fun loadData() {
+    fun loadData(focusPlayerId: Long) {
+        initFocusPlayerId = focusPlayerId
         playerTextColor = getResource().getColor(R.color.text_main)
         h2hTextColor = getResource().getColor(R.color.text_second)
         playerBgColor = Color.parseColor("#d0d0d0")
@@ -64,6 +67,10 @@ class H2hTableViewModel(application: Application): BaseViewModel(application) {
                 override fun onNext(t: MutableList<H2hTableItem>?) {
                     loadingObserver.value = false
                     h2hList.value = t
+
+                    if (initFocusPlayerId != null) {
+                        onFocusChanged()
+                    }
                 }
 
                 override fun onError(e: Throwable?) {
@@ -81,6 +88,10 @@ class H2hTableViewModel(application: Application): BaseViewModel(application) {
         for (player in players) {
             var item = H2hTableItem(player, player.name!!, playerBgColor, playerTextColor, false)
             list.add(item)
+
+            if (initFocusPlayerId == player.id) {
+                focusRow = list.size
+            }
         }
         list.add(0, H2hTableItem(null, "", playerBgColor, playerTextColor, false))
         it.onNext(list)
@@ -95,6 +106,9 @@ class H2hTableViewModel(application: Application): BaseViewModel(application) {
             var itemPlayer = H2hTableItem(item.bean, item.name!!, playerBgColor, playerTextColor, false)
             list.add(itemPlayer)
             var playerCol: Player = item.bean as Player
+            if (initFocusPlayerId == playerCol.id) {
+                focusColPosition = list.size - 1
+            }
             for (row in 1 until players!!.size) {
                 var playerRow: Player = players[row].bean as Player
                 if (playerCol.id == playerRow.id) {

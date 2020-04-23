@@ -13,6 +13,7 @@ import com.king.app.plate.base.adapter.BaseBindingAdapter
 import com.king.app.plate.databinding.ActivityH2hAllBinding
 import com.king.app.plate.model.bean.H2hResultPack
 import com.king.app.plate.page.player.PlayerItem
+import com.king.app.plate.page.player.page.PlayerPageActivity
 import com.king.app.plate.utils.ScreenUtils
 
 /**
@@ -21,6 +22,10 @@ import com.king.app.plate.utils.ScreenUtils
  * @date: 2020/4/22 11:19
  */
 class H2hTableActivity: BaseActivity<ActivityH2hAllBinding, H2hTableViewModel>() {
+
+    companion object {
+        const val EXTRA_PLAYER_ID = "player_id"
+    }
 
     private var playerAdapter = H2hTableItemAdapter()
     private var h2hAdapter = H2hTableItemAdapter()
@@ -53,10 +58,15 @@ class H2hTableActivity: BaseActivity<ActivityH2hAllBinding, H2hTableViewModel>()
         })
     }
 
+    private fun getPlayerId(): Long {
+        return if (getIntentBundle() == null) 0
+        else getIntentBundle()!!.getLong(PlayerPageActivity.EXTRA_PLAYER_ID)
+    }
+
     override fun initData() {
         mModel.playerList.observe(this, Observer { showPlayers(it) })
         mModel.h2hList.observe(this, Observer { showH2h(it) })
-        mModel.loadData()
+        mModel.loadData(getPlayerId())
     }
 
     private fun showPlayers(it: MutableList<H2hTableItem>?) {

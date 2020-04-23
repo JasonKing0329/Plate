@@ -15,6 +15,9 @@ interface RankDao:BaseDao<Rank> {
     @Query("select * from `rank` where matchId=:matchId order by matchId desc, rank asc")
     fun getMatchRanks(matchId: Long): MutableList<Rank>
 
+    @Query("select * from `rank` where playerId=:playerId")
+    fun getPlayerRanks(playerId: Long): MutableList<Rank>
+
     @Query("select * from `rank` where playerId =:playerId and matchId =:matchId")
     fun getPlayerRank(playerId: Long, matchId: Long): Rank
 

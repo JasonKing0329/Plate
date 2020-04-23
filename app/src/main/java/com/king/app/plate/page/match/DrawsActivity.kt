@@ -148,7 +148,7 @@ class DrawsActivity: BaseActivity<ActivityMatchDrawBinding, DrawViewModel>() {
     }
 
     private fun playerPage(x: Int, y: Int) {
-        var player = mModel.getRecordPlayer(x, y, 0)
+        var player = mModel.getRecordPlayer(x, y)
         if (player != null) {
             var bundle = Bundle()
             bundle.putLong(PlayerPageActivity.EXTRA_PLAYER_ID, player.playerId)

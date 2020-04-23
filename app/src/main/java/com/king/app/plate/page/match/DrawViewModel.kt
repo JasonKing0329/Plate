@@ -234,4 +234,11 @@ class DrawViewModel(application: Application): BaseViewModel(application) {
         } catch (e: Exception) {}
         return null
     }
+
+    fun getRecordPlayer(x: Int, y: Int): RecordPlayer? {
+        try {
+            return drawData.body.bodyData[x][y].player
+        } catch (e: Exception) {}
+        return null
+    }
 }

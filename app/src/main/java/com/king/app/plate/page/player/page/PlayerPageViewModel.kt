@@ -4,6 +4,7 @@ import android.app.Application
 import android.view.View
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
+import androidx.lifecycle.MutableLiveData
 import com.king.app.plate.base.BaseViewModel
 import com.king.app.plate.base.observer.NextErrorObserver
 import com.king.app.plate.conf.AppConstants
@@ -11,6 +12,7 @@ import com.king.app.plate.model.db.entity.Player
 import com.king.app.plate.model.repo.RankRepository
 import com.king.app.plate.model.repo.RecordRepository
 import com.king.app.plate.model.repo.ScoreRepository
+import com.king.app.plate.view.widget.chart.adapter.LineData
 import io.reactivex.rxjava3.core.Observable
 
 /**
@@ -41,6 +43,8 @@ class PlayerPageViewModel(application: Application): BaseViewModel(application) 
     var h2hPlayers = ObservableField<String>()
     var scoreBody = ObservableField<String>()
 
+    var rankChartData = MutableLiveData<RankChartData>()
+
     private var rankRepository = RankRepository()
     private var scoreRepository = ScoreRepository()
     private var recordRepository = RecordRepository()
@@ -68,8 +72,8 @@ class PlayerPageViewModel(application: Application): BaseViewModel(application) 
 
     private fun loadDetails(): Observable<Boolean> = Observable.create {
         // rank and score
-        loadRankPart()
         loadScorePart()
+        loadRankPart()
         // match result
         loadResultPart()
         // h2h
@@ -163,5 +167,42 @@ class PlayerPageViewModel(application: Application): BaseViewModel(application) 
         matchId = getDatabase().getRankDao().getRankFirstMatch(low, player.id)
         var lowDate = getDatabase().getMatchDao().getMatchById(matchId).date
         lowestRank.set("$low ($lowDate)")
+
+        var ranks = getDatabase().getRankDao().getPlayerRanks(player.id)
+        var max = getDatabase().getPlayerDao().getCount() + 1// 避免x轴上连出线
+        var lineData = LineData()
+        lineData.startX = 0
+        lineData.endX = ranks.size - 1
+        lineData.values = mutableListOf()
+        lineData.valuesText = mutableListOf()
+        var lastRank = 0
+        for (i in ranks.indices) {
+            // 取反，排名高的权值大
+            lineData.values.add(max - ranks[i].rank)
+            if (ranks[i].rank != lastRank) {
+                lineData.valuesText.add(ranks[i].rank.toString())
+            }
+            else{
+                lineData.valuesText.add("")
+            }
+            lastRank = ranks[i].rank
+        }
+        var xText = arrayOfNulls<String>(ranks.size)
+        for (i in xText.indices) {
+            var step: Int = when {// x轴刻度文字，每隔多少个显示（下面的数值都是经调试在360dp的手机上比较合适的值）
+                ranks.size < 16 -> 2
+                ranks.size < 22 -> 3
+                ranks.size < 32 -> 4
+                ranks.size < 37 -> 5
+                else -> 10
+            }
+            if (i % step == 0) {
+                xText[i] = getDatabase().getMatchDao().getMatchById(ranks[i].matchId).date
+            }
+            else {
+                xText[i] = ""
+            }
+        }
+        rankChartData.postValue(RankChartData(ranks, max, lineData, xText))
     }
 }
