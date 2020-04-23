@@ -3,6 +3,7 @@ package com.king.app.plate.page.player
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Rect
+import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.widget.PopupMenu
@@ -15,6 +16,7 @@ import com.king.app.plate.base.BaseActivity
 import com.king.app.plate.base.adapter.BaseBindingAdapter
 import com.king.app.plate.conf.AppConstants
 import com.king.app.plate.databinding.ActivityPlayerBinding
+import com.king.app.plate.page.player.page.PlayerPageActivity
 import com.king.app.plate.utils.ScreenUtils
 
 /**
@@ -91,6 +93,11 @@ class PlayerActivity: BaseActivity<ActivityPlayerBinding, PlayerViewModel>() {
                         intent.putExtra(RESP_PLAYER_ID, data.bean!!.id)
                         setResult(Activity.RESULT_OK, intent)
                         finish()
+                    }
+                    else {
+                        var bundle = Bundle()
+                        bundle.putLong(PlayerPageActivity.EXTRA_PLAYER_ID, data.bean!!.id)
+                        startPage(PlayerPageActivity::class.java, bundle)
                     }
                 }
 

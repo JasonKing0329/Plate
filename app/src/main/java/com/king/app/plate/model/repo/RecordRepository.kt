@@ -2,6 +2,7 @@ package com.king.app.plate.model.repo
 
 import com.king.app.plate.conf.AppConstants
 import com.king.app.plate.model.bean.RecordPack
+import com.king.app.plate.model.db.entity.Record
 import com.king.app.plate.page.match.DrawRound
 import io.reactivex.rxjava3.core.Observable
 import kotlin.math.pow
@@ -38,5 +39,25 @@ class RecordRepository: BaseRepository() {
         }
         it.onNext(roundList)
         it.onComplete()
+    }
+
+    fun getPlayerResultRecords(playerId: Long): MutableList<Record> {
+        var list = getDatabase().getRecordDao().getPlayerRecords(playerId)
+        var result = mutableListOf<Record>()
+        for (record in list) {
+            // not complete
+            if (record.winnerId == 0.toLong()) {
+                continue
+            }
+            // final
+            if (record.winnerId == playerId && record.round == AppConstants.round - 1) {
+                result.add(record)
+            }
+            // before final
+            else if (record.winnerId != playerId) {
+                result.add(record)
+            }
+        }
+        return result
     }
 }

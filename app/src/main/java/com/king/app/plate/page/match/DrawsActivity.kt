@@ -11,6 +11,7 @@ import com.king.app.plate.base.BaseActivity
 import com.king.app.plate.databinding.ActivityMatchDrawBinding
 import com.king.app.plate.page.h2h.H2hActivity
 import com.king.app.plate.page.player.PlayerActivity
+import com.king.app.plate.page.player.page.PlayerPageActivity
 import com.king.app.plate.view.dialog.AlertDialogFragment
 import com.king.app.plate.view.dialog.SimpleDialogs
 import com.king.app.plate.view.draw.DrawKeyboard
@@ -123,19 +124,20 @@ class DrawsActivity: BaseActivity<ActivityMatchDrawBinding, DrawViewModel>() {
     }
 
     private fun onClickPlayerCell(x: Int, y: Int) {
-        var items = if(x == 0) arrayOf<CharSequence>("View H2H", "Select player", "Set seed", "Remove")
-        else arrayOf<CharSequence>("View H2H", "Select player", "Set seed", "Remove", "Get winner")
+        var items = if(x == 0) arrayOf<CharSequence>("Player page", "View H2H", "Select player", "Set seed", "Remove")
+        else arrayOf<CharSequence>("Player page", "View H2H", "Select player", "Set seed", "Remove", "Get winner")
         AlertDialogFragment()
             .setItems(items, DialogInterface.OnClickListener { dialogInterface, i ->
                 when(i) {
-                    0 -> viewH2h(x, y)
-                    1 -> selectPlayer(x, y)
-                    2 -> setPlayerSeed(x, y)
-                    3 -> {
+                    0 -> playerPage(x, y)
+                    1 -> viewH2h(x, y)
+                    2 -> selectPlayer(x, y)
+                    3 -> setPlayerSeed(x, y)
+                    4 -> {
                         mModel.deletePlayer(x, y)
                         mBinding.draws.invalidate()
                     }
-                    4 -> {
+                    5 -> {
                         mModel.getWinnerFor(x, y)
                         mBinding.draws.invalidate()
                     }
@@ -143,6 +145,15 @@ class DrawsActivity: BaseActivity<ActivityMatchDrawBinding, DrawViewModel>() {
             })
             .show(supportFragmentManager, "AlertDialogFragment")
 
+    }
+
+    private fun playerPage(x: Int, y: Int) {
+        var player = mModel.getRecordPlayer(x, y, 0)
+        if (player != null) {
+            var bundle = Bundle()
+            bundle.putLong(PlayerPageActivity.EXTRA_PLAYER_ID, player.playerId)
+            startPage(PlayerPageActivity::class.java, bundle)
+        }
     }
 
     private fun viewH2h(x: Int, y: Int) {

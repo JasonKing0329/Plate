@@ -83,4 +83,28 @@
         <item name="android:textColor">@color/white</item>
     </style>
 
+    <style name="GroupKeyValue">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:minHeight">50dp</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="TvGroupKey">
+        <item name="android:textColor">@color/text_main</item>
+        <item name="android:textSize">16dp</item>
+    </style>
+
+    <style name="TvGroupValue">
+        <item name="android:textColor">@color/text_second</item>
+        <item name="android:textSize">16dp</item>
+        <item name="android:gravity">right</item>
+    </style>
+
 </resources>

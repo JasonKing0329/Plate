@@ -26,4 +26,7 @@ interface RankDao:BaseDao<Rank> {
 
     @Query("delete from rank where matchId=:matchId")
     fun deleteMatchRank(matchId: Long);
+
+    @Query("select matchId from `rank` where rank =:rank and playerId=:playerId limit 0, 1")
+    fun getRankFirstMatch(rank: Int, playerId: Long): Long
 }

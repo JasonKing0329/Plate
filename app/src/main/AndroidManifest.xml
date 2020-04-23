@@ -63,6 +63,8 @@
         <activity android:name=".page.h2h.H2hTableActivity"
             android:launchMode="singleInstance">
         </activity>
+        <activity android:name=".page.player.page.PlayerPageActivity">
+        </activity>
     </application>
 
 </manifest>
