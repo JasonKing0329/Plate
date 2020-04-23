@@ -39,6 +39,7 @@ class PlayerPageViewModel(application: Application): BaseViewModel(application) 
     var r32TimesVisibility = ObservableInt()
     var r32Times = ObservableField<String>()
     var h2hPlayers = ObservableField<String>()
+    var scoreBody = ObservableField<String>()
 
     private var rankRepository = RankRepository()
     private var scoreRepository = ScoreRepository()
@@ -67,7 +68,8 @@ class PlayerPageViewModel(application: Application): BaseViewModel(application) 
 
     private fun loadDetails(): Observable<Boolean> = Observable.create {
         // rank and score
-        loadRankScorePart()
+        loadRankPart()
+        loadScorePart()
         // match result
         loadResultPart()
         // h2h
@@ -127,11 +129,30 @@ class PlayerPageViewModel(application: Application): BaseViewModel(application) 
         }
     }
 
-    private fun loadRankScorePart() {
-        var curRank = rankRepository.getPlayerCurrentRank(player.id)
-        playerRank.set(curRank.toString())
+    private fun loadScorePart() {
         var score = scoreRepository.sumPlayerScore(player.id)
         playerScore.set(score.toString())
+        var scores = getDatabase().getScoreDao().getScoreList(player.id)
+        var buffer = StringBuffer()
+        var lastScore = 0
+        for (s in scores) {
+            if (s.score != lastScore) {
+                buffer.append("\n")
+            }
+            var match = getDatabase().getMatchDao().getMatchById(s.matchId)
+            buffer.append(match.name).append("(").append(s.score).append(")  ")
+            lastScore = s.score!!
+        }
+        var text = buffer.toString()
+        if (text.length > 1) {
+            text = text.substring(1)
+        }
+        scoreBody.set(text)
+    }
+
+    private fun loadRankPart() {
+        var curRank = rankRepository.getPlayerCurrentRank(player.id)
+        playerRank.set(curRank.toString())
         var high = rankRepository.getPlayerHighRank(player.id)
         // pick the first time
         var matchId = getDatabase().getRankDao().getRankFirstMatch(high, player.id)

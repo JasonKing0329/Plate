@@ -24,4 +24,7 @@ interface ScoreDao: BaseDao<Score> {
     @Query("select sum(s.score) from score s join 'match' m on s.matchId = m.id and m.period=:period and m.orderInPeriod<=:orderInPeriod where s.playerId=:playerId")
     fun sumScoreUntilMatch(period:Int, orderInPeriod:Int, playerId: Long): Int
 
+    @Query("select * from score where playerId=:playerId order by score desc")
+    fun getScoreList(playerId: Long): MutableList<Score>
+
 }
