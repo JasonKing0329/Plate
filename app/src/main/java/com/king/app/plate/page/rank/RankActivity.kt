@@ -1,12 +1,17 @@
 package com.king.app.plate.page.rank
 
 import android.graphics.Rect
+import android.os.Bundle
+import android.view.View
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.king.app.plate.R
 import com.king.app.plate.base.BaseActivity
+import com.king.app.plate.base.adapter.BaseBindingAdapter
 import com.king.app.plate.databinding.ActivityRankBinding
+import com.king.app.plate.model.db.entity.Match
+import com.king.app.plate.page.player.page.PlayerPageActivity
 import com.king.app.plate.utils.ColorUtils
 import com.king.app.plate.utils.DrawableUtil
 import com.king.app.plate.utils.ScreenUtils
@@ -58,6 +63,11 @@ class RankActivity: BaseActivity<ActivityRankBinding, RankViewModel>() {
     private fun showRankList1(it: List<RankItem>) {
         adapter1.list = it
         if (mBinding.rvRank1.adapter == null) {
+            adapter1.setOnItemClickListener(object : BaseBindingAdapter.OnItemClickListener<RankItem> {
+                override fun onClickItem(view: View, position: Int, data: RankItem) {
+                    showPlayerPage(data.player.id)
+                }
+            })
             mBinding.rvRank1.adapter = adapter1
         }
         else{
@@ -68,10 +78,21 @@ class RankActivity: BaseActivity<ActivityRankBinding, RankViewModel>() {
     private fun showRankList2(it: List<RankItem>) {
         adapter2.list = it
         if (mBinding.rvRank2.adapter == null) {
+            adapter2.setOnItemClickListener(object : BaseBindingAdapter.OnItemClickListener<RankItem> {
+                override fun onClickItem(view: View, position: Int, data: RankItem) {
+                    showPlayerPage(data.player.id)
+                }
+            })
             mBinding.rvRank2.adapter = adapter2
         }
         else{
             adapter2.notifyDataSetChanged()
         }
+    }
+
+    private fun showPlayerPage(id: Long) {
+        var bundle = Bundle()
+        bundle.putLong(PlayerPageActivity.EXTRA_PLAYER_ID, id)
+        startPage(PlayerPageActivity::class.java, bundle)
     }
 }

@@ -9,8 +9,8 @@ android {
         applicationId "com.king.app.plate"
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 16
-        versionName "1.5.3"
+        versionCode 17
+        versionName "1.6"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {
@@ -68,4 +68,5 @@ dependencies {
     implementation "com.tbruyelle.rxpermissions2:rxpermissions:${RXPERMISSION_VERSION}"
 
     implementation 'com.king.lib:jactionbar:1.1.0'
+    implementation 'com.zaihuishou:expandablerecycleradapter:1.0.3'
 }

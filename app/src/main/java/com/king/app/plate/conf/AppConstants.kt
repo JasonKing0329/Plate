@@ -34,6 +34,7 @@ class AppConstants {
         const val SCORE_RETIRE_NORMAL = "(对手退赛)"
 
         val ROUND_NORMAL = arrayOf("R32", "R16", "QF", "SF", "Final")
+        val RESULT_NORMAL = arrayOf("R32", "R16", "QF", "SF", "Runner-up", "Champion")
 
         val MATCH_LEVEL = arrayOf("Normal", "Final")
     }

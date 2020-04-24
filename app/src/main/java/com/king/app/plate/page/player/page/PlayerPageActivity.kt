@@ -7,6 +7,7 @@ import com.king.app.plate.R
 import com.king.app.plate.base.BaseActivity
 import com.king.app.plate.databinding.ActivityPlayerPageBinding
 import com.king.app.plate.page.h2h.H2hTableActivity
+import com.king.app.plate.page.player.record.RecordListActivity
 import com.king.app.plate.utils.ColorUtils
 import com.king.app.plate.utils.DrawableUtil
 import com.king.app.plate.view.widget.chart.adapter.IAxis
@@ -59,6 +60,11 @@ class PlayerPageActivity: BaseActivity<ActivityPlayerPageBinding, PlayerPageView
             var bundle = Bundle()
             bundle.putLong(H2hTableActivity.EXTRA_PLAYER_ID, mModel.player.id)
             startPage(H2hTableActivity::class.java, bundle)
+        }
+        mBinding.llRecords.setOnClickListener {
+            var bundle = Bundle()
+            bundle.putLong(RecordListActivity.EXTRA_PLAYER_ID, mModel.player.id)
+            startPage(RecordListActivity::class.java, bundle)
         }
 
         DrawableUtil.setGradientColor(mBinding.tvName, ColorUtils.randomWhiteTextBgColor())

@@ -1,7 +1,10 @@
 package com.king.app.plate.model.detail
 
+import com.king.app.plate.PlateApplication
 import com.king.app.plate.conf.AppConstants
 import com.king.app.plate.model.bean.RecordPack
+import com.king.app.plate.model.db.AppDatabase
+import com.king.app.plate.model.db.entity.Record
 import com.king.app.plate.model.db.entity.RecordScore
 
 /**
@@ -14,6 +17,20 @@ class RecordParser {
     companion object {
         fun getRoundSimpleText(round: Int, matchLevel: Int): String {
             return AppConstants.ROUND_NORMAL[round]
+        }
+
+        fun getRecordResult(round: Int, isWinner: Boolean, matchLevel: Int): String {
+            return if (round == AppConstants.round - 1 && isWinner) AppConstants.RESULT_NORMAL[AppConstants.round]
+            else AppConstants.RESULT_NORMAL[round]
+        }
+
+        fun getRecordPack(record: Record, database: AppDatabase): RecordPack {
+            var players = database.getRecordPlayerDao().getPlayersByRecord(record.id)
+            for (player in players) {
+                player.player = database.getPlayerDao().getPlayerById(player.playerId)
+            }
+            var scores = database.getRecordScoreDao().getScoresByRecord(record.id)
+            return RecordPack(record, players, scores)
         }
 
         /**

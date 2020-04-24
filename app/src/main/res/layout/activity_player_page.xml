@@ -192,13 +192,40 @@
                     app:layout_constraintTop_toBottomOf="@id/ll_low"/>
 
                 <LinearLayout
-                    android:id="@+id/ll_result"
+                    android:id="@+id/ll_records"
                     style="@style/GroupKeyValue"
                     android:layout_marginTop="1dp"
                     android:paddingRight="10dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/chart_rank">
+                    <TextView
+                        style="@style/TvGroupKey"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Records"/>
+                    <TextView
+                        android:id="@+id/tv_record"
+                        style="@style/TvGroupValue"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="@{model.recordText}"/>
+                    <ImageView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:padding="6dp"
+                        android:background="?android:attr/selectableItemBackgroundBorderless"
+                        android:src="@drawable/ic_chevron_right_black_36dp"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/ll_result"
+                    style="@style/GroupKeyValue"
+                    android:layout_marginTop="1dp"
+                    android:paddingRight="10dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/ll_records">
                     <TextView
                         style="@style/TvGroupKey"
                         android:layout_width="wrap_content"

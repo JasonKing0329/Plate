@@ -28,6 +28,7 @@ class PlayerPageViewModel(application: Application): BaseViewModel(application) 
     var highestRank = ObservableField<String>()
     var lowestRank = ObservableField<String>()
     var bestResult = ObservableField<String>()
+    var recordText = ObservableField<String>()
     var championTimesVisibility = ObservableInt()
     var championTimes = ObservableField<String>()
     var ruTimesVisibility = ObservableInt()
@@ -104,8 +105,22 @@ class PlayerPageViewModel(application: Application): BaseViewModel(application) 
     }
 
     private fun loadResultPart() {
-        var records = recordRepository.getPlayerResultRecords(player.id)
+        var win = 0
+        var lose = 0
+        var allRecords = getDatabase().getRecordDao().getPlayerRecords(player.id)
+        for (record in allRecords) {
+            if (record.winnerId == player.id) {
+                win ++
+            }
+            // don't count record not completed
+            else if (record.winnerId != 0.toLong()) {
+                lose ++
+            }
+        }
+        recordText.set("Win $win, Lose $lose")
 
+        // count result
+        var records = recordRepository.getPlayerResultRecords(player.id)
         val step = IntArray(AppConstants.round + 1)
         for (record in records) {
             if (record.round < AppConstants.round - 1) {
@@ -115,15 +130,16 @@ class PlayerPageViewModel(application: Application): BaseViewModel(application) 
                 if (record.winnerId == player.id) step[AppConstants.round] ++ else step[AppConstants.round - 1] ++
             }
         }
+
         var bestText: String? = null
         for (i in step.size - 1 downTo 0) {
             var result = when(i) {
-                AppConstants.round -> setRoundText(championTimes, championTimesVisibility, "Champion", step[i])
-                AppConstants.round - 1 -> setRoundText(ruTimes, ruTimesVisibility, "Runner-up", step[i])
-                AppConstants.round - 2 -> setRoundText(sfTimes, sfTimesVisibility, "SF", step[i])
-                AppConstants.round - 3 -> setRoundText(qfTimes, qfTimesVisibility, "QF", step[i])
-                AppConstants.round - 4 -> setRoundText(r16Times, r16TimesVisibility, "R16", step[i])
-                AppConstants.round - 5 -> setRoundText(r32Times, r32TimesVisibility, "R32", step[i])
+                AppConstants.round -> setRoundText(championTimes, championTimesVisibility, AppConstants.RESULT_NORMAL[AppConstants.round], step[i])
+                AppConstants.round - 1 -> setRoundText(ruTimes, ruTimesVisibility, AppConstants.RESULT_NORMAL[AppConstants.round - 1], step[i])
+                AppConstants.round - 2 -> setRoundText(sfTimes, sfTimesVisibility, AppConstants.RESULT_NORMAL[AppConstants.round - 2], step[i])
+                AppConstants.round - 3 -> setRoundText(qfTimes, qfTimesVisibility, AppConstants.RESULT_NORMAL[AppConstants.round - 3], step[i])
+                AppConstants.round - 4 -> setRoundText(r16Times, r16TimesVisibility, AppConstants.RESULT_NORMAL[AppConstants.round - 4], step[i])
+                AppConstants.round - 5 -> setRoundText(r32Times, r32TimesVisibility, AppConstants.RESULT_NORMAL[AppConstants.round - 5], step[i])
                 else -> ""
             }
             if (result.isNotEmpty() && bestText == null) {

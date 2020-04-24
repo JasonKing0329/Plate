@@ -25,7 +25,7 @@ interface RecordDao:BaseDao<Record> {
     @Query("select * from `record` where matchId=:matchId and round=:round and orderInRound=:orderInRound")
     fun getRecord(matchId: Long, round: Int, orderInRound: Int): Record
 
-    @Query("select record.* from record_player join record on record_player.recordId=record.id where record_player.playerId=:playerId")
+    @Query("select record.* from record_player join record on record_player.recordId=record.id where record_player.playerId=:playerId order by record.matchId")
     fun getPlayerRecords(playerId: Long): MutableList<Record>
 
     @Query("delete from `record` where matchId=:matchId")

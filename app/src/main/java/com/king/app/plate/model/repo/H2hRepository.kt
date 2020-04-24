@@ -17,12 +17,7 @@ class H2hRepository: BaseRepository() {
         var list = mutableListOf<H2hItem>()
         var records = getDatabase().getRecordDao().getH2hRecords(player1Id, player2Id)
         for (record in records) {
-            var players = getDatabase().getRecordPlayerDao().getPlayersByRecord(record.id)
-            for (player in players) {
-                player.player = getDatabase().getPlayerDao().getPlayerById(player.playerId)
-            }
-            var scores = getDatabase().getRecordScoreDao().getScoresByRecord(record.id)
-            var pack = RecordPack(record, players, scores)
+            var pack = RecordParser.getRecordPack(record, getDatabase())
             var match = getDatabase().getMatchDao().getMatchById(record.matchId)
             var round = RecordParser.getRoundSimpleText(record.round, match.level)
             var result = RecordParser.getH2hResult(pack)
