@@ -101,7 +101,9 @@ class H2hViewModel(application: Application): BaseViewModel(application) {
             player1Name.set(player1!!.name)
             var rank = rankRepository.getPlayerCurrentRank(player1!!.id)
             player1Rank.set("Rank $rank")
-            player1CircleColor.value = ColorUtils.randomWhiteTextBgColor()
+            var color = if (player1!!.defColor == null) ColorUtils.randomWhiteTextBgColor()
+            else player1!!.defColor!!
+            player1CircleColor.value = color
             onH2hChanged()
         }
     }
@@ -111,7 +113,9 @@ class H2hViewModel(application: Application): BaseViewModel(application) {
             player2Name.set(player2!!.name)
             var rank = rankRepository.getPlayerCurrentRank(player2!!.id)
             player2Rank.set("Rank $rank")
-            player2CircleColor.value = ColorUtils.randomWhiteTextBgColor()
+            var color = if (player2!!.defColor == null) ColorUtils.randomWhiteTextBgColor()
+            else player2!!.defColor!!
+            player2CircleColor.value = color
             onH2hChanged()
         }
     }

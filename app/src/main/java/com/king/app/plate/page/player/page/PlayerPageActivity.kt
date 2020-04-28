@@ -67,10 +67,14 @@ class PlayerPageActivity: BaseActivity<ActivityPlayerPageBinding, PlayerPageView
             startPage(RecordListActivity::class.java, bundle)
         }
 
-        DrawableUtil.setGradientColor(mBinding.tvName, ColorUtils.randomWhiteTextBgColor())
     }
 
     override fun initData() {
+        mModel.playerObserver.observe(this, Observer {
+            var color = if (it.defColor == null) ColorUtils.randomWhiteTextBgColor()
+            else it.defColor!!
+            DrawableUtil.setGradientColor(mBinding.tvName, color)
+        })
         mModel.rankChartData.observe(this, Observer { showChart(it) })
         mModel.loadPlayer(getPlayerId())
     }

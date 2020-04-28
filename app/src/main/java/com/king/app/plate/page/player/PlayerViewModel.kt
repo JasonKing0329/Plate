@@ -89,4 +89,9 @@ class PlayerViewModel(application: Application): BaseViewModel(application) {
         this.sortType = sortType
         loadPlayers()
     }
+
+    fun updatePlayerColor(bean: Player, color: Int) {
+        bean.defColor = color
+        getDatabase().getPlayerDao().update(bean)
+    }
 }

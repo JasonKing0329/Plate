@@ -15,8 +15,6 @@ import com.king.app.plate.utils.DrawableUtil
  */
 class RankItemAdapter: BaseBindingAdapter<AdapterRankItemBinding, RankItem>() {
 
-    private var colorMap: MutableMap<Long?, Int?> = mutableMapOf()
-
     override fun onCreateBind(inflater: LayoutInflater, parent: ViewGroup): AdapterRankItemBinding =
         AdapterRankItemBinding.inflate(inflater, parent, false)
 
@@ -36,12 +34,8 @@ class RankItemAdapter: BaseBindingAdapter<AdapterRankItemBinding, RankItem>() {
                 binding!!.tvRankChange.setTextColor(binding!!.tvRankChange.resources.getColor(R.color.text_sub))
             }
         }
-        var key = bean.player.id
-        var color = colorMap[key]
-        if (color == null) {
-            color = ColorUtils.randomWhiteTextBgColor()
-            colorMap[key] = color
-        }
+        var color = if (bean.player.defColor == null) ColorUtils.randomWhiteTextBgColor()
+        else bean.player.defColor!!
         DrawableUtil.setGradientColor(binding!!.tvName, color)
     }
 }

@@ -1,6 +1,7 @@
 package com.king.app.plate.page.player
 
 import android.app.Activity
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
@@ -10,6 +11,9 @@ import android.widget.PopupMenu
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.flask.colorpicker.ColorPickerView
+import com.flask.colorpicker.builder.ColorPickerClickListener
+import com.flask.colorpicker.builder.ColorPickerDialogBuilder
 import com.king.app.jactionbar.PopupMenuProvider
 import com.king.app.plate.R
 import com.king.app.plate.base.BaseActivity
@@ -32,7 +36,9 @@ class PlayerActivity: BaseActivity<ActivityPlayerBinding, PlayerViewModel>() {
         var RESP_PLAYER_ID: String = "resp_player_id"
     }
 
-    private var adapter: PlayerAdapter? = null
+    private var adapter: PlayerAdapter = PlayerAdapter()
+
+    private var isSetColor = false
 
     override fun getContentView(): Int = R.layout.activity_player
 
@@ -53,6 +59,20 @@ class PlayerActivity: BaseActivity<ActivityPlayerBinding, PlayerViewModel>() {
                 R.id.menu_sort -> getSortPopup(anchorView!!)
                 else -> null
             }
+        }
+        mBinding.actionbar.setOnMenuItemListener {
+            when(it) {
+                R.id.menu_color -> {
+                    mBinding.actionbar.showConfirmStatus(it, true, "Cancel");
+                    isSetColor = true
+                }
+            }
+        }
+        mBinding.actionbar.setOnConfirmListener {
+            when(it) {
+                R.id.menu_color -> isSetColor = false
+            }
+            true
         }
     }
 
@@ -83,21 +103,25 @@ class PlayerActivity: BaseActivity<ActivityPlayerBinding, PlayerViewModel>() {
     }
 
     private fun showPlayers(it: List<PlayerItem>?) {
-        if (adapter == null) {
-            adapter = PlayerAdapter()
-            adapter!!.list = it
+        adapter!!.list = it
+        if (mBinding.rvList.adapter == null) {
             adapter!!.setOnItemClickListener(object : BaseBindingAdapter.OnItemClickListener<PlayerItem>{
                 override fun onClickItem(view: View, position: Int, data: PlayerItem) {
-                    if (isSelectMode()) {
-                        var intent = Intent()
-                        intent.putExtra(RESP_PLAYER_ID, data.bean!!.id)
-                        setResult(Activity.RESULT_OK, intent)
-                        finish()
+                    if (isSetColor) {
+                        setColorForPlayer(position, data)
                     }
                     else {
-                        var bundle = Bundle()
-                        bundle.putLong(PlayerPageActivity.EXTRA_PLAYER_ID, data.bean!!.id)
-                        startPage(PlayerPageActivity::class.java, bundle)
+                        if (isSelectMode()) {
+                            var intent = Intent()
+                            intent.putExtra(RESP_PLAYER_ID, data.bean!!.id)
+                            setResult(Activity.RESULT_OK, intent)
+                            finish()
+                        }
+                        else {
+                            var bundle = Bundle()
+                            bundle.putLong(PlayerPageActivity.EXTRA_PLAYER_ID, data.bean!!.id)
+                            startPage(PlayerPageActivity::class.java, bundle)
+                        }
                     }
                 }
 
@@ -105,9 +129,26 @@ class PlayerActivity: BaseActivity<ActivityPlayerBinding, PlayerViewModel>() {
             mBinding.rvList.adapter = adapter
         }
         else {
-            adapter!!.list = it
             adapter!!.notifyDataSetChanged()
         }
+    }
+
+    private fun setColorForPlayer(position: Int, data: PlayerItem) {
+        var builder = ColorPickerDialogBuilder.with(this)
+            .setTitle("Pick color")
+            .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
+            .density(12)
+            .setOnColorSelectedListener {  }
+            .setPositiveButton("Ok"
+            ) { d, lastSelectedColor, allColors ->
+                mModel.updatePlayerColor(data.bean!!, lastSelectedColor)
+                adapter.notifyItemChanged(position)
+            }
+            .setNegativeButton("Cancel", null);
+        if (data.bean!!.defColor != null) {
+            builder.initialColor(data.bean!!.defColor!!)
+        }
+        builder.build().show()
     }
 }
 

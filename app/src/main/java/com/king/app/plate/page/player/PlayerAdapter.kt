@@ -17,8 +17,6 @@ import com.king.app.plate.utils.RippleUtil
  */
 class PlayerAdapter: BaseBindingAdapter<AdapterPlayerBinding, PlayerItem>() {
 
-    private var colorMap: MutableMap<Long?, Int?> = mutableMapOf()
-
     override fun onCreateBind(inflater: LayoutInflater, parent: ViewGroup): AdapterPlayerBinding =
         // 必须有后两个，否则宽度只能占recyclerview的一半
         AdapterPlayerBinding.inflate(inflater, parent, false)
@@ -29,12 +27,8 @@ class PlayerAdapter: BaseBindingAdapter<AdapterPlayerBinding, PlayerItem>() {
             , binding!!.clGroup.resources.getColor(R.color.ripple_color))
         binding!!.bean = bean
 
-        var key = bean?.bean?.id
-        var color = colorMap[key]
-        if (color == null) {
-            color = ColorUtils.randomWhiteTextBgColor()
-            colorMap[key] = color
-        }
+        var color = if (bean.bean!!.defColor == null) ColorUtils.randomWhiteTextBgColor()
+        else bean.bean!!.defColor!!
         DrawableUtil.setGradientColor(binding!!.tvName, color)
     }
 }

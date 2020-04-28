@@ -45,6 +45,7 @@ class PlayerPageViewModel(application: Application): BaseViewModel(application) 
     var scoreBody = ObservableField<String>()
 
     var rankChartData = MutableLiveData<RankChartData>()
+    var playerObserver = MutableLiveData<Player>()
 
     private var rankRepository = RankRepository()
     private var scoreRepository = ScoreRepository()
@@ -54,6 +55,7 @@ class PlayerPageViewModel(application: Application): BaseViewModel(application) 
 
     fun loadPlayer(playerId: Long) {
         player = getDatabase().getPlayerDao().getPlayerById(playerId)
+        playerObserver.value = player
 
         playerName.set(player.name)
         loadDetails()

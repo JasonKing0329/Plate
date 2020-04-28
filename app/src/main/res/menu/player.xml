@@ -6,4 +6,8 @@
         android:title="Load From"
         android:icon="@drawable/ic_sort_white_36dp"
         app:showAsAction="ifRoom"/>
+    <item android:id="@+id/menu_color"
+        android:title="Set Color"
+        android:icon="@drawable/ic_color_lens_green_36dp"
+        app:showAsAction="ifRoom"/>
 </menu>

@@ -48,7 +48,6 @@ class RecordViewModel(application: Application): BaseViewModel(application) {
         var records = getDatabase().getRecordDao().getPlayerRecords(playerId)
         records.reverse()
 
-        var colorMap = mutableMapOf<Long, Int?>()
         // 已按matchId排序
         var lastHead = HeadItem()
         for (record in records) {
@@ -83,10 +82,9 @@ class RecordViewModel(application: Application): BaseViewModel(application) {
                     opponent = getDatabase().getPlayerDao().getPlayerById(player.playerId)
                 }
             }
-            if (colorMap[opponent!!.id] == null) {
-                colorMap[opponent!!.id] = ColorUtils.randomWhiteTextBgColor()
-            }
-            var childItem = ChildItem(record, opponent!!, colorMap[opponent!!.id]!!)
+            var color = if (opponent!!.defColor == null) ColorUtils.randomWhiteTextBgColor()
+            else opponent!!.defColor!!
+            var childItem = ChildItem(record, opponent!!, color)
             var winner = RecordParser.getH2hResult(pack)
             var score = RecordParser.getScoreText(pack)
             var round = RecordParser.getRoundSimpleText(record.round, lastHead.match!!.level)
