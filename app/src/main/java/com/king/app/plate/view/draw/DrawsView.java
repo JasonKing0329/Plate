@@ -50,6 +50,7 @@ public class DrawsView extends View implements View.OnTouchListener {
 
     private Rect[][] drawsMap;
 
+    private Point lastFocusPoint;
     private Point focusPoint;
 
     private boolean isEnableFocusItem = true;
@@ -357,6 +358,7 @@ public class DrawsView extends View implements View.OnTouchListener {
 
     private void focusCell(int x, int y) {
         DebugLog.e(x + ", " + y);
+        lastFocusPoint = focusPoint;
         // 已聚焦，取消聚焦
         if (focusPoint != null && focusPoint.x == x && focusPoint.y == y) {
             focusPoint = null;
@@ -373,6 +375,21 @@ public class DrawsView extends View implements View.OnTouchListener {
 
     public Point getFocusPoint() {
         return focusPoint;
+    }
+
+    /**
+     * 当lastFocusPoint与focusPoint不同代表首次输入当前单元格
+     * @return
+     */
+    public Point getLastFocusPoint() {
+        return lastFocusPoint;
+    }
+
+    /**
+     * 当发生输入后将lastFocusPoint与focusPoint同步，代表是继续输入当前单元格
+     */
+    public void syncLastFocusPoint() {
+        lastFocusPoint = focusPoint;
     }
 
     public Rect getFocusRect() {

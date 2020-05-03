@@ -54,7 +54,11 @@ class DrawsActivity: BaseActivity<ActivityMatchDrawBinding, DrawViewModel>() {
             override fun onKey(key: String?) {
                 var point: Point? = mBinding.draws.focusPoint
                 if (point != null) {
-                    adapter.updateText(point.x, point.y, key)
+                    var isFirst = mBinding.draws.focusPoint != mBinding.draws.lastFocusPoint
+                    adapter.updateText(point.x, point.y, key, isFirst)
+                    // 只要发生了输入就同步当前游标，以便下一次是继续输入
+                    mBinding.draws.syncLastFocusPoint()
+
                     mBinding.draws.invalidate()
                 }
             }

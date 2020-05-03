@@ -37,10 +37,15 @@ class DrawsAdapter : AbsDrawAdapter() {
         return colorDefault
     }
 
-    fun updateText(x: Int, y: Int, text: String?) {
+    fun updateText(x: Int, y: Int, text: String?, isFirst: Boolean) {
         try {
             var colList: MutableList<BodyCell> = data?.body?.bodyData!![x]
-            colList[y].text = colList[y].text + text!!
+            if (isFirst) {
+                colList[y].text = text!!
+            }
+            else {
+                colList[y].text = colList[y].text + text!!
+            }
             colList[y].isModified = true
         } catch (e: Exception) {
         }
