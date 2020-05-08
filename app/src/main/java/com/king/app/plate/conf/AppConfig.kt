@@ -14,19 +14,17 @@ class AppConfig {
         var appRootPath = "$sdcardPath/plate"
         var exportPath = "$appRootPath/export"
         var historyPath = "$appRootPath/history"
+        var historyDbPath = "$historyPath/db"
+        var historyPrefPath = "$historyPath/pref"
         var confPath = "$appRootPath/conf"
-        var prefPath = "$confPath/conf"
-        var prefDefPath = "$prefPath/conf"
-
-        val prefName = "com.king.app.plate_preferences"
 
         var appDirectories = arrayOf(
             appRootPath,
             exportPath,
             historyPath,
             confPath,
-            prefPath,
-            prefDefPath
+            historyDbPath,
+            historyPrefPath
         )
 
     }

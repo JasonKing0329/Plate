@@ -2,6 +2,7 @@ package com.king.app.plate.model
 
 import android.preference.PreferenceManager
 import com.king.app.plate.PlateApplication
+import com.king.app.plate.model.db.AppDatabase
 
 /**
  * Desc:
@@ -12,6 +13,14 @@ import com.king.app.plate.PlateApplication
 abstract class BaseProperty {
 
     companion object {
+        val PREF_NAME = "com.king.app.plate_preferences.xml"
+        fun getPrefFolder():String {
+            return PlateApplication.instance.cacheDir.parent + "/shared_prefs/"
+        }
+        fun getPrefPath(): String {
+            return "${getPrefFolder()}${PREF_NAME}"
+        }
+
         fun getString(key: String): String {
             val sp = PreferenceManager.getDefaultSharedPreferences(PlateApplication.instance)
             return sp.getString(key, "")

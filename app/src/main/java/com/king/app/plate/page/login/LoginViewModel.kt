@@ -10,7 +10,7 @@ import androidx.lifecycle.MutableLiveData
 import com.king.app.plate.base.BaseViewModel
 import com.king.app.plate.conf.AppConfig
 import com.king.app.plate.model.SettingProperty
-import com.king.app.plate.utils.DBExporter
+import com.king.app.plate.utils.DataExporter
 import com.king.app.plate.utils.MD5Util
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
@@ -60,8 +60,6 @@ class LoginViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun initCreate() {
-        // 每次进入导出一次数据库
-        DBExporter.execute()
         prepare()
     }
 
@@ -99,7 +97,8 @@ class LoginViewModel(application: Application) : BaseViewModel(application) {
     private fun prepareData(): Observable<Boolean> {
         return Observable.create { e ->
 
-            DBExporter.execute()
+            // 每次进入导出一次数据库
+            DataExporter.execute()
 
             // 创建base目录
             for (path in AppConfig.appDirectories) {

@@ -54,7 +54,10 @@ class DrawColorSelector: PopupContent<FragmentDrawColorBinding, EmptyViewModel>(
                 views[i][j].setOnClickListener { pickColor(i, isFocus, colors[i][j], it) }
             }
         }
-        mBinding.tvOk.setOnClickListener { SettingProperty.setDrawColors(DrawColors(colors)) }
+        mBinding.tvOk.setOnClickListener {
+            SettingProperty.setDrawColors(DrawColors(colors))
+            dismissAllowingStateLoss()
+        }
     }
 
     override fun initData() {

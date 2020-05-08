@@ -3,6 +3,7 @@ package com.king.app.plate.utils;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.king.app.plate.PlateApplication;
+import com.king.app.plate.model.BaseProperty;
 import com.king.app.plate.model.db.AppDatabase;
 
 import java.io.File;
@@ -59,6 +60,40 @@ public class FileUtil {
         if (db != null) {
             db.close();
         }
+    }
+
+    public static boolean replacePreference(File source) {
+        if (source == null || !source.exists()) {
+            return false;
+        }
+
+        // 删除源目录preference
+        String folder = BaseProperty.Companion.getPrefFolder();
+        File targetFolder = new File(folder);
+        if (targetFolder.exists()) {
+            File[] files = targetFolder.listFiles();
+            for (File f : files) {
+                f.delete();
+            }
+        }
+        try {
+            InputStream in = new FileInputStream(source);
+            File file = new File(BaseProperty.Companion.getPrefPath());
+            OutputStream fileOut = new FileOutputStream(file);
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = in.read(buffer)) > 0) {
+                fileOut.write(buffer, 0, length);
+            }
+
+            fileOut.flush();
+            fileOut.close();
+            in.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
     public static boolean replaceDatabase(File source) {

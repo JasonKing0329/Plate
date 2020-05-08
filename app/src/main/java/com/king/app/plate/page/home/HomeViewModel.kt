@@ -5,7 +5,7 @@ import android.view.View
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.MutableLiveData
 import com.king.app.plate.base.BaseViewModel
-import com.king.app.plate.utils.DBExporter
+import com.king.app.plate.utils.DataExporter
 
 /**
  * Desc:
@@ -25,8 +25,8 @@ class HomeViewModel(application: Application): BaseViewModel(application) {
         editVisibility.set(View.VISIBLE)
     }
 
-    fun saveDatabase() {
-        DBExporter.exportAsHistory()
+    fun saveData() {
+        DataExporter.exportAsHistory()
         messageObserver.value = "success"
     }
 

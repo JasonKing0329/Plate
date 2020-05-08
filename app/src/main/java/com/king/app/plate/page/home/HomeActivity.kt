@@ -5,6 +5,7 @@ import androidx.lifecycle.Observer
 import com.king.app.plate.R
 import com.king.app.plate.base.BaseActivity
 import com.king.app.plate.databinding.ActivityHomeBinding
+import com.king.app.plate.model.db.AppDatabase
 import com.king.app.plate.page.SettingsActivity
 import com.king.app.plate.page.h2h.H2hActivity
 import com.king.app.plate.page.match.DrawsActivity
@@ -40,7 +41,7 @@ class HomeActivity: BaseActivity<ActivityHomeBinding, HomeViewModel>() {
 
         mBinding.actionbar.setOnMenuItemListener { menuId ->
             when (menuId) {
-                R.id.menu_save -> mModel.saveDatabase()
+                R.id.menu_save -> mModel.saveData()
                 R.id.menu_load_from -> loadFrom()
                 R.id.menu_setting -> startPage(SettingsActivity::class.java)
             }
@@ -57,7 +58,7 @@ class HomeActivity: BaseActivity<ActivityHomeBinding, HomeViewModel>() {
 
     private fun loadFrom() {
         var content = LoadFromDialog()
-        content.onDatabaseChangedListener = object : LoadFromDialog.OnDatabaseChangedListener {
+        content.onDataChangedListener = object : LoadFromDialog.OnDataChangedListener {
             override fun onDatabaseChanged() {
 
             }
@@ -73,4 +74,8 @@ class HomeActivity: BaseActivity<ActivityHomeBinding, HomeViewModel>() {
 
     }
 
+    override fun onDestroy() {
+        AppDatabase.instance.close()
+        super.onDestroy()
+    }
 }

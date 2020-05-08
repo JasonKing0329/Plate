@@ -33,7 +33,7 @@ abstract class AppDatabase:RoomDatabase() {
         var instance = Single.instance;
 
         fun getDbFolder(): String {
-            return PlateApplication.instance.getCacheDir().getParent() + "/databases/"
+            return PlateApplication.instance.cacheDir.parent + "/databases/"
         }
 
         fun getDbPath(): String {

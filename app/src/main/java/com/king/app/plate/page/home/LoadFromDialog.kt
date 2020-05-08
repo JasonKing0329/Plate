@@ -24,11 +24,15 @@ import java.io.File
  */
 class LoadFromDialog: PopupContent<FragmentContentLoadfromBinding, EmptyViewModel>() {
 
-    private lateinit var list: List<File>
+    private lateinit var dbList: List<File>
 
-    private var adapter = ItemAdapter()
+    private lateinit var prefList: List<File>
 
-    var onDatabaseChangedListener: OnDatabaseChangedListener? = null
+    private var dbAdapter = ItemAdapter()
+
+    private var prefAdapter = ItemAdapter()
+
+    var onDataChangedListener: OnDataChangedListener? = null
 
     override fun getBinding(inflater: LayoutInflater): FragmentContentLoadfromBinding = FragmentContentLoadfromBinding.inflate(inflater)
 
@@ -36,28 +40,43 @@ class LoadFromDialog: PopupContent<FragmentContentLoadfromBinding, EmptyViewMode
 
     override fun initView(view: View) {
         mBinding.rvList.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
+        mBinding.rvPref.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
 
         mBinding.tvConfirm.setOnClickListener { onSave() }
     }
 
     override fun initData() {
-        var file = File(AppConfig.historyPath)
-        list = listOf(*file.listFiles())
+        var file = File(AppConfig.historyDbPath)
+        dbList = listOf(*file.listFiles())
+        dbList = dbList.sortedByDescending { file ->  file.lastModified()}
 
-        adapter.list = list
-        mBinding.rvList.adapter = adapter
+        dbAdapter.list = dbList
+        mBinding.rvList.adapter = dbAdapter
+
+        file = File(AppConfig.historyPrefPath)
+        prefList = listOf(*file.listFiles())
+        prefList = prefList.sortedByDescending { file ->  file.lastModified()}
+
+        prefAdapter.list = prefList
+        mBinding.rvPref.adapter = prefAdapter
     }
 
     private fun onSave() {
-        if (adapter.selection != -1) {
-            val file = list[adapter.selection]
+        if (dbAdapter.selection != -1 || prefAdapter.selection != -1) {
             AlertDialogFragment()
                 .setMessage(getString(R.string.load_from_warning_msg))
                 .setPositiveText(getString(R.string.ok))
                 .setPositiveListener(DialogInterface.OnClickListener{ dialogInterface, i ->
-                    FileUtil.replaceDatabase(file)
-                    if (onDatabaseChangedListener != null) {
-                        onDatabaseChangedListener!!.onDatabaseChanged()
+                    if (dbAdapter.selection != -1) {
+                        var file = dbList[dbAdapter.selection]
+                        FileUtil.replaceDatabase(file)
+                    }
+                    if (prefAdapter.selection != -1) {
+                        var file = prefList[prefAdapter.selection]
+                        FileUtil.replacePreference(file)
+                    }
+                    if (onDataChangedListener != null) {
+                        onDataChangedListener!!.onDatabaseChanged()
                     }
                     dismissAllowingStateLoss()
                 })
@@ -94,7 +113,7 @@ class LoadFromDialog: PopupContent<FragmentContentLoadfromBinding, EmptyViewMode
         }
     }
 
-    interface OnDatabaseChangedListener {
+    interface OnDataChangedListener {
         fun onDatabaseChanged()
     }
 }

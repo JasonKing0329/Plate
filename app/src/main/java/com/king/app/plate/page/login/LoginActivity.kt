@@ -10,7 +10,7 @@ import com.king.app.plate.model.fingerprint.FingerprintHelper
 import com.king.app.plate.page.SettingsActivity
 import com.king.app.plate.page.home.HomeActivity
 import com.king.app.plate.utils.AppUtil
-import com.king.app.plate.utils.DBExporter
+import com.king.app.plate.utils.DataExporter
 import com.tbruyelle.rxpermissions2.RxPermissions
 
 class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>() {
@@ -72,9 +72,6 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>() {
     }
 
     private fun superUser() {
-
-        // 每次进入导出一次数据库
-        DBExporter.execute()
         startActivity(Intent().setClass(this, HomeActivity::class.java))
         finish()
     }
