@@ -9,10 +9,12 @@ import androidx.lifecycle.Observer
 import com.king.app.plate.R
 import com.king.app.plate.base.BaseActivity
 import com.king.app.plate.databinding.ActivityMatchDrawBinding
+import com.king.app.plate.model.SettingProperty
 import com.king.app.plate.page.h2h.H2hActivity
 import com.king.app.plate.page.player.PlayerActivity
 import com.king.app.plate.page.player.page.PlayerPageActivity
 import com.king.app.plate.view.dialog.AlertDialogFragment
+import com.king.app.plate.view.dialog.PopupDialog
 import com.king.app.plate.view.dialog.SimpleDialogs
 import com.king.app.plate.view.draw.DrawKeyboard
 import com.king.app.plate.view.draw.DrawsView
@@ -39,6 +41,7 @@ class DrawsActivity: BaseActivity<ActivityMatchDrawBinding, DrawViewModel>() {
     override fun createViewModel(): DrawViewModel = generateViewModel(DrawViewModel::class.java)
 
     override fun initView() {
+        mBinding.draws.setCellColors(SettingProperty.getDrawColors()?.colors)
         mBinding.draws.setAdapter(adapter)
         mBinding.draws.setOnClickDrawItemListener(object : DrawsView.OnClickDrawItemListener {
             override fun onClickDrawItem(x: Int, y: Int) {
@@ -116,8 +119,23 @@ class DrawsActivity: BaseActivity<ActivityMatchDrawBinding, DrawViewModel>() {
                         showMessageShort("Current match is not completed")
                     }
                 }
+                R.id.menu_color -> setColors()
             }
         }
+    }
+
+    private fun setColors() {
+        var content = DrawColorSelector()
+        content.onColorChangedListener = object : DrawColorSelector.OnColorChangedListener {
+            override fun onColorChanged(colors: Array<IntArray>) {
+                mBinding.draws.setCellColors(colors)
+                mBinding.draws.invalidate()
+            }
+        }
+        var dialog = PopupDialog()
+        dialog.content = content
+        dialog.title = "Set colors"
+        dialog.show(supportFragmentManager, "DrawColorSelector")
     }
 
     private fun popupEditScore(x: Int, y: Int) {

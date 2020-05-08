@@ -1,5 +1,7 @@
 package com.king.app.plate.conf
 
+import android.graphics.Color
+
 /**
  * Desc:
  * @author：Jing Yang
@@ -37,5 +39,8 @@ class AppConstants {
         val RESULT_NORMAL = arrayOf("R32", "R16", "QF", "SF", "Runner-up", "Champion")
 
         val MATCH_LEVEL = arrayOf("Normal", "Final")
+
+        var DRAW_TEXT_DEF = Color.parseColor("#333333")
+        var DRAW_TEXT_MODIFY = Color.parseColor("#ff0000")
     }
 }

@@ -67,7 +67,7 @@ public class FileUtil {
         }
 
         // 删除源目录database
-        String dbPath = PlateApplication.instance.getFilesDir().getParent() + "/databases";
+        String dbPath = AppDatabase.Companion.getDbFolder();
         File targetFolder = new File(dbPath);
         if (targetFolder.exists()) {
             File[] files = targetFolder.listFiles();
@@ -77,7 +77,7 @@ public class FileUtil {
         }
         try {
             InputStream in = new FileInputStream(source);
-            File file = new File(dbPath + "/" + AppDatabase.Companion.getDATABASE_NAME());
+            File file = new File(AppDatabase.Companion.getDbPath());
             OutputStream fileOut = new FileOutputStream(file);
             byte[] buffer = new byte[1024];
             int length;

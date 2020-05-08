@@ -33,18 +33,21 @@ public class DrawsView extends View implements View.OnTouchListener {
     private int cellWidth = ScreenUtils.dp2px(36);
     private int divider = ScreenUtils.dp2px(1);
     private int focusBorderWidth = ScreenUtils.dp2px(2);
-    private int colorWinner = Color.CYAN;
     private int colorFocus = Color.BLACK;
     private int colorText = Color.parseColor("#333333");
     private int textSize = ScreenUtils.dp2px(14);
 
-    private int[] cellColors = new int[]{
-            Color.parseColor("#89DAE9"),
-            Color.parseColor("#E49F80"),
-            Color.parseColor("#89E98B"),
-            Color.parseColor("#F8EB75"),
-            Color.parseColor("#F0F0F0")
+    public static int defaultCellColor = Color.parseColor("#F0F0F0");
+    public static int[][] defaultCellColors = new int[][] {
+            {Color.parseColor("#89DAE9"), defaultCellColor},// r32
+            {Color.parseColor("#E49F80"), defaultCellColor},// r16
+            {Color.parseColor("#89E98B"), defaultCellColor},// qf
+            {Color.parseColor("#F8EB75"), defaultCellColor},// sf
+            {defaultCellColor},// f
+            {Color.CYAN}// winner
     };
+
+    private int[][] cellColors;
 
     private int round;
 
@@ -86,6 +89,10 @@ public class DrawsView extends View implements View.OnTouchListener {
         round = (int) (Math.log(draws) / Math.log(2));
         drawsMap = new Rect[round * getRoundTotalCol() + 1][];// 1是winner
         setOnTouchListener(this);
+    }
+
+    public void setCellColors(int[][] cellColors) {
+        this.cellColors = cellColors;
     }
 
     public void setAdapter(AbsDrawAdapter adapter) {
@@ -271,16 +278,22 @@ public class DrawsView extends View implements View.OnTouchListener {
     }
 
     private int getColor(int hor, int ver) {
-        // 最后一列，winner
-        if (hor == round * getRoundTotalCol()) {
-            return colorWinner;
-        } else {
-            int index = ver / 2;
-            if (index % 2 == 0) {
-                return cellColors[hor / getRoundTotalCol()];
+        try {
+            int[][] colors = cellColors == null ? defaultCellColors : cellColors;
+            // 最后一列，winner
+            if (hor == round * getRoundTotalCol()) {
+                return colors[colors.length - 1][0];
             } else {
-                return cellColors[cellColors.length - 1];
+                int index = ver / 2;
+                int round = hor / getRoundTotalCol();
+                if (index % 2 == 0) {
+                    return colors[round][0];
+                } else {
+                    return colors[round][1];
+                }
             }
+        } catch (Exception e) {
+            return defaultCellColor;
         }
     }
 
