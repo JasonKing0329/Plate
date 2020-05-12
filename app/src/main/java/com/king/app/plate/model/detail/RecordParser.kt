@@ -16,12 +16,37 @@ class RecordParser {
 
     companion object {
         fun getRoundSimpleText(round: Int, matchLevel: Int): String {
-            return AppConstants.ROUND_NORMAL[round]
+            return when(matchLevel) {
+                AppConstants.matchLevelFinal -> {
+                    when (round) {
+                        AppConstants.ROUND_SF -> AppConstants.ROUND_FINAL[1]
+                        AppConstants.ROUND_F -> AppConstants.ROUND_FINAL[2]
+                        else -> AppConstants.ROUND_FINAL[0]
+                    }
+                }
+                else -> AppConstants.ROUND_NORMAL[round]
+            }
         }
 
         fun getRecordResult(round: Int, isWinner: Boolean, matchLevel: Int): String {
-            return if (round == AppConstants.round - 1 && isWinner) AppConstants.RESULT_NORMAL[AppConstants.round]
-            else AppConstants.RESULT_NORMAL[round]
+            return when(matchLevel) {
+                AppConstants.matchLevelFinal -> {
+                    if (round == AppConstants.ROUND_F && isWinner)
+                        AppConstants.RESULT_FINAL[AppConstants.RESULT_FINAL.size - 1]
+                    else
+                        when (round) {
+                            AppConstants.ROUND_SF -> AppConstants.RESULT_FINAL[1]
+                            AppConstants.ROUND_F -> AppConstants.RESULT_FINAL[2]
+                            else -> AppConstants.RESULT_FINAL[0]
+                        }
+                }
+                else -> {
+                    if (round == AppConstants.ROUND_F && isWinner)
+                        AppConstants.RESULT_NORMAL[AppConstants.round]
+                    else
+                        AppConstants.RESULT_NORMAL[round]
+                }
+            }
         }
 
         fun getRecordPack(record: Record, database: AppDatabase): RecordPack {

@@ -125,7 +125,14 @@ class PlayerPageViewModel(application: Application): BaseViewModel(application) 
         var records = recordRepository.getPlayerResultRecords(player.id)
         val step = IntArray(AppConstants.round + 1)
         for (record in records) {
-            if (record.round < AppConstants.round - 1) {
+            if (record.round < AppConstants.ROUND_F) {
+                // 总决赛小组赛不计入
+                if (record.round == AppConstants.ROUND_ROBIN) {
+                    var match = getDatabase().getMatchDao().getMatchById(record.matchId)
+                    if (match.level == AppConstants.matchLevelFinal) {
+                        continue
+                    }
+                }
                 step[record.round] ++
             }
             else {
