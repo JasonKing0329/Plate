@@ -10,17 +10,12 @@ import com.king.app.plate.model.bean.RankPlayer
 import com.king.app.plate.model.db.entity.Match
 import com.king.app.plate.model.db.entity.RecordPlayer
 import com.king.app.plate.model.detail.DrawModel
-import com.king.app.plate.model.repo.DrawRepository
-import com.king.app.plate.model.repo.PlayerRepository
-import com.king.app.plate.model.repo.RecordRepository
+import com.king.app.plate.model.repo.*
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.ObservableSource
 import io.reactivex.rxjava3.core.Observer
 import io.reactivex.rxjava3.disposables.Disposable
-import io.reactivex.rxjava3.functions.Function
 import java.lang.Exception
-import java.util.*
-import kotlin.math.abs
 
 /**
  * Desc:
@@ -38,6 +33,8 @@ class FinalDrawViewModel(application: Application): BaseViewModel(application) {
     private var drawRepository = DrawRepository()
     private var recordRepository = RecordRepository()
     private var playerRepository = PlayerRepository()
+    private var scoreRepository = ScoreRepository()
+    private var rankRepository = RankRepository()
     private var drawModel = DrawModel()
 
     var showGroupRedPlayers = MutableLiveData<MutableList<RankPlayer>>()
@@ -344,6 +341,48 @@ class FinalDrawViewModel(application: Application): BaseViewModel(application) {
         } catch (e: Exception) {
             messageObserver.value = "Winner is not ready"
         }
+    }
+
+    fun isMatchCompleted(): Boolean {
+        // 以决赛是否生成winnerId判定
+        var record = getDatabase().getRecordDao().getRecord(match.id, AppConstants.ROUND_F, 0)
+        return record != null && record.winnerId != 0.toLong()
+    }
+
+    fun createScore() {
+        scoreRepository.createFinalScores(match.id)
+            .compose(applySchedulers())
+            .subscribe(object : NextErrorObserver<Boolean>(getComposite()) {
+
+                override fun onNext(t: Boolean) {
+                    messageObserver.value = "success"
+                    loadMatch(match.id)
+                }
+
+                override fun onError(e: Throwable) {
+                    e.printStackTrace()
+                    messageObserver.value = "create error: $e"
+                }
+
+            })
+    }
+
+    fun createRank() {
+        rankRepository.createRank(match.id)
+            .compose(applySchedulers())
+            .subscribe(object : NextErrorObserver<Boolean>(getComposite()) {
+
+                override fun onNext(t: Boolean) {
+                    messageObserver.value = "success"
+                    loadMatch(match.id)
+                }
+
+                override fun onError(e: Throwable) {
+                    e.printStackTrace()
+                    messageObserver.value = "create error: $e"
+                }
+
+            })
     }
 
 }

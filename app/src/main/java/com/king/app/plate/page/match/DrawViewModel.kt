@@ -224,7 +224,7 @@ class DrawViewModel(application: Application): BaseViewModel(application) {
 
     fun isMatchCompleted(): Boolean {
         // 以决赛是否生成winnerId判定
-        var record = getDatabase().getRecordDao().getRecord(match.id, AppConstants.round - 1, 0)
+        var record = getDatabase().getRecordDao().getRecord(match.id, AppConstants.ROUND_F, 0)
         return record != null && record.winnerId != 0.toLong()
     }
 

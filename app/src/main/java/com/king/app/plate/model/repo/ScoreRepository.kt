@@ -12,7 +12,10 @@ import io.reactivex.rxjava3.core.Observable
  */
 class ScoreRepository: BaseRepository() {
 
-    private val SCORE_STEP = listOf(10, 45, 90, 180, 300, 500)
+    private val SCORE_NORMAL_STEP = listOf(10, 45, 90, 180, 300, 500)
+
+    // Final采用累积方法：RR每赢一场+100，输+50，SF胜出+200，F胜出+300
+    private val SCORE_FINAL_STEP = listOf(50, 100, 200, 300)
 
     fun createMatchScores(matchId: Long): Observable<Boolean> = Observable.create{
         var scores = mutableListOf<Score>()
@@ -62,17 +65,72 @@ class ScoreRepository: BaseRepository() {
     private fun defineScore(player: RecordPlayer, round: Int, isWinner: Boolean): Score {
         // 第二轮负，如果是种子（轮空），只有第一轮负的分。其他第二轮负的分
         var nScore = if (round == 1 && player.playerSeed!! > 0) {
-            SCORE_STEP[0]
+            SCORE_NORMAL_STEP[0]
         }
         // 决赛，胜者
         else if (round == AppConstants.round - 1 && isWinner) {
-            SCORE_STEP[SCORE_STEP.size - 1]
+            SCORE_NORMAL_STEP[SCORE_NORMAL_STEP.size - 1]
         }
         // 其他情况
         else{
-            SCORE_STEP[round]
+            SCORE_NORMAL_STEP[round]
         }
         return Score(0, 0, player.playerId, nScore)
+    }
+
+    /**
+     * Final采用累积方法：RR每赢一场+100，输+50，SF胜出+200，F胜出+300
+     */
+    fun createFinalScores(matchId: Long): Observable<Boolean> = Observable.create{
+        var scores = mutableListOf<Score>()
+        var recordList = getDatabase().getRecordDao().getRecordsByMatch(matchId)
+        var scoreMap = mutableMapOf<Long, Score>()
+        for (record in recordList) {
+            var players = getDatabase().getRecordPlayerDao().getPlayersByRecord(record.id)
+            for (player in players) {
+                var scoreBean = scoreMap[player.playerId]
+                if (scoreBean == null) {
+                    scoreBean = Score(0, matchId, player.playerId, 0)
+                    scoreMap[player.playerId] = scoreBean
+                    scores.add(scoreBean)
+                }
+                var score = defineFinalScore(record.round, record.winnerId == player.playerId)
+                scoreBean.score = scoreBean.score!! + score
+            }
+        }
+
+        var match = getDatabase().getMatchDao().getMatchById(matchId)
+
+        getDatabase().getScoreDao().deleteMatchScore(matchId)
+        match.isScoreCreated = false
+        if (scores.size > 0) {
+            match.isScoreCreated = true
+            getDatabase().getScoreDao().insertAll(scores)
+        }
+
+        // update match info
+        getDatabase().getMatchDao().update(match)
+
+        it.onNext(true)
+        it.onComplete()
+    }
+
+    private fun defineFinalScore(round: Int, isWinner: Boolean): Int {
+        return when(round) {
+            AppConstants.ROUND_ROBIN -> {
+                if (isWinner) SCORE_FINAL_STEP[1]
+                else SCORE_FINAL_STEP[0]
+            }
+            AppConstants.ROUND_SF -> {
+                if (isWinner) SCORE_FINAL_STEP[2]
+                else 0
+            }
+            AppConstants.ROUND_F -> {
+                if (isWinner) SCORE_FINAL_STEP[3]
+                else 0
+            }
+            else -> 0
+        }
     }
 
     fun sumPlayerScore(playerId: Long): Int {
