@@ -17,5 +17,6 @@ data class Record (
     var winnerId: Long?,
     var retireFlg: Int,
     var isBye: Boolean,
-    var orderInRound: Int
+    var orderInRound: Int,
+    var groupFlag: Int?// 0:groupRed, 1:groupBlue
 )

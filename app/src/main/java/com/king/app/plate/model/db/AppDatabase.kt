@@ -15,7 +15,7 @@ import com.king.app.plate.model.db.entity.*
  * @date: 2020/1/21 9:43
  */
 @Database(entities = [Match::class, Player::class, Rank::class, Score::class
-    , Record::class, RecordPlayer::class, RecordScore::class], version = 2)
+    , Record::class, RecordPlayer::class, RecordScore::class], version = 3)
 abstract class AppDatabase:RoomDatabase() {
 
     abstract fun getMatchDao(): MatchDao
@@ -51,6 +51,11 @@ abstract class AppDatabase:RoomDatabase() {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     database.execSQL("alter table 'match' add column isRankCreated INTEGER NOT NULL default 0")
                     database.execSQL("alter table 'match' add column isScoreCreated INTEGER NOT NULL default 0")
+                }
+            })
+            .addMigrations(object :Migration(2, 3) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL("alter table 'record' add column groupFlag INTEGER")
                 }
             })
             .build()

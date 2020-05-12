@@ -67,6 +67,8 @@
         </activity>
         <activity android:name=".page.player.record.RecordListActivity">
         </activity>
+        <activity android:name=".page.match.FinalDrawActivity">
+        </activity>
     </application>
 
 </manifest>

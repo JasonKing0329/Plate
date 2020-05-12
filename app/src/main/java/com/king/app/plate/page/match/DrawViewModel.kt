@@ -94,7 +94,7 @@ class DrawViewModel(application: Application): BaseViewModel(application) {
     private fun convertDrawData(): ObservableSource<DrawData> = ObservableSource {
         drawRepository.convertRoundsToBody(drawData.roundList, drawData.body)
         // 显示winner
-        var finalRecord = getDatabase().getRecordDao().getRecord(match.id, AppConstants.round - 1, 0)
+        var finalRecord = getDatabase().getRecordDao().getRecord(match.id, AppConstants.ROUND_F, 0)
         if (finalRecord?.winnerId != null) {
             var recordPlayers = getDatabase().getRecordPlayerDao().getPlayersByRecord(finalRecord.id)
             for (recordPlayer in recordPlayers) {

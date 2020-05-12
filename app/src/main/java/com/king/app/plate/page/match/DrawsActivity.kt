@@ -141,7 +141,7 @@ class DrawsActivity: BaseActivity<ActivityMatchDrawBinding, DrawViewModel>() {
     private fun popupEditScore(x: Int, y: Int) {
         if (mBinding.draws.focusRect != null) {
             var scrollX = mBinding.scrollView.scrollX
-            popupKeyboard.show(this, mBinding.draws.focusRect, scrollX, mBinding.draws)
+            popupKeyboard.show(this, mBinding.draws.focusRect, scrollX, mBinding.draws, 0)
         }
     }
 

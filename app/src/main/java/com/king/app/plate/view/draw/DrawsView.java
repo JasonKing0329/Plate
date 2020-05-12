@@ -1,6 +1,7 @@
 package com.king.app.plate.view.draw;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -13,6 +14,7 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
+import com.king.app.plate.R;
 import com.king.app.plate.conf.AppConstants;
 import com.king.app.plate.utils.DebugLog;
 import com.king.app.plate.utils.ScreenUtils;
@@ -28,8 +30,13 @@ public class DrawsView extends View implements View.OnTouchListener {
 
     private Paint textPaint = new Paint();
 
-    private int draws = AppConstants.Companion.getDraws();
-    private int set = AppConstants.Companion.getSet();
+    private int draws;
+    private int set;
+    private int round;
+    private boolean isWithWinner;
+
+    private int totalColumn;
+
     private int cellWidth = ScreenUtils.dp2px(36);
     private int divider = ScreenUtils.dp2px(1);
     private int focusBorderWidth = ScreenUtils.dp2px(2);
@@ -48,8 +55,6 @@ public class DrawsView extends View implements View.OnTouchListener {
     };
 
     private int[][] cellColors;
-
-    private int round;
 
     private Rect[][] drawsMap;
 
@@ -86,8 +91,20 @@ public class DrawsView extends View implements View.OnTouchListener {
     }
 
     private void init(AttributeSet attrs) {
-        round = (int) (Math.log(draws) / Math.log(2));
-        drawsMap = new Rect[round * getRoundTotalCol() + 1][];// 1是winner
+        TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.DrawsView);
+        draws = a.getInteger(R.styleable.DrawsView_drawNumber, AppConstants.Companion.getDraws());
+        set = a.getInteger(R.styleable.DrawsView_drawSet, AppConstants.Companion.getSet());
+        isWithWinner = a.getBoolean(R.styleable.DrawsView_drawWithWinner, true);
+        // 若未指定round，则根据draws计算全部round
+        int defRound = (int) (Math.log(draws) / Math.log(2));
+        round = a.getInteger(R.styleable.DrawsView_drawRound, defRound);
+
+        totalColumn = round * getRoundTotalCol();
+        if (isWithWinner) {
+            totalColumn ++;
+        }
+        drawsMap = new Rect[totalColumn][];
+
         setOnTouchListener(this);
     }
 
@@ -168,7 +185,7 @@ public class DrawsView extends View implements View.OnTouchListener {
      * @return
      */
     private int measureDefaultWidth(int defaultWidth) {
-        return cellWidth * (getRoundTotalCol() * round + 1) + (round * getRoundTotalCol() - 1) * divider;
+        return cellWidth * (totalColumn) + (totalColumn - 1) * divider;
     }
 
     @Override
@@ -236,9 +253,11 @@ public class DrawsView extends View implements View.OnTouchListener {
         }
 
         // winner
-        drawsMap[round * getRoundTotalCol()] = new Rect[1];
-        int left = drawsMap[drawsMap.length - 2][0].right + divider;
-        drawsMap[round * getRoundTotalCol()][0] = new Rect(left, 0, left + cellWidth, getHeight());
+        if (isWithWinner) {
+            drawsMap[drawsMap.length - 1] = new Rect[1];
+            int left = drawsMap[drawsMap.length - 2][0].right + divider;
+            drawsMap[drawsMap.length - 1][0] = new Rect(left, 0, left + cellWidth, getHeight());
+        }
     }
 
     private class HeightValue {
@@ -281,7 +300,7 @@ public class DrawsView extends View implements View.OnTouchListener {
         try {
             int[][] colors = cellColors == null ? defaultCellColors : cellColors;
             // 最后一列，winner
-            if (hor == round * getRoundTotalCol()) {
+            if (isWithWinner && hor == totalColumn - 1) {
                 return colors[colors.length - 1][0];
             } else {
                 int index = ver / 2;
@@ -297,6 +316,10 @@ public class DrawsView extends View implements View.OnTouchListener {
         }
     }
 
+    /**
+     * 一个Record包含的总列数（player+set）
+     * @return
+     */
     private int getRoundTotalCol() {
         return set + 1;
     }

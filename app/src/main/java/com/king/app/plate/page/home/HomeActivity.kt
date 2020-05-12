@@ -4,11 +4,14 @@ import android.os.Bundle
 import androidx.lifecycle.Observer
 import com.king.app.plate.R
 import com.king.app.plate.base.BaseActivity
+import com.king.app.plate.conf.AppConstants
 import com.king.app.plate.databinding.ActivityHomeBinding
 import com.king.app.plate.model.db.AppDatabase
+import com.king.app.plate.model.db.entity.Match
 import com.king.app.plate.page.SettingsActivity
 import com.king.app.plate.page.h2h.H2hActivity
 import com.king.app.plate.page.match.DrawsActivity
+import com.king.app.plate.page.match.FinalDrawActivity
 import com.king.app.plate.page.match.MatchActivity
 import com.king.app.plate.page.player.PlayerActivity
 import com.king.app.plate.page.rank.RankActivity
@@ -50,10 +53,16 @@ class HomeActivity: BaseActivity<ActivityHomeBinding, HomeViewModel>() {
         mModel.showLastMatchDraw.observe(this, Observer { showLastDraw(it) })
     }
 
-    private fun showLastDraw(matchId: Long) {
+    private fun showLastDraw(match: Match) {
         var bundle = Bundle()
-        bundle.putLong(DrawsActivity.EXTRA_MATCH_ID, matchId)
-        startPage(DrawsActivity::class.java, bundle)
+        if (match.level == AppConstants.matchLevelFinal) {
+            bundle.putLong(FinalDrawActivity.EXTRA_MATCH_ID, match.id)
+            startPage(FinalDrawActivity::class.java, bundle)
+        }
+        else {
+            bundle.putLong(DrawsActivity.EXTRA_MATCH_ID, match.id)
+            startPage(DrawsActivity::class.java, bundle)
+        }
     }
 
     private fun loadFrom() {

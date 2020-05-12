@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.king.app.plate.R
 import com.king.app.plate.base.BaseActivity
 import com.king.app.plate.base.adapter.BaseBindingAdapter
+import com.king.app.plate.conf.AppConstants
 import com.king.app.plate.databinding.ActivityMatchBinding
 import com.king.app.plate.model.db.entity.Match
 import com.king.app.plate.utils.ScreenUtils
@@ -85,10 +86,16 @@ class MatchActivity: BaseActivity<ActivityMatchBinding, MatchViewModel>() {
                 }
             }
             adapter.setOnItemClickListener(object : BaseBindingAdapter.OnItemClickListener<Match> {
-                override fun onClickItem(view: View, position: Int, data: Match) {
+                override fun onClickItem(view: View, position: Int, match: Match) {
                     var bundle = Bundle()
-                    bundle.putLong(DrawsActivity.EXTRA_MATCH_ID, data.id)
-                    startPage(DrawsActivity::class.java, bundle)
+                    if (match.level == AppConstants.matchLevelFinal) {
+                        bundle.putLong(FinalDrawActivity.EXTRA_MATCH_ID, match.id)
+                        startPage(FinalDrawActivity::class.java, bundle)
+                    }
+                    else {
+                        bundle.putLong(DrawsActivity.EXTRA_MATCH_ID, match.id)
+                        startPage(DrawsActivity::class.java, bundle)
+                    }
                 }
             })
             mBinding.rvList.adapter = adapter

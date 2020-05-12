@@ -21,4 +21,11 @@
         <attr name="axisYTextWidth" format="dimension" />
     </declare-styleable>
 
+    <!--Draws-->
+    <declare-styleable name="DrawsView">
+        <attr name="drawNumber" format="integer" />
+        <attr name="drawSet" format="integer" />
+        <attr name="drawRound" format="integer" />
+        <attr name="drawWithWinner" format="boolean" />
+    </declare-styleable>
 </resources>

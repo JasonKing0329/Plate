@@ -8,7 +8,6 @@ import com.king.app.plate.model.db.entity.RecordScore
 import com.king.app.plate.page.match.DrawData
 import com.king.app.plate.page.match.DrawRound
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.ObservableSource
 import kotlin.math.abs
 import kotlin.math.ln
 import kotlin.math.max
@@ -21,13 +20,26 @@ import kotlin.math.max
 class DrawRepository: BaseRepository() {
 
     /**
+     * 初始化按照12签1轮，RecordPack 6 逐个填空
+     */
+    fun createFinalGroupDraw(): Observable<DrawBody> = createDrawBody(AppConstants.draws_final_group, 1, false)
+
+    /**
+     * 初始化按照4签2轮，RecordPack 4-2-1 逐个填空
+     */
+    fun createFinalRestDraw(): Observable<DrawBody> = createDrawBody(AppConstants.draws_final_rest, null, true)
+
+    /**
      * 初始化按照32签5轮，RecordPack 16-8-4-2-1 逐个填空
      */
-    fun createDrawBody(): Observable<DrawBody> = Observable.create {
+    fun createDrawBody(): Observable<DrawBody> = createDrawBody(AppConstants.draws, null, true)
+
+    private fun createDrawBody(draws: Int, round: Int?, isWithWinner: Boolean): Observable<DrawBody> = Observable.create {
         var drawBody = DrawBody()
         var data = mutableListOf<MutableList<BodyCell>>()
-        var round = (ln(AppConstants.draws.toDouble()) / ln(2.0)).toInt()
-        var maxRow = AppConstants.draws
+        // round未指定代表计算全部轮次
+        var round = if(round == null) (ln(draws.toDouble()) / ln(2.0)).toInt() else round!!
+        var maxRow = draws
         var recordPack: RecordPack? = null
         for (i in 0 until round) {
             for (j in 0 until (AppConstants.set + 1)) {
@@ -51,9 +63,11 @@ class DrawRepository: BaseRepository() {
             maxRow /= 2
         }
         // 加一列winner
-        var winner = mutableListOf<BodyCell>()
-        winner.add(newBodyData(0, AppConstants.cellTypePlayer, recordPack))
-        data.add(winner)
+        if (isWithWinner) {
+            var winner = mutableListOf<BodyCell>()
+            winner.add(newBodyData(0, AppConstants.cellTypePlayer, recordPack))
+            data.add(winner)
+        }
         drawBody.bodyData = data
 
         it.onNext(drawBody)
@@ -69,12 +83,18 @@ class DrawRepository: BaseRepository() {
         return data
     }
 
+    fun convertFinalGroupToBody(rounds: List<DrawRound>?, drawBody: DrawBody) = convertRoundsToBody(rounds, drawBody, AppConstants.draws_final_group)
+
+    fun convertFinalRestToBody(rounds: List<DrawRound>?, drawBody: DrawBody) = convertRoundsToBody(rounds, drawBody, AppConstants.draws_final_rest)
+
+    fun convertRoundsToBody(rounds: List<DrawRound>?, drawBody: DrawBody) = convertRoundsToBody(rounds, drawBody, AppConstants.draws)
+
     /**
      * 将轮次record数据转化为DrawBody
      */
-    fun convertRoundsToBody(rounds: List<DrawRound>?, drawBody: DrawBody) {
+    private fun convertRoundsToBody(rounds: List<DrawRound>?, drawBody: DrawBody, draws: Int) {
         if (rounds != null) {
-            var draw = AppConstants.draws
+            var draw = draws
             var recordColumn = AppConstants.set + 1
             // 轮次
             for (i in rounds.indices) {
@@ -160,13 +180,28 @@ class DrawRepository: BaseRepository() {
     }
 
     /**
+     * 总决赛小组签表
+     */
+    fun saveFinalGroupDraw(drawData: DrawData, groupFlg: Int): Observable<DrawData> = saveDraw(drawData, groupFlg, 0)
+
+    /**
+     * 总决赛SF与F签表
+     */
+    fun saveFinalRestDraw(drawData: DrawData): Observable<DrawData> = saveDraw(drawData, null, AppConstants.ROUND_SF)
+
+    /**
+     * 常规赛签表
+     */
+    fun saveDraw(drawData: DrawData): Observable<DrawData> = saveDraw(drawData, null, 0)
+
+    /**
      * 目前只考虑3盘的情况(recordStep = 4)
      */
-    fun saveDraw(drawData: DrawData): Observable<DrawData> = Observable.create {
+    private fun saveDraw(drawData: DrawData, groupFlg: Int?, startRound: Int): Observable<DrawData> = Observable.create {
         var recordStep = 4
         // 每4列，2行为一个record
         for (col in 0 until drawData.body.bodyData.size step recordStep) {
-            var round = col / recordStep
+            var round = col / recordStep + startRound
             var colPlayer = drawData.body.bodyData[col]
             // champion只有player行
             if (col == drawData.body.bodyData.size - 1) {
@@ -191,7 +226,7 @@ class DrawRepository: BaseRepository() {
                 line2Cells.add(colSet3[row + 1])
                 recordCells.bodyCells.add(line1Cells)
                 recordCells.bodyCells.add(line2Cells)
-                updateRecordCellsData(drawData.match!!.id, round, orderInRound, recordCells)
+                updateRecordCellsData(drawData.match!!.id, round, orderInRound, recordCells, groupFlg)
             }
         }
         it.onNext(drawData)
@@ -201,7 +236,13 @@ class DrawRepository: BaseRepository() {
     /**
      * 每4列2行为一个Record记录
      */
-    private fun updateRecordCellsData(matchId: Long, round: Int, orderInRound: Int, cells: RecordCells) {
+    private fun updateRecordCellsData(
+        matchId: Long,
+        round: Int,
+        orderInRound: Int,
+        cells: RecordCells,
+        groupFlg: Int?
+    ) {
         var isScoreModified = false
         var recordPack = cells.bodyCells[0][0].pack
         // new
@@ -210,7 +251,7 @@ class DrawRepository: BaseRepository() {
             var players = recordPack.playerList
             if (players.size > 0) {
                 // insert record
-                var record = Record(0, matchId, round, null, 0, false, orderInRound)
+                var record = Record(0, matchId, round, null, 0, false, orderInRound, groupFlg)
                 if (players.size == 1) {
                     record.isBye = true
                     record.winnerId = players[0].playerId
