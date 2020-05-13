@@ -3,6 +3,7 @@ package com.king.app.plate.page.match
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.AdapterView
 import com.king.app.plate.base.EmptyViewModel
 import com.king.app.plate.conf.AppConstants
 import com.king.app.plate.databinding.FragmentMatchEditorBinding
@@ -42,6 +43,25 @@ class MatchEditor: PopupContent<FragmentMatchEditorBinding, EmptyViewModel>() {
                     mBinding.etName.setText(date)
                 }
             })
+        }
+        mBinding.spType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+            }
+
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                if (position == AppConstants.matchLevelFinal) {
+                    mBinding.tvTypeDetail.text = "Draws 8, set 3"
+                }
+                else {
+                    mBinding.tvTypeDetail.text = "Draws 32, set 3"
+                }
+            }
+
         }
     }
 

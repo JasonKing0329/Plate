@@ -19,7 +19,7 @@
         <TextView
             android:id="@+id/tv_index"
             android:layout_width="wrap_content"
-            android:minWidth="20dp"
+            android:minWidth="30dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
@@ -85,6 +85,25 @@
             android:visibility="@{bean.rankCreated ? View.VISIBLE : View.GONE}"
             app:layout_constraintStart_toEndOf="@+id/tv_score"
             app:layout_constraintTop_toTopOf="@+id/tv_score" />
+
+        <ImageView
+            android:id="@+id/iv_cup"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/iv_edit"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_cup" />
+
+        <TextView
+            android:id="@+id/tv_final"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Final"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_cup"
+            app:layout_constraintEnd_toStartOf="@+id/iv_cup"
+            app:layout_constraintTop_toTopOf="@+id/iv_cup" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
