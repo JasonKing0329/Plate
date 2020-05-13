@@ -7,6 +7,9 @@
         <variable
             name="bean"
             type="com.king.app.plate.model.db.entity.Match" />
+        <variable
+            name="player"
+            type="com.king.app.plate.model.bean.RankPlayer" />
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_group"
@@ -86,24 +89,51 @@
             app:layout_constraintStart_toEndOf="@+id/tv_score"
             app:layout_constraintTop_toTopOf="@+id/tv_score" />
 
-        <ImageView
-            android:id="@+id/iv_cup"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:padding="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/iv_edit"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_cup" />
-
         <TextView
             android:id="@+id/tv_final"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Final"
-            app:layout_constraintBottom_toBottomOf="@+id/iv_cup"
-            app:layout_constraintEnd_toStartOf="@+id/iv_cup"
-            app:layout_constraintTop_toTopOf="@+id/iv_cup" />
+            android:textColor="@color/text_sub"
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_date"
+            app:layout_constraintStart_toEndOf="@+id/tv_date"
+            app:layout_constraintTop_toTopOf="@+id/tv_date" />
+
+        <ImageView
+            android:id="@+id/iv_cup"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_date"
+            app:layout_constraintStart_toEndOf="@+id/tv_final"
+            app:layout_constraintTop_toTopOf="@+id/tv_date"
+            app:srcCompat="@drawable/ic_cup" />
+
+        <TextView
+            android:id="@+id/tv_winner"
+            style="@style/TvPlayerCircle"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:visibility="@{player == null ? View.GONE:View.VISIBLE}"
+            android:text="@{player.player.name}"
+            android:textSize="16dp"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_edit"
+            app:layout_constraintEnd_toStartOf="@+id/iv_edit"
+            app:layout_constraintTop_toTopOf="@+id/iv_edit" />
+
+        <TextView
+            android:id="@+id/tv_winner_rank"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="6dp"
+            android:visibility="@{player == null || player.rank == 0 ? View.GONE:View.VISIBLE}"
+            android:text="@{String.valueOf(player.rank)}"
+            android:textColor="@color/white"
+            android:textSize="9dp"
+            app:layout_constraintEnd_toEndOf="@+id/tv_winner"
+            app:layout_constraintTop_toTopOf="@+id/tv_winner" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

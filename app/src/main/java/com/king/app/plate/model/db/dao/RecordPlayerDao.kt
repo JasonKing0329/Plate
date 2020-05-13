@@ -12,6 +12,9 @@ import com.king.app.plate.model.db.entity.RecordPlayer
 @Dao
 interface RecordPlayerDao:BaseDao<RecordPlayer> {
 
+    @Query("select * from `record_player` where recordId=:recordId and playerId=:playerId")
+    fun getRecordPlayer(recordId: Long, playerId: Long): RecordPlayer
+
     @Query("select * from `record_player` where recordId=:recordId order by `order` asc")
     fun getPlayersByRecord(recordId: Long): MutableList<RecordPlayer>
 

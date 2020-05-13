@@ -20,7 +20,7 @@ abstract class HeadChildBindingAdapter<VH : ViewDataBinding, VI : ViewDataBindin
     protected val TYPE_HEAD = 0
     protected val TYPE_ITEM = 1
 
-    protected var list: List<Any>? = null
+    var list: MutableList<Any>? = null
 
     private var onHeadClickListener: OnHeadClickListener<H>? = null
 
@@ -28,7 +28,7 @@ abstract class HeadChildBindingAdapter<VH : ViewDataBinding, VI : ViewDataBindin
 
     protected abstract val itemClass: Class<*>
 
-    fun setData(list: List<Any>) {
+    fun setData(list: MutableList<Any>) {
         this.list = list
     }
 
@@ -56,7 +56,7 @@ abstract class HeadChildBindingAdapter<VH : ViewDataBinding, VI : ViewDataBindin
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         if (viewType == TYPE_HEAD) {
-            val binding = onCreateHeadBind(LayoutInflater.from(parent.context))
+            val binding = onCreateHeadBind(LayoutInflater.from(parent.context), parent)
             val holder = BindingHolder(binding.root)
             binding.root.setOnClickListener { v ->
                 onClickHead(
@@ -67,7 +67,7 @@ abstract class HeadChildBindingAdapter<VH : ViewDataBinding, VI : ViewDataBindin
             }
             return holder
         } else {
-            val binding = onCreateItemBind(LayoutInflater.from(parent.context))
+            val binding = onCreateItemBind(LayoutInflater.from(parent.context), parent)
             val holder = BindingHolder(binding.root)
             binding.root.setOnClickListener { v ->
                 onClickItem(
@@ -80,9 +80,15 @@ abstract class HeadChildBindingAdapter<VH : ViewDataBinding, VI : ViewDataBindin
         }
     }
 
-    abstract fun onCreateHeadBind(from: LayoutInflater?): VH
+    abstract fun onCreateHeadBind(
+        from: LayoutInflater,
+        parent: ViewGroup
+    ): VH
 
-    abstract fun onCreateItemBind(from: LayoutInflater?): VI
+    abstract fun onCreateItemBind(
+        from: LayoutInflater,
+        parent: ViewGroup
+    ): VI
 
     protected fun onClickHead(view: View, position: Int, data: H) {
         if (onHeadClickListener != null) {

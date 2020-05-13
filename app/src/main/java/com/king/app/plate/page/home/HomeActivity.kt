@@ -12,7 +12,7 @@ import com.king.app.plate.page.SettingsActivity
 import com.king.app.plate.page.h2h.H2hActivity
 import com.king.app.plate.page.match.DrawsActivity
 import com.king.app.plate.page.match.FinalDrawActivity
-import com.king.app.plate.page.match.MatchActivity
+import com.king.app.plate.page.match.list.MatchActivity
 import com.king.app.plate.page.player.PlayerActivity
 import com.king.app.plate.page.rank.RankActivity
 import com.king.app.plate.utils.DrawableUtil

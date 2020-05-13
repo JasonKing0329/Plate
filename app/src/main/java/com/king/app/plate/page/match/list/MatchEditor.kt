@@ -1,4 +1,4 @@
-package com.king.app.plate.page.match
+package com.king.app.plate.page.match.list
 
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -10,7 +10,6 @@ import com.king.app.plate.databinding.FragmentMatchEditorBinding
 import com.king.app.plate.model.db.entity.Match
 import com.king.app.plate.view.dialog.PopupContent
 import com.king.app.plate.view.share.DateManager
-import java.text.SimpleDateFormat
 import java.util.*
 
 /**

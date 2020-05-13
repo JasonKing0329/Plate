@@ -51,7 +51,7 @@
         </activity>
         <activity android:name=".page.player.PlayerActivity">
         </activity>
-        <activity android:name=".page.match.MatchActivity">
+        <activity android:name=".page.match.list.MatchActivity">
         </activity>
         <activity android:name=".page.match.DrawsActivity">
         </activity>

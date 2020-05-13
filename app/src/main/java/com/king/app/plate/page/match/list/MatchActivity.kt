@@ -1,4 +1,4 @@
-package com.king.app.plate.page.match
+package com.king.app.plate.page.match.list
 
 import android.content.DialogInterface
 import android.graphics.Rect
@@ -9,10 +9,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.king.app.plate.R
 import com.king.app.plate.base.BaseActivity
-import com.king.app.plate.base.adapter.BaseBindingAdapter
+import com.king.app.plate.base.adapter.HeadChildBindingAdapter
 import com.king.app.plate.conf.AppConstants
 import com.king.app.plate.databinding.ActivityMatchBinding
 import com.king.app.plate.model.db.entity.Match
+import com.king.app.plate.page.match.DrawsActivity
+import com.king.app.plate.page.match.FinalDrawActivity
 import com.king.app.plate.utils.ScreenUtils
 import com.king.app.plate.view.dialog.PopupDialog
 
@@ -23,11 +25,12 @@ import com.king.app.plate.view.dialog.PopupDialog
  */
 class MatchActivity: BaseActivity<ActivityMatchBinding, MatchViewModel>() {
 
-    private var adapter:MatchItemAdapter = MatchItemAdapter()
+    private var adapter = MatchAdapter()
 
     override fun getContentView(): Int = R.layout.activity_match
 
-    override fun createViewModel(): MatchViewModel = generateViewModel(MatchViewModel::class.java)
+    override fun createViewModel(): MatchViewModel = generateViewModel(
+        MatchViewModel::class.java)
 
     override fun initView() {
         mBinding.actionbar.setOnBackListener { onBackPressed() }
@@ -71,10 +74,10 @@ class MatchActivity: BaseActivity<ActivityMatchBinding, MatchViewModel>() {
         mModel.loadMatches()
     }
 
-    private fun showMatches(list: List<Match>?) {
+    private fun showMatches(list: MutableList<Any>?) {
         adapter.list = list
         if (mBinding.rvList.adapter == null) {
-            adapter.onActionListener = object : MatchItemAdapter.OnActionListener {
+            adapter.onActionListener = object : MatchAdapter.OnActionListener {
                 override fun onDeleteItem(position: Int, bean: Match) {
                     showConfirmCancelMessage("Are you sure to delete this match?"
                         , DialogInterface.OnClickListener { dialog, which ->  mModel.deleteMatch(bean)}
@@ -85,15 +88,15 @@ class MatchActivity: BaseActivity<ActivityMatchBinding, MatchViewModel>() {
                     editMatch(bean)
                 }
             }
-            adapter.setOnItemClickListener(object : BaseBindingAdapter.OnItemClickListener<Match> {
-                override fun onClickItem(view: View, position: Int, match: Match) {
+            adapter.setOnItemClickListener(object : HeadChildBindingAdapter.OnItemClickListener<MatchItemBean> {
+                override fun onClickItem(view: View, position: Int, match: MatchItemBean) {
                     var bundle = Bundle()
-                    if (match.level == AppConstants.matchLevelFinal) {
-                        bundle.putLong(FinalDrawActivity.EXTRA_MATCH_ID, match.id)
+                    if (match.match.level == AppConstants.matchLevelFinal) {
+                        bundle.putLong(FinalDrawActivity.EXTRA_MATCH_ID, match.match.id)
                         startPage(FinalDrawActivity::class.java, bundle)
                     }
                     else {
-                        bundle.putLong(DrawsActivity.EXTRA_MATCH_ID, match.id)
+                        bundle.putLong(DrawsActivity.EXTRA_MATCH_ID, match.match.id)
                         startPage(DrawsActivity::class.java, bundle)
                     }
                 }
