@@ -1,5 +1,6 @@
 package com.king.app.plate.page.home
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Observer
@@ -14,9 +15,12 @@ import com.king.app.plate.page.h2h.H2hActivity
 import com.king.app.plate.page.match.DrawsActivity
 import com.king.app.plate.page.match.FinalDrawActivity
 import com.king.app.plate.page.match.list.MatchActivity
+import com.king.app.plate.page.match.list.MatchItemBean
 import com.king.app.plate.page.player.PlayerActivity
 import com.king.app.plate.page.rank.RankActivity
+import com.king.app.plate.utils.ColorUtils
 import com.king.app.plate.utils.DrawableUtil
+import com.king.app.plate.utils.RippleUtil
 import com.king.app.plate.utils.ScreenUtils
 import com.king.app.plate.view.dialog.PopupDialog
 
@@ -55,13 +59,25 @@ class HomeActivity: BaseActivity<ActivityHomeBinding, HomeViewModel>() {
             }
         }
 
-        mModel.lastMatchObserver.observe(this, Observer {
-            mBinding.adapterMatch.bean = it.match
-            mBinding.adapterMatch.player = it.winner
-            mBinding.adapterMatch.ivDelete.visibility = View.GONE
-            mBinding.adapterMatch.tvIndex.visibility = View.INVISIBLE
-        })
+        mModel.lastMatchObserver.observe(this, Observer { bindRecentMatch(it) })
         mModel.loadData()
+    }
+
+    private fun bindRecentMatch(it: MatchItemBean) {
+        mBinding.adapterMatch.clGroup.background = RippleUtil.getRippleBackground(
+            Color.WHITE
+            , mBinding.adapterMatch.clGroup.resources.getColor(R.color.ripple_color))
+
+        mBinding.adapterMatch.bean = it.match
+        mBinding.adapterMatch.player = it.winner
+        mBinding.adapterMatch.ivDelete.visibility = View.GONE
+        mBinding.adapterMatch.tvIndex.visibility = View.INVISIBLE
+
+        if (it.winner != null) {
+            var color = if (it.winner!!.player!!.defColor == null) ColorUtils.randomWhiteTextBgColor()
+            else it.winner!!.player!!.defColor!!
+            DrawableUtil.setGradientColor(mBinding.adapterMatch.tvWinner, color)
+        }
     }
 
     private fun showLastDraw(match: Match) {
