@@ -27,4 +27,9 @@ interface ScoreDao: BaseDao<Score> {
     @Query("select * from score where playerId=:playerId order by score desc")
     fun getScoreList(playerId: Long): MutableList<Score>
 
+    @Query("select s.* from score s join [match] m on s.matchId=m.id where s.playerId=:playerId and m.period=:period")
+    fun getPeriodScoreList(playerId: Long, period: Int): MutableList<Score>
+
+    @Query("select s.* from score s join [match] m on s.matchId=m.id where s.playerId=:playerId and m.[order]<=:orderMax and m.[order]>=:orderMin")
+    fun getRankScoreList(playerId: Long, orderMin: Int, orderMax: Int): MutableList<Score>
 }

@@ -8,6 +8,8 @@ import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.king.app.plate.PlateApplication
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.disposables.Disposable
 
 /**
  * Desc:
@@ -19,6 +21,12 @@ abstract class BaseFragment<T : ViewDataBinding, VM: BaseViewModel>: RootFragmen
     lateinit var mBinding: T
 
     lateinit var mModel: VM
+
+    var compositeDisposable: CompositeDisposable = CompositeDisposable()
+
+    fun addDisposable(disposable: Disposable) {
+        compositeDisposable.add(disposable)
+    }
 
     fun generateViewModel(vm: Class<VM>) = ViewModelProvider(this, ViewModelFactory(PlateApplication.instance)).get(vm)
 

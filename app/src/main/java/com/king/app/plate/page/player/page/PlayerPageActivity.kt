@@ -10,6 +10,8 @@ import com.king.app.plate.page.h2h.H2hTableActivity
 import com.king.app.plate.page.player.record.RecordListActivity
 import com.king.app.plate.utils.ColorUtils
 import com.king.app.plate.utils.DrawableUtil
+import com.king.app.plate.utils.ScreenUtils
+import com.king.app.plate.view.dialog.PopupDialog
 import com.king.app.plate.view.widget.chart.adapter.IAxis
 import com.king.app.plate.view.widget.chart.adapter.LineChartAdapter
 import com.king.app.plate.view.widget.chart.adapter.LineData
@@ -46,14 +48,15 @@ class PlayerPageActivity: BaseActivity<ActivityPlayerPageBinding, PlayerPageView
             }
         }
         mBinding.ivScoreExpand.setOnClickListener{
-            if (mBinding.tvScoreBody.visibility == View.VISIBLE) {
-                mBinding.tvScoreBody.visibility = View.GONE
-                mBinding.ivResultExpand.setImageResource(R.drawable.ic_arrow_drop_down_black_24dp)
-            }
-            else {
-                mBinding.tvScoreBody.visibility = View.VISIBLE
-                mBinding.ivResultExpand.setImageResource(R.drawable.ic_arrow_drop_up_black_24dp)
-            }
+//            if (mBinding.tvScoreBody.visibility == View.VISIBLE) {
+//                mBinding.tvScoreBody.visibility = View.GONE
+//                mBinding.ivResultExpand.setImageResource(R.drawable.ic_arrow_drop_down_black_24dp)
+//            }
+//            else {
+//                mBinding.tvScoreBody.visibility = View.VISIBLE
+//                mBinding.ivResultExpand.setImageResource(R.drawable.ic_arrow_drop_up_black_24dp)
+//            }
+            showScoreDetails()
         }
 
         mBinding.llH2h.setOnClickListener{
@@ -67,6 +70,16 @@ class PlayerPageActivity: BaseActivity<ActivityPlayerPageBinding, PlayerPageView
             startPage(RecordListActivity::class.java, bundle)
         }
 
+    }
+
+    private fun showScoreDetails() {
+        var content = ScoreStructDialog()
+        content.playerId = getPlayerId()
+        var dialog = PopupDialog()
+        dialog.content = content
+        dialog.title = "Score Struct"
+        dialog.forceHeight = ScreenUtils.getScreenHeight() * 3 / 5
+        dialog.show(supportFragmentManager, "ScoreStructDialog")
     }
 
     override fun initData() {

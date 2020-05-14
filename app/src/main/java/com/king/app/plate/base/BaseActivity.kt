@@ -7,6 +7,8 @@ import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.king.app.plate.PlateApplication
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.disposables.Disposable
 
 /**
  * 描述:
@@ -24,6 +26,12 @@ abstract class BaseActivity<T : ViewDataBinding, VM : BaseViewModel> : RootActiv
     lateinit var mBinding: T
 
     lateinit var mModel: VM
+
+    var compositeDisposable: CompositeDisposable = CompositeDisposable()
+
+    fun addDisposable(disposable: Disposable) {
+        compositeDisposable.add(disposable)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

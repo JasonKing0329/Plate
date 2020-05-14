@@ -4,9 +4,11 @@ import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.AdapterView
+import com.king.app.plate.PlateApplication
 import com.king.app.plate.base.EmptyViewModel
 import com.king.app.plate.conf.AppConstants
 import com.king.app.plate.databinding.FragmentMatchEditorBinding
+import com.king.app.plate.model.db.AppDatabase
 import com.king.app.plate.model.db.entity.Match
 import com.king.app.plate.view.dialog.PopupContent
 import com.king.app.plate.view.share.DateManager
@@ -55,9 +57,11 @@ class MatchEditor: PopupContent<FragmentMatchEditorBinding, EmptyViewModel>() {
             ) {
                 if (position == AppConstants.matchLevelFinal) {
                     mBinding.tvTypeDetail.text = "Draws 8, set 3"
+                    match!!.draws = 8
                 }
                 else {
                     mBinding.tvTypeDetail.text = "Draws 32, set 3"
+                    match!!.draws = 32
                 }
             }
 
@@ -66,8 +70,24 @@ class MatchEditor: PopupContent<FragmentMatchEditorBinding, EmptyViewModel>() {
 
     override fun initData() {
         if (match == null) {
+            // 新增match，自动生成period, order与orderInPeriod
+            var period = 0
+            var order = 0
+            var orderInPeriod = 0
+            var lastMatch = AppDatabase.instance.getMatchDao().getLastMatch()
+            if (lastMatch != null) {
+                order = lastMatch.order + 1
+                if (lastMatch.orderInPeriod == AppConstants.PERIOD_TOTAL) {
+                    period = lastMatch.period!! + 1
+                    orderInPeriod = 1
+                }
+                else {
+                    period = lastMatch.period!!
+                    orderInPeriod = lastMatch.orderInPeriod!! + 1
+                }
+            }
             date = dateManager.dateFormat.format(Date())
-            match = Match(0, 0, 0, 0, date, date, 0, AppConstants.draws, AppConstants.bye, 0,
+            match = Match(0, period, order, orderInPeriod, date, date, 0, AppConstants.draws, AppConstants.bye, 0,
                 isRankCreated = false,
                 isScoreCreated = false
             )
@@ -104,6 +124,7 @@ class MatchEditor: PopupContent<FragmentMatchEditorBinding, EmptyViewModel>() {
         match!!.name = name.toString();
         match!!.period = period
         match!!.orderInPeriod = order
+        match!!.order = (period - 1) * AppConstants.PERIOD_TOTAL + order
         match!!.date = date
         match!!.level = mBinding.spType.selectedItemPosition
 

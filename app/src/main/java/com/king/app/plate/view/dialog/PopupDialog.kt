@@ -19,7 +19,7 @@ import com.king.app.plate.utils.ScreenUtils
  * @author：Jing Yang
  * @date: 2020/4/17 10:39
  */
-open class PopupDialog: BaseDialogFragment(), PopupContentHolder {
+open class PopupDialog : BaseDialogFragment(), PopupContentHolder {
 
     private lateinit var binding: DialogBaseBinding
 

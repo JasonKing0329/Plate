@@ -9,6 +9,9 @@ import android.graphics.Color
  */
 class AppConstants {
     companion object {
+
+        var PERIOD_TOTAL = 21 // 20 Normal + 1 Final
+
         var draws = 32
         var set = 3
         var bye = 8

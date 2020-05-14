@@ -3,6 +3,7 @@ package com.king.app.plate.model.repo
 import com.king.app.plate.conf.AppConstants
 import com.king.app.plate.model.db.entity.RecordPlayer
 import com.king.app.plate.model.db.entity.Score
+import com.king.app.plate.page.player.page.ScoreItem
 import io.reactivex.rxjava3.core.Observable
 
 /**
@@ -135,5 +136,35 @@ class ScoreRepository: BaseRepository() {
 
     fun sumPlayerScore(playerId: Long): Int {
         return getDatabase().getScoreDao().sumScore(playerId)
+    }
+
+    /**
+     * 从最近一站创建过积分的赛事开始往前PERIOD_TOTAL站内有效积分
+     */
+    fun getRankScoreList(playerId: Long): Observable<MutableList<ScoreItem>> = Observable.create {
+        var list = mutableListOf<ScoreItem>()
+        var lastMatch = getDatabase().getMatchDao().getLastRankMatch()
+        var orderMin = lastMatch.order - AppConstants.PERIOD_TOTAL
+        var scores = getDatabase().getScoreDao().getRankScoreList(playerId, orderMin, lastMatch.order)
+        for (score in scores) {
+            var match = getDatabase().getMatchDao().getMatchById(score.matchId)
+            list.add(ScoreItem(score, match))
+        }
+        it.onNext(list)
+        it.onComplete()
+    }
+
+    /**
+     * Period内赛事积分
+     */
+    fun getPeriodScoreList(playerId: Long, period: Int): Observable<MutableList<ScoreItem>> = Observable.create {
+        var list = mutableListOf<ScoreItem>()
+        var scores = getDatabase().getScoreDao().getPeriodScoreList(playerId, period)
+        for (score in scores) {
+            var match = getDatabase().getMatchDao().getMatchById(score.matchId)
+            list.add(ScoreItem(score, match))
+        }
+        it.onNext(list)
+        it.onComplete()
     }
 }

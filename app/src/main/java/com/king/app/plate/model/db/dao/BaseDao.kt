@@ -28,4 +28,7 @@ interface BaseDao<T> {
     @Update
     fun update(element: T)
 
+    @Update
+    fun update(element: MutableList<T>)
+
 }
