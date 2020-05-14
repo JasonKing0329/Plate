@@ -5,8 +5,12 @@ import android.view.View
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.MutableLiveData
 import com.king.app.plate.base.BaseViewModel
+import com.king.app.plate.base.observer.NextErrorObserver
 import com.king.app.plate.model.db.entity.Match
+import com.king.app.plate.model.repo.MatchRepository
+import com.king.app.plate.page.match.list.MatchItemBean
 import com.king.app.plate.utils.DataExporter
+import io.reactivex.rxjava3.core.Observable
 
 /**
  * Desc:
@@ -15,15 +19,25 @@ import com.king.app.plate.utils.DataExporter
  */
 class HomeViewModel(application: Application): BaseViewModel(application) {
 
-    var editVisibility: ObservableInt = ObservableInt(View.GONE)
-    var showLastMatchDraw = MutableLiveData<Match>()
+    var lastMatchVisibility: ObservableInt = ObservableInt(View.GONE)
 
-    init {
-        checkExistMatch()
-    }
+    var lastMatchObserver = MutableLiveData<MatchItemBean>()
 
-    private fun checkExistMatch() {
-        editVisibility.set(View.VISIBLE)
+    fun loadData() {
+        loadLastMatch()
+            .compose(applySchedulers())
+            .subscribe(object : NextErrorObserver<MatchItemBean>(getComposite()) {
+                override fun onNext(t: MatchItemBean) {
+                    lastMatchVisibility.set(View.VISIBLE)
+                    lastMatchObserver.value = t
+                }
+
+                override fun onError(e: Throwable?) {
+                    e?.printStackTrace()
+                    messageObserver.value = "error: $e"
+                }
+
+            })
     }
 
     fun saveData() {
@@ -31,13 +45,10 @@ class HomeViewModel(application: Application): BaseViewModel(application) {
         messageObserver.value = "success"
     }
 
-    fun getLastMatch() {
+    private fun loadLastMatch(): Observable<MatchItemBean> = Observable.create {
         var match = getDatabase().getMatchDao().getLastMatch()
-        if (match == null) {
-            messageObserver.value = "No match created"
-        }
-        else{
-            showLastMatchDraw.value = match
-        }
+        var player = MatchRepository().getWinner(match)
+        it.onNext(MatchItemBean(match, player))
+        it.onComplete()
     }
 }

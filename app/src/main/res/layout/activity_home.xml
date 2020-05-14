@@ -23,31 +23,18 @@
             app:menu="@menu/home"
             app:title="Home" />
 
-        <LinearLayout
-            android:id="@+id/v_temp"
+        <FrameLayout
+            android:id="@+id/group_match"
             android:layout_width="0dp"
-            android:layout_height="56dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:background="?android:attr/selectableItemBackground"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:visibility="@{model.editVisibility}"
+            android:visibility="@{model.lastMatchVisibility}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/actionbar">
-            <ImageView
-                android:id="@+id/iv_edit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_edit_grey_600_24dp" />
-            <TextView
-                android:id="@+id/tv_temp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Recent Match"
-                android:textColor="@color/text_main"
-                android:textSize="24dp" />
-        </LinearLayout>
+            <include layout="@layout/adapter_match_item"
+                android:id="@+id/adapter_match"/>
+        </FrameLayout>
 
         <TextView
             android:id="@+id/tv_player"
@@ -55,7 +42,7 @@
             android:text="Player"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/v_temp" />
+            app:layout_constraintTop_toBottomOf="@+id/group_match" />
 
         <TextView
             android:id="@+id/tv_match"

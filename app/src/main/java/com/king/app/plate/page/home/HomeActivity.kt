@@ -1,6 +1,7 @@
 package com.king.app.plate.page.home
 
 import android.os.Bundle
+import android.view.View
 import androidx.lifecycle.Observer
 import com.king.app.plate.R
 import com.king.app.plate.base.BaseActivity
@@ -35,7 +36,11 @@ class HomeActivity: BaseActivity<ActivityHomeBinding, HomeViewModel>() {
         mBinding.tvH2h.setOnClickListener { startPage(H2hActivity::class.java) }
         mBinding.tvMatch.setOnClickListener { startPage(MatchActivity::class.java) }
         mBinding.tvRank.setOnClickListener { startPage(RankActivity::class.java) }
-        mBinding.vTemp.setOnClickListener { mModel.getLastMatch() }
+        mBinding.groupMatch.setOnClickListener {
+            if (mModel.lastMatchObserver.value != null) {
+                showLastDraw(mModel.lastMatchObserver.value!!.match)
+            }
+        }
 
         DrawableUtil.setRippleBackground(mBinding.tvPlayer, resources.getColor(R.color.home_sec_player), resources.getColor(R.color.ripple_gray))
         DrawableUtil.setRippleBackground(mBinding.tvMatch, resources.getColor(R.color.home_sec_match), resources.getColor(R.color.ripple_gray))
@@ -50,7 +55,13 @@ class HomeActivity: BaseActivity<ActivityHomeBinding, HomeViewModel>() {
             }
         }
 
-        mModel.showLastMatchDraw.observe(this, Observer { showLastDraw(it) })
+        mModel.lastMatchObserver.observe(this, Observer {
+            mBinding.adapterMatch.bean = it.match
+            mBinding.adapterMatch.player = it.winner
+            mBinding.adapterMatch.ivDelete.visibility = View.GONE
+            mBinding.adapterMatch.tvIndex.visibility = View.INVISIBLE
+        })
+        mModel.loadData()
     }
 
     private fun showLastDraw(match: Match) {
