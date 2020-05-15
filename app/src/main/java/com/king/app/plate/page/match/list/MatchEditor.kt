@@ -4,7 +4,6 @@ import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.AdapterView
-import com.king.app.plate.PlateApplication
 import com.king.app.plate.base.EmptyViewModel
 import com.king.app.plate.conf.AppConstants
 import com.king.app.plate.databinding.FragmentMatchEditorBinding
@@ -77,7 +76,7 @@ class MatchEditor: PopupContent<FragmentMatchEditorBinding, EmptyViewModel>() {
             var lastMatch = AppDatabase.instance.getMatchDao().getLastMatch()
             if (lastMatch != null) {
                 order = lastMatch.order + 1
-                if (lastMatch.orderInPeriod == AppConstants.PERIOD_TOTAL) {
+                if (lastMatch.orderInPeriod == AppConstants.PERIOD_TOTAL_MATCH_NUM) {
                     period = lastMatch.period!! + 1
                     orderInPeriod = 1
                 }
@@ -125,7 +124,7 @@ class MatchEditor: PopupContent<FragmentMatchEditorBinding, EmptyViewModel>() {
         match!!.name = name.toString();
         match!!.period = period
         match!!.orderInPeriod = order
-        match!!.order = (period - 1) * AppConstants.PERIOD_TOTAL + order
+        match!!.order = (period - 1) * AppConstants.PERIOD_TOTAL_MATCH_NUM + order
         match!!.date = date
         match!!.level = mBinding.spType.selectedItemPosition
 

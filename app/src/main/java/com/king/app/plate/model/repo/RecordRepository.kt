@@ -58,8 +58,8 @@ class RecordRepository: BaseRepository() {
         it.onComplete()
     }
 
-    fun getPlayerResultRecords(playerId: Long): MutableList<Record> {
-        var list = getDatabase().getRecordDao().getPlayerRecords(playerId)
+    fun getPlayerResultRecords(playerId: Long, periodType: Int, specificPeriod: Int): MutableList<Record> {
+        var list = getPlayerRecords(playerId, periodType, specificPeriod)
         var result = mutableListOf<Record>()
         for (record in list) {
             // not complete
@@ -76,5 +76,24 @@ class RecordRepository: BaseRepository() {
             }
         }
         return result
+    }
+
+    fun getPlayerRecords(playerId: Long, periodType: Int, specificPeriod: Int): MutableList<Record> {
+        return when(periodType) {
+            AppConstants.PERIOD_SPECIFIC -> {
+                getDatabase().getRecordDao().getPlayerRecordsWithin(playerId, specificPeriod)
+            }
+            AppConstants.PERIOD_CURRENT -> {
+                var lastMatch = getDatabase().getMatchDao().getLastMatch()
+                getDatabase().getRecordDao().getPlayerRecordsWithin(playerId, lastMatch.period!!)
+            }
+            AppConstants.PERIOD_RANK -> {
+                var lastRankMatch = getDatabase().getMatchDao().getLastRankMatch()
+                var minOrder = lastRankMatch.order - AppConstants.PERIOD_TOTAL_MATCH_NUM + 1
+                getDatabase().getRecordDao()
+                    .getPlayerRecordsWithin(playerId, minOrder, lastRankMatch.order)
+            }
+            else -> getDatabase().getRecordDao().getPlayerRecords(playerId)
+        }
     }
 }

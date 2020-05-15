@@ -15,14 +15,8 @@ interface ScoreDao: BaseDao<Score> {
     @Query("delete from score where matchId=:matchId")
     fun deleteMatchScore(matchId: Long)
 
-    @Query("select sum(score) from score where playerId=:playerId")
-    fun sumScore(playerId: Long): Int
-
     @Query("select score from score where matchId=:matchId and playerId=:playerId")
     fun getScore(matchId: Long, playerId: Long): Int
-
-    @Query("select sum(s.score) from score s join 'match' m on s.matchId = m.id and m.period=:period and m.orderInPeriod<=:orderInPeriod where s.playerId=:playerId")
-    fun sumScoreUntilMatch(period:Int, orderInPeriod:Int, playerId: Long): Int
 
     @Query("select * from score where playerId=:playerId order by score desc")
     fun getScoreList(playerId: Long): MutableList<Score>
@@ -32,4 +26,8 @@ interface ScoreDao: BaseDao<Score> {
 
     @Query("select s.* from score s join [match] m on s.matchId=m.id where s.playerId=:playerId and m.[order]<=:orderMax and m.[order]>=:orderMin")
     fun getRankScoreList(playerId: Long, orderMin: Int, orderMax: Int): MutableList<Score>
+
+    @Query("select sum(s.score) from score s join [match] m on s.matchId=m.id where s.playerId=:playerId and m.[order]<=:orderMax and m.[order]>=:orderMin")
+    fun sumRankScore(playerId: Long, orderMin: Int, orderMax: Int): Int
+
 }

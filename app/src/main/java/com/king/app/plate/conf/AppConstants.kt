@@ -10,8 +10,6 @@ import android.graphics.Color
 class AppConstants {
     companion object {
 
-        var PERIOD_TOTAL = 21 // 20 Normal + 1 Final
-
         var draws = 32
         var set = 3
         var bye = 8
@@ -57,5 +55,14 @@ class AppConstants {
 
         var DRAW_TEXT_DEF = Color.parseColor("#333333")
         var DRAW_TEXT_MODIFY = Color.parseColor("#ff0000")
+
+        // 一个周期内赛事总数
+        var PERIOD_TOTAL_MATCH_NUM = 21 // 20 Normal + 1 Final
+
+        // 当前周期、排名周期、全时期、指定周期
+        val PERIOD_CURRENT = 0
+        val PERIOD_RANK = 1
+        val PERIOD_ALLTIME = 2
+        val PERIOD_SPECIFIC = 3
     }
 }

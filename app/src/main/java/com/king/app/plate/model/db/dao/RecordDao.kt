@@ -31,8 +31,28 @@ interface RecordDao:BaseDao<Record> {
     @Query("select * from `record` where matchId=:matchId and round=:round")
     fun getFinalRecord(matchId: Long, round: Int): Record
 
+    /**
+     * player所有的records
+     */
     @Query("select record.* from record_player join record on record_player.recordId=record.id where record_player.playerId=:playerId order by record.matchId")
     fun getPlayerRecords(playerId: Long): MutableList<Record>
+
+    /**
+     * player对应match.period的records
+     */
+    @Query("select r.* from record_player rp " +
+            "join record r on rp.recordId=r.id " +
+            "join 'match' m on r.matchId=m.id and m.period=:period " +
+            "where rp.playerId=:playerId " +
+            "order by r.matchId")
+    fun getPlayerRecordsWithin(playerId: Long, period: Int): MutableList<Record>
+
+    @Query("select r.* from record_player rp " +
+            "join record r on rp.recordId=r.id " +
+            "join 'match' m on r.matchId=m.id and m.[order]<=:orderMax and m.[order]>=:orderMin " +
+            "where rp.playerId=:playerId " +
+            "order by r.matchId")
+    fun getPlayerRecordsWithin(playerId: Long, orderMin: Int, orderMax: Int): MutableList<Record>
 
     @Query("delete from `record` where matchId=:matchId")
     fun deleteByMatch(matchId: Long)

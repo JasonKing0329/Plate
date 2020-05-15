@@ -1,8 +1,8 @@
 package com.king.app.plate.model.repo
 
+import com.king.app.plate.conf.AppConstants
 import com.king.app.plate.model.bean.RankPlayer
 import com.king.app.plate.model.db.entity.Rank
-import com.king.app.plate.page.rank.RankItem
 import io.reactivex.rxjava3.core.Observable
 
 /**
@@ -15,8 +15,10 @@ class RankRepository: BaseRepository() {
     fun createRank(matchId: Long): Observable<Boolean> = Observable.create {
         var players = getDatabase().getPlayerDao().getPlayers()
         var list = mutableListOf<RankPlayer>()
+        var match = getDatabase().getMatchDao().getMatchById(matchId)
+        var orderMin = match.order - AppConstants.PERIOD_TOTAL_MATCH_NUM + 1
         for (player in players) {
-            var score = getDatabase().getScoreDao().sumScore(player.id)
+            var score = getDatabase().getScoreDao().sumRankScore(player.id, orderMin, match.order)
             var rp = RankPlayer(player, 0, score)
             list.add(rp)
         }
@@ -34,8 +36,6 @@ class RankRepository: BaseRepository() {
             var rankBean = Rank(0, matchId, rp.player!!.id, rank)
             rankList.add(rankBean)
         }
-
-        var match = getDatabase().getMatchDao().getMatchById(matchId)
 
         getDatabase().getRankDao().deleteMatchRank(matchId)
         match.isRankCreated = false

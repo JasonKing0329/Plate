@@ -24,4 +24,11 @@
         <item>For Rank</item>
         <item>For Period</item>
     </string-array>
+
+    <string-array name="best_result_type">
+        <item>Current period</item>
+        <item>Rank period</item>
+        <item>All time</item>
+        <item>Specific period</item>
+    </string-array>
 </resources>

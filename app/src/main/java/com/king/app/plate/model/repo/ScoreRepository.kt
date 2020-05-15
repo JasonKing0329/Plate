@@ -135,7 +135,9 @@ class ScoreRepository: BaseRepository() {
     }
 
     fun sumPlayerScore(playerId: Long): Int {
-        return getDatabase().getScoreDao().sumScore(playerId)
+        var lastMatch = getDatabase().getMatchDao().getLastRankMatch()
+        var orderMin = lastMatch.order - AppConstants.PERIOD_TOTAL_MATCH_NUM + 1
+        return getDatabase().getScoreDao().sumRankScore(playerId, orderMin, lastMatch.order)
     }
 
     /**
@@ -144,7 +146,7 @@ class ScoreRepository: BaseRepository() {
     fun getRankScoreList(playerId: Long): Observable<MutableList<ScoreItem>> = Observable.create {
         var list = mutableListOf<ScoreItem>()
         var lastMatch = getDatabase().getMatchDao().getLastRankMatch()
-        var orderMin = lastMatch.order - AppConstants.PERIOD_TOTAL
+        var orderMin = lastMatch.order - AppConstants.PERIOD_TOTAL_MATCH_NUM + 1
         var scores = getDatabase().getScoreDao().getRankScoreList(playerId, orderMin, lastMatch.order)
         for (score in scores) {
             var match = getDatabase().getMatchDao().getMatchById(score.matchId)

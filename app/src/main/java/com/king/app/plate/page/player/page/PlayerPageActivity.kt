@@ -2,9 +2,11 @@ package com.king.app.plate.page.player.page
 
 import android.os.Bundle
 import android.view.View
+import android.widget.AdapterView
 import androidx.lifecycle.Observer
 import com.king.app.plate.R
 import com.king.app.plate.base.BaseActivity
+import com.king.app.plate.conf.AppConstants
 import com.king.app.plate.databinding.ActivityPlayerPageBinding
 import com.king.app.plate.page.h2h.H2hTableActivity
 import com.king.app.plate.page.player.record.RecordListActivity
@@ -26,6 +28,10 @@ class PlayerPageActivity: BaseActivity<ActivityPlayerPageBinding, PlayerPageView
     companion object {
         const val EXTRA_PLAYER_ID = "player_id"
     }
+
+    private var currentPeriod = 0
+    private var maxPeriod = 0
+    private var minPeriod = 1
 
     override fun getContentView(): Int = R.layout.activity_player_page
 
@@ -59,6 +65,56 @@ class PlayerPageActivity: BaseActivity<ActivityPlayerPageBinding, PlayerPageView
             startPage(RecordListActivity::class.java, bundle)
         }
 
+        mBinding.spResultType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+
+            }
+
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                mModel.periodType = position
+                if (position == AppConstants.PERIOD_SPECIFIC) {
+                    var lastMatch = mModel.getLastMatch()// 取最近一站，不需要完赛
+                    if (lastMatch != null) {
+                        maxPeriod = lastMatch.period!!
+                        currentPeriod = maxPeriod
+                    }
+                }
+                updatePeriod()
+                mModel.onPeriodChanged(currentPeriod)
+            }
+        }
+
+        mBinding.ivLast.setOnClickListener {
+            currentPeriod --
+            updatePeriod()
+            mModel.onPeriodChanged(currentPeriod)
+        }
+        mBinding.ivNext.setOnClickListener {
+            currentPeriod ++
+            updatePeriod()
+            mModel.onPeriodChanged(currentPeriod)
+        }
+
+        updatePeriod()
+    }
+
+    private fun updatePeriod() {
+        if (mModel.periodType == AppConstants.PERIOD_SPECIFIC) {
+            mBinding.tvPeriod.text = "Period $currentPeriod"
+            mBinding.tvPeriod.visibility = View.VISIBLE
+            mBinding.ivLast.visibility = if (currentPeriod > minPeriod) View.VISIBLE else View.INVISIBLE
+            mBinding.ivNext.visibility = if (currentPeriod < maxPeriod) View.VISIBLE else View.INVISIBLE
+        }
+        else {
+            mBinding.tvPeriod.visibility = View.INVISIBLE
+            mBinding.ivLast.visibility = View.INVISIBLE
+            mBinding.ivNext.visibility = View.INVISIBLE
+        }
     }
 
     private fun showScoreDetails() {

@@ -39,6 +39,8 @@ class ScoreStructDialog: PopupContent<FragmentScoreStructBinding, EmptyViewModel
     private var maxPeriod = 0
     private var minPeriod = 1
 
+    var sumScoreText = ""
+
     override fun getBinding(inflater: LayoutInflater): FragmentScoreStructBinding = FragmentScoreStructBinding.inflate(inflater)
 
     override fun createViewModel(): EmptyViewModel = generateViewModel(EmptyViewModel::class.java)
@@ -67,10 +69,12 @@ class ScoreStructDialog: PopupContent<FragmentScoreStructBinding, EmptyViewModel
         mBinding.ivLast.setOnClickListener {
             currentPeriod --
             updatePeriod()
+            getScores()
         }
         mBinding.ivNext.setOnClickListener {
             currentPeriod ++
             updatePeriod()
+            getScores()
         }
     }
 
@@ -97,6 +101,7 @@ class ScoreStructDialog: PopupContent<FragmentScoreStructBinding, EmptyViewModel
             .subscribe(object : NextErrorObserver<MutableList<ScoreItem>>(compositeDisposable) {
                 override fun onNext(t: MutableList<ScoreItem>?) {
                     showList(t!!)
+                    mBinding.tvScoreSum.text = sumScoreText
                 }
 
                 override fun onError(e: Throwable?) {
@@ -130,6 +135,12 @@ class ScoreStructDialog: PopupContent<FragmentScoreStructBinding, EmptyViewModel
             SORT_DATE -> list.sortByDescending { it.match.order }
             SORT_SCORE -> list.sortByDescending { it.bean.score }
         }
+        var sum = 0
+        for (item in list) {
+            sum += item.bean.score!!
+        }
+        sumScoreText = "Total: $sum"
+
         it.onNext(list)
         it.onComplete()
     }

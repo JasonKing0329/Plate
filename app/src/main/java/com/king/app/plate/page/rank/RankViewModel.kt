@@ -7,6 +7,7 @@ import androidx.databinding.ObservableInt
 import androidx.lifecycle.MutableLiveData
 import com.king.app.plate.base.BaseViewModel
 import com.king.app.plate.base.observer.NextErrorObserver
+import com.king.app.plate.conf.AppConstants
 import com.king.app.plate.model.db.entity.Match
 import com.king.app.plate.model.repo.RankRepository
 import io.reactivex.rxjava3.core.Observable
@@ -89,7 +90,8 @@ class RankViewModel(application: Application): BaseViewModel(application) {
         var ranks = getDatabase().getRankDao().getMatchRanks(thisMatch.id)
         for (rank in ranks) {
             var player = getDatabase().getPlayerDao().getPlayerById(rank.playerId)
-            var score = getDatabase().getScoreDao().sumScoreUntilMatch(thisMatch.period!!, thisMatch.orderInPeriod!!, rank.playerId)
+            var minOrder = thisMatch.order - AppConstants.PERIOD_TOTAL_MATCH_NUM + 1
+            var score = getDatabase().getScoreDao().sumRankScore(player.id, minOrder, thisMatch.order)
             var change = 0
             if (lastMatchId != 0.toLong()) {
                 var lastRank = getDatabase().getRankDao().getPlayerRank(rank.playerId, lastMatchId)

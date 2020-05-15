@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import com.king.app.plate.base.BaseViewModel
 import com.king.app.plate.base.observer.NextErrorObserver
 import com.king.app.plate.conf.AppConstants
+import com.king.app.plate.model.db.entity.Match
 import com.king.app.plate.model.db.entity.Player
 import com.king.app.plate.model.repo.RankRepository
 import com.king.app.plate.model.repo.RecordRepository
@@ -21,6 +22,8 @@ import io.reactivex.rxjava3.core.Observable
  * @date: 2020/4/23 10:34
  */
 class PlayerPageViewModel(application: Application): BaseViewModel(application) {
+
+    var periodType = AppConstants.PERIOD_CURRENT
 
     var playerName = ObservableField<String>()
     var playerRank = ObservableField<String>()
@@ -78,7 +81,7 @@ class PlayerPageViewModel(application: Application): BaseViewModel(application) 
         loadScorePart()
         loadRankPart()
         // match result
-        loadResultPart()
+        loadResultPart(0)
         // h2h
         loadH2hPart()
 
@@ -106,10 +109,10 @@ class PlayerPageViewModel(application: Application): BaseViewModel(application) 
         return result
     }
 
-    private fun loadResultPart() {
+    private fun loadResultPart(specificPeriod: Int) {
         var win = 0
         var lose = 0
-        var allRecords = getDatabase().getRecordDao().getPlayerRecords(player.id)
+        var allRecords = recordRepository.getPlayerRecords(player.id, periodType, specificPeriod)
         for (record in allRecords) {
             if (record.winnerId == player.id) {
                 win ++
@@ -122,7 +125,7 @@ class PlayerPageViewModel(application: Application): BaseViewModel(application) 
         recordText.set("Win $win, Lose $lose")
 
         // count result
-        var records = recordRepository.getPlayerResultRecords(player.id)
+        var records = recordRepository.getPlayerResultRecords(player.id, periodType, specificPeriod)
         val step = IntArray(AppConstants.round + 1)
         for (record in records) {
             if (record.round < AppConstants.ROUND_F) {
@@ -229,5 +232,13 @@ class PlayerPageViewModel(application: Application): BaseViewModel(application) 
             }
         }
         rankChartData.postValue(RankChartData(ranks, max, lineData, xText))
+    }
+
+    fun getLastMatch(): Match {
+        return getDatabase().getMatchDao().getLastMatch()
+    }
+
+    fun onPeriodChanged(specificPeriod: Int) {
+        loadResultPart(specificPeriod)
     }
 }
