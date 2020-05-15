@@ -11,10 +11,13 @@ import com.king.app.plate.base.BaseActivity
 import com.king.app.plate.base.adapter.BaseBindingAdapter
 import com.king.app.plate.databinding.ActivityRankBinding
 import com.king.app.plate.model.db.entity.Match
+import com.king.app.plate.model.db.entity.Player
 import com.king.app.plate.page.player.page.PlayerPageActivity
+import com.king.app.plate.page.player.page.ScoreStructDialog
 import com.king.app.plate.utils.ColorUtils
 import com.king.app.plate.utils.DrawableUtil
 import com.king.app.plate.utils.ScreenUtils
+import com.king.app.plate.view.dialog.PopupDialog
 
 /**
  * Desc:
@@ -60,9 +63,26 @@ class RankActivity: BaseActivity<ActivityRankBinding, RankViewModel>() {
         mModel.loadData()
     }
 
+    private var scoreListener = object : RankItemAdapter.OnRankItemListener {
+        override fun onClickScore(bean: RankItem) {
+            showScoreDetails(bean.player)
+        }
+    }
+
+    private fun showScoreDetails(player: Player) {
+        var content = ScoreStructDialog()
+        content.playerId = player.id
+        var dialog = PopupDialog()
+        dialog.content = content
+        dialog.title = "Score list of ${player.name}"
+        dialog.forceHeight = ScreenUtils.getScreenHeight() * 3 / 5
+        dialog.show(supportFragmentManager, "ScoreStructDialog")
+    }
+
     private fun showRankList1(it: List<RankItem>) {
         adapter1.list = it
         if (mBinding.rvRank1.adapter == null) {
+            adapter1.onRankItemListener = scoreListener
             adapter1.setOnItemClickListener(object : BaseBindingAdapter.OnItemClickListener<RankItem> {
                 override fun onClickItem(view: View, position: Int, data: RankItem) {
                     showPlayerPage(data.player.id)
@@ -78,6 +98,7 @@ class RankActivity: BaseActivity<ActivityRankBinding, RankViewModel>() {
     private fun showRankList2(it: List<RankItem>) {
         adapter2.list = it
         if (mBinding.rvRank2.adapter == null) {
+            adapter2.onRankItemListener = scoreListener
             adapter2.setOnItemClickListener(object : BaseBindingAdapter.OnItemClickListener<RankItem> {
                 override fun onClickItem(view: View, position: Int, data: RankItem) {
                     showPlayerPage(data.player.id)

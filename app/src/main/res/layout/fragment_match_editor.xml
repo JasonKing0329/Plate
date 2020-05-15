@@ -126,5 +126,15 @@
             app:layout_constraintStart_toEndOf="@+id/et_period"
             app:layout_constraintTop_toTopOf="@+id/et_period" />
 
+        <TextView
+            android:id="@+id/tv_order_full"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:textSize="10dp"
+            app:layout_constraintBottom_toBottomOf="@+id/et_period"
+            app:layout_constraintStart_toEndOf="@+id/et_order"
+            app:layout_constraintTop_toTopOf="@+id/et_period" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -15,6 +15,8 @@ import com.king.app.plate.utils.DrawableUtil
  */
 class RankItemAdapter: BaseBindingAdapter<AdapterRankItemBinding, RankItem>() {
 
+    var onRankItemListener: OnRankItemListener? = null
+
     override fun onCreateBind(inflater: LayoutInflater, parent: ViewGroup): AdapterRankItemBinding =
         AdapterRankItemBinding.inflate(inflater, parent, false)
 
@@ -37,5 +39,11 @@ class RankItemAdapter: BaseBindingAdapter<AdapterRankItemBinding, RankItem>() {
         var color = if (bean.player.defColor == null) ColorUtils.randomWhiteTextBgColor()
         else bean.player.defColor!!
         DrawableUtil.setGradientColor(binding!!.tvName, color)
+
+        binding.tvScore.setOnClickListener { onRankItemListener?.onClickScore(bean) }
+    }
+
+    interface OnRankItemListener {
+        fun onClickScore(bean: RankItem)
     }
 }

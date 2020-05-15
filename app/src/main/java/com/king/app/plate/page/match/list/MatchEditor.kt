@@ -99,6 +99,7 @@ class MatchEditor: PopupContent<FragmentMatchEditorBinding, EmptyViewModel>() {
         mBinding.etOrder.setText(match!!.orderInPeriod.toString())
         mBinding.tvTypeDetail.text = "Draws ${match!!.draws}, Set ${AppConstants.set}"
         mBinding.spType.setSelection(match!!.level)
+        mBinding.tvOrderFull.text = "The ${match!!.order} match"
     }
 
     private fun onConfirm() {

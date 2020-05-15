@@ -36,7 +36,6 @@ class PlayerPageActivity: BaseActivity<ActivityPlayerPageBinding, PlayerPageView
         mBinding.actionbar.setOnBackListener { onBackPressed() }
 
         mBinding.llResults.visibility = View.GONE
-        mBinding.tvScoreBody.visibility = View.GONE
         mBinding.ivResultExpand.setOnClickListener{
             if (mBinding.llResults.visibility == View.VISIBLE) {
                 mBinding.llResults.visibility = View.GONE
@@ -47,17 +46,7 @@ class PlayerPageActivity: BaseActivity<ActivityPlayerPageBinding, PlayerPageView
                 mBinding.ivResultExpand.setImageResource(R.drawable.ic_arrow_drop_up_black_24dp)
             }
         }
-        mBinding.ivScoreExpand.setOnClickListener{
-//            if (mBinding.tvScoreBody.visibility == View.VISIBLE) {
-//                mBinding.tvScoreBody.visibility = View.GONE
-//                mBinding.ivResultExpand.setImageResource(R.drawable.ic_arrow_drop_down_black_24dp)
-//            }
-//            else {
-//                mBinding.tvScoreBody.visibility = View.VISIBLE
-//                mBinding.ivResultExpand.setImageResource(R.drawable.ic_arrow_drop_up_black_24dp)
-//            }
-            showScoreDetails()
-        }
+        mBinding.llScore.setOnClickListener{ showScoreDetails() }
 
         mBinding.llH2h.setOnClickListener{
             var bundle = Bundle()
