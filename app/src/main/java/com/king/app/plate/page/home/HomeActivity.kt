@@ -73,7 +73,7 @@ class HomeActivity: BaseActivity<ActivityHomeBinding, HomeViewModel>() {
         mBinding.adapterMatch.ivDelete.visibility = View.GONE
         mBinding.adapterMatch.tvIndex.visibility = View.INVISIBLE
 
-        if (it.winner != null) {
+        if (it.winner != null && it.winner!!.player != null) {
             var color = if (it.winner!!.player!!.defColor == null) ColorUtils.randomWhiteTextBgColor()
             else it.winner!!.player!!.defColor!!
             DrawableUtil.setGradientColor(mBinding.adapterMatch.tvWinner, color)
