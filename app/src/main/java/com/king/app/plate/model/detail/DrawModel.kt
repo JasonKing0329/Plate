@@ -182,18 +182,32 @@ class DrawModel {
         var cellList = drawData.body.bodyData[0]
         players.shuffle()
         // shuffle后按照01-23,02-13,03-12的顺序
-        fillCellPlayer(cellList[0], players[0].player!!, players[0].rank)
-        fillCellPlayer(cellList[1], players[1].player!!, players[1].rank)
-        fillCellPlayer(cellList[2], players[2].player!!, players[2].rank)
-        fillCellPlayer(cellList[3], players[3].player!!, players[3].rank)
-        fillCellPlayer(cellList[4], players[0].player!!, players[0].rank)
-        fillCellPlayer(cellList[5], players[2].player!!, players[2].rank)
-        fillCellPlayer(cellList[6], players[1].player!!, players[1].rank)
-        fillCellPlayer(cellList[7], players[3].player!!, players[3].rank)
-        fillCellPlayer(cellList[8], players[0].player!!, players[0].rank)
-        fillCellPlayer(cellList[9], players[3].player!!, players[3].rank)
-        fillCellPlayer(cellList[10], players[1].player!!, players[1].rank)
-        fillCellPlayer(cellList[11], players[2].player!!, players[2].rank)
+        fillFinalPlayers(cellList[0], cellList[1], players[0], players[1]);
+        fillFinalPlayers(cellList[2], cellList[3], players[2], players[3]);
+        fillFinalPlayers(cellList[4], cellList[5], players[0], players[2]);
+        fillFinalPlayers(cellList[6], cellList[7], players[1], players[3]);
+        fillFinalPlayers(cellList[8], cellList[9], players[0], players[3]);
+        fillFinalPlayers(cellList[10], cellList[11], players[1], players[2]);
+        // 重新按rank还原
+        players.sortBy { it.rank }
+    }
+
+    /**
+     * final group match, 确保排名高的在上方
+     */
+    private fun fillFinalPlayers(cellTop: BodyCell, cellBottom: BodyCell, rankPlayer: RankPlayer, rankPlayer1: RankPlayer) {
+        var playerTop: RankPlayer;
+        var playerBottom: RankPlayer;
+        if (rankPlayer.rank < rankPlayer1.rank) {
+            playerTop = rankPlayer;
+            playerBottom = rankPlayer1
+        }
+        else {
+            playerTop = rankPlayer1;
+            playerBottom = rankPlayer
+        }
+        fillCellPlayer(cellTop, playerTop.player!!, playerTop.rank)
+        fillCellPlayer(cellBottom, playerBottom.player!!, playerBottom.rank)
     }
 
     fun createFinalGroupResult(roundList: List<DrawRound>): MutableList<FinalPlayerScore> {
