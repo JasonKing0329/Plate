@@ -19,5 +19,9 @@ data class FinalPlayerScore (
     var matchLose: Int = 0,
     var setWin: Int = 0,
     var setLose: Int = 0,
+    var setRate: Float = 0f,
+    var gameWin: Int = 0,
+    var gameLose: Int = 0,
+    var gameRate: Float = 0f,
     var recordPacks: MutableList<RecordPack> = mutableListOf()
 )

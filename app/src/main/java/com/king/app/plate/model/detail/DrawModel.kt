@@ -1,7 +1,6 @@
 package com.king.app.plate.model.detail
 
 import com.king.app.plate.model.bean.BodyCell
-import com.king.app.plate.model.bean.DrawBody
 import com.king.app.plate.model.bean.FinalGroupPlayers
 import com.king.app.plate.model.bean.RankPlayer
 import com.king.app.plate.model.db.entity.Player
@@ -210,6 +209,16 @@ class DrawModel {
         fillCellPlayer(cellBottom, playerBottom.player!!, playerBottom.rank)
     }
 
+    /**
+     * 遵循ATP Final规则，小组排名按一下顺序确定：
+     * 1.Number of wins 胜场
+     * 2.Number of matches(这里可以忽略，所有player参赛场次都一样)
+     * 3.In two-player-ties, head-to-head records 两人经过1,2后分不出胜负，比较胜负关系（仅2-2-1-1的情况）
+     * 4.In three-player-ties, percentage of sets won, percentage of games won, then head-to-head
+     * (三人连环套的情况，先比胜盘率，决出一人不同后，剩下两人再依次执行规则直到规则3（这一人有可能是第一也可能是第三）；胜盘率仍全一样，比较胜局率，规则同比较胜盘率)
+     *
+     * 最后，如果胜局率也完全一样，那就不考虑了，ATP也没有考虑，可能是真的不会出现吧
+     */
     fun createFinalGroupResult(roundList: List<DrawRound>): MutableList<FinalPlayerScore> {
         var list = mutableListOf<FinalPlayerScore>()
         var map = mutableMapOf<Long, FinalPlayerScore>()
@@ -237,28 +246,32 @@ class DrawModel {
                 var scores = pack.scoreList
                 for (score in scores) {
                     if (score.score1 > score.score2) {
+                        map[pack.playerList[0].playerId]!!.gameWin += score.score1
+                        map[pack.playerList[1].playerId]!!.gameLose += score.score2
                         map[pack.playerList[0].playerId]!!.setWin ++
                         map[pack.playerList[1].playerId]!!.setLose ++
                     }
                     else {
+                        map[pack.playerList[0].playerId]!!.gameLose += score.score1
+                        map[pack.playerList[1].playerId]!!.gameWin += score.score2
                         map[pack.playerList[0].playerId]!!.setLose ++
                         map[pack.playerList[1].playerId]!!.setWin ++
                     }
                 }
             }
         }
-        // 先按胜场降序排序
+        // 先按胜场降序排序（规则1）
         list.sortByDescending { it.matchWin }
-        // 出现胜场数为2-2-2-0以及3-1-1-1时需要比较盘分，其他情况胜场数相同的比较胜负关系
+        // 出现胜场数为2-2-2-0以及3-1-1-1时需要执行（规则4），其他情况胜场数相同的比较胜负关系（规则3）
         if (isLoopResult(list)) {
-            // 比较胜盘数
-            list.sortByDescending { it.setWin }
+            // 规则4
+            list = resolveThreeInTie(list)
         }
         else {
-            // 出现相同胜负场次的比较胜负关系，只有2-2-1-1一种情况
+            // 规则3，只有2-2-1-1一种情况
             if (list[0].matchWin == list[1].matchWin) {
-                defineSameMatchWin(list, 0, 1)
-                defineSameMatchWin(list, 2, 3)
+                resolveTwoInTie(list, 0, 1)
+                resolveTwoInTie(list, 2, 3)
             }
         }
 
@@ -271,7 +284,75 @@ class DrawModel {
         return list
     }
 
-    private fun defineSameMatchWin(list: MutableList<FinalPlayerScore>, index1: Int, index2: Int) {
+    /**
+     * resolve three-player-ties(只有2-2-2-0以及3-1-1-1两种情况)
+     * In three-player-ties, percentage of sets won, percentage of games won, then head-to-head
+     * (三人连环套的情况，先比胜盘率，决出一人不同后，剩下两人回到规则3（这一人有可能是第一也可能是第三）；胜盘率仍全一样，比较胜局率，规则同比较胜盘率)
+     * @param list 已按matchWin排序
+     */
+    private fun resolveThreeInTie(list: MutableList<FinalPlayerScore>): MutableList<FinalPlayerScore> {
+        var result = mutableListOf<FinalPlayerScore>()
+        // 3-1-1-1的情况
+        if (list[0].matchWin > list[1].matchWin) {
+            result.add(list[0])
+            list.removeAt(0)
+        }
+        // 剩余的进行胜盘率与胜局率比较
+        for (item in list) {
+            // 计算胜盘率与胜局率
+            item.setRate = item.setWin.toFloat() / (item.setWin + item.setLose)
+            item.gameRate = item.gameWin.toFloat() / (item.gameWin + item.gameLose)
+        }
+        list.sortByDescending { it.setRate }
+        // 2-2-2，1-1-1中第一个就大于后面两个，第一个胜出，剩下两个比较胜负关系
+        if (list[0].setRate != list[1].setRate) {
+            result.add(list[0])
+            list.removeAt(0)
+            // 剩下两个tie的人比较胜负关系，如果是2-2-2-0的情况，最后一个自动为最后一名
+            resolveTwoInTie(list, 0, 1)
+            // 加入到结果
+            result.addAll(list)
+        }
+        else {
+            // 2-2-2，1-1-1中前两个一样，最后一个不一样，前两个比较胜负关系
+            if (list[1].setRate != list[2].setRate) {
+                resolveTwoInTie(list, 0, 1)
+                // 加入到结果
+                result.addAll(list)
+            }
+            // 三人胜盘率都一样，进入到胜局率的比较
+            else {
+                list.sortByDescending { it.gameRate }
+                // 2-2-2，1-1-1中第一个就大于后面两个，第一个胜出，剩下两个比较胜负关系
+                if (list[0].gameRate != list[1].gameRate) {
+                    result.add(list[0])
+                    list.removeAt(0)
+                    // 剩下两个tie的人比较胜负关系，如果是2-2-2-0的情况，最后一个自动为最后一名
+                    resolveTwoInTie(list, 0, 1)
+                    // 加入到结果
+                    result.addAll(list)
+                }
+                else {
+                    // 2-2-2，1-1-1中前两个一样，最后一个不一样，前两个比较胜负关系
+                    if (list[1].gameRate != list[2].gameRate) {
+                        resolveTwoInTie(list, 0, 1)
+                        // 加入到结果
+                        result.addAll(list)
+                    }
+                    // 三人胜局率都一样，不作考虑
+                    else {
+
+                    }
+                }
+            }
+        }
+        return result
+    }
+
+    /**
+     * In two-player-ties, head-to-head records 两人比较胜负关系，决定交换在list中的位置
+     */
+    private fun resolveTwoInTie(list: MutableList<FinalPlayerScore>, index1: Int, index2: Int) {
         // 从index1的交手记录中找到index2，并判断胜负关系
         for (pack in list[index1].recordPacks) {
             var winnerId = pack.record!!.winnerId
