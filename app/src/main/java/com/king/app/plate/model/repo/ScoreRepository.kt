@@ -15,8 +15,8 @@ class ScoreRepository: BaseRepository() {
 
     private val SCORE_NORMAL_STEP = listOf(10, 45, 90, 180, 300, 500)
 
-    // Final采用累积方法：RR每赢一场+100，输+50，SF胜出+200，F胜出+300
-    private val SCORE_FINAL_STEP = listOf(50, 100, 200, 300)
+    // Final采用累积方法：RR每赢一场+100，输+40，SF胜出+200，F胜出+300
+    private val SCORE_FINAL_STEP = listOf(40, 100, 200, 300)
 
     fun createMatchScores(matchId: Long): Observable<Boolean> = Observable.create{
         var scores = mutableListOf<Score>()
@@ -80,7 +80,7 @@ class ScoreRepository: BaseRepository() {
     }
 
     /**
-     * Final采用累积方法：RR每赢一场+100，输+50，SF胜出+200，F胜出+300
+     * Final采用累积方法：RR每赢一场+100，输+40，SF胜出+200，F胜出+300
      */
     fun createFinalScores(matchId: Long): Observable<Boolean> = Observable.create{
         var scores = mutableListOf<Score>()
