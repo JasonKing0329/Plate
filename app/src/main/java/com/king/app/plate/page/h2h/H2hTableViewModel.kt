@@ -8,6 +8,7 @@ import com.king.app.plate.base.BaseViewModel
 import com.king.app.plate.base.observer.NextErrorObserver
 import com.king.app.plate.model.bean.H2hResultPack
 import com.king.app.plate.model.db.entity.Player
+import com.king.app.plate.page.h2h.list.H2hListItem
 import io.reactivex.rxjava3.core.Observable
 
 /**
@@ -19,6 +20,8 @@ class H2hTableViewModel(application: Application): BaseViewModel(application) {
 
     var playerList = MutableLiveData<MutableList<H2hTableItem>>()
     var h2hList = MutableLiveData<MutableList<H2hTableItem>>()
+    var h2hSortedList = MutableLiveData<MutableList<H2hListItem>>()
+    var showH2hDetail = MutableLiveData<H2hListItem>()
 
     var playerTextColor: Int = 0
     var playerBgColor: Int = 0
@@ -181,5 +184,44 @@ class H2hTableViewModel(application: Application): BaseViewModel(application) {
             var item = h2hList.value!![position]
             item.bean is H2hResultPack
         }
+    }
+
+    fun collectListItem() {
+        loadingObserver.value = true
+        getListItem()
+            .compose(applySchedulers())
+            .subscribe(object : NextErrorObserver<MutableList<H2hListItem>>(getComposite()) {
+                override fun onNext(t: MutableList<H2hListItem>) {
+                    loadingObserver.value = false
+                    h2hSortedList.value = t
+                }
+
+                override fun onError(e: Throwable?) {
+                    e?.printStackTrace()
+                    loadingObserver.value = false
+                    messageObserver.value = "collectListItem error: $e"
+                }
+            })
+    }
+
+    private fun getListItem(): Observable<MutableList<H2hListItem>> = Observable.create{
+        var list = mutableListOf<H2hListItem>()
+        // 先查出所有player间的交手记录
+        var players = getDatabase().getPlayerDao().getPlayers()
+        for (i in players.indices) {
+            for (j in i + 1 until players.size) {
+                //TODO 暂时不做detail统计
+//                var records = getDatabase().getRecordDao().getH2hRecords(players[i].id, players[j].id)
+                var result = getDatabase().getRecordDao().getH2hResult(players[i].id, players[j].id)
+                // 只显示3次以上交手记录
+                if (result.player2Win + result.player1Win > 2) {
+                    var item = H2hListItem(players[i], players[j], result.player1Win, result.player2Win, null)
+                    list.add(item)
+                }
+            }
+        }
+        list.sortByDescending { it -> it.score1 + it.score2}
+        it.onNext(list)
+        it.onComplete()
     }
 }

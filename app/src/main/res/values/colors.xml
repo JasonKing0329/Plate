@@ -32,4 +32,7 @@
     <color name="ripple_color">#22000000</color>
 
     <color name="h2h_focus_bg">#FFE372</color>
+    <color name="h2h_win">#FF0000</color>
+    <color name="h2h_lose">#999999</color>
+    <color name="h2h_tie">#FFE600</color>
 </resources>

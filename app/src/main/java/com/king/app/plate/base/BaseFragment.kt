@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.king.app.plate.PlateApplication
@@ -29,6 +30,8 @@ abstract class BaseFragment<T : ViewDataBinding, VM: BaseViewModel>: RootFragmen
     }
 
     fun generateViewModel(vm: Class<VM>) = ViewModelProvider(this, ViewModelFactory(PlateApplication.instance)).get(vm)
+
+    fun <AVM: AndroidViewModel> getActivityViewModel(vm: Class<AVM>): AVM = ViewModelProvider(activity!!.viewModelStore, ViewModelFactory(PlateApplication.instance)).get(vm)
 
     override fun onCreateView(
         inflater: LayoutInflater,

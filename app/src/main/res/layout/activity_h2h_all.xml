@@ -21,7 +21,8 @@
             app:supportSearch="false"
             app:title="H2H Table"
             app:titleColor="@color/white"
-            app:titleSize="18dp" />
+            app:titleSize="18dp"
+            app:menu="@menu/h2h_table"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_players"
@@ -41,6 +42,16 @@
             app:layout_constraintTop_toBottomOf="@id/actionbar"
             app:layout_constraintBottom_toBottomOf="parent"
             tools:listitem="@layout/adapter_h2h_all_item"/>
+
+        <FrameLayout
+            android:id="@+id/fl_ft"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/actionbar"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
