@@ -25,7 +25,8 @@
             app:supportSearch="false"
             app:title="Rank"
             app:titleColor="@color/white"
-            app:titleSize="18dp" />
+            app:titleSize="18dp"
+            app:menu="@menu/rank"/>
 
         <ImageView
             android:id="@+id/iv_last"

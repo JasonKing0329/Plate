@@ -160,13 +160,17 @@ class ScoreRepository: BaseRepository() {
      * Period内赛事积分
      */
     fun getPeriodScoreList(playerId: Long, period: Int): Observable<MutableList<ScoreItem>> = Observable.create {
+        it.onNext(getPeriodScores(playerId, period))
+        it.onComplete()
+    }
+
+    fun getPeriodScores(playerId: Long, period: Int): MutableList<ScoreItem> {
         var list = mutableListOf<ScoreItem>()
         var scores = getDatabase().getScoreDao().getPeriodScoreList(playerId, period)
         for (score in scores) {
             var match = getDatabase().getMatchDao().getMatchById(score.matchId)
             list.add(ScoreItem(score, match))
         }
-        it.onNext(list)
-        it.onComplete()
+        return list
     }
 }

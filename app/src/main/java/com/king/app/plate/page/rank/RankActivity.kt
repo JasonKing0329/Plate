@@ -29,6 +29,8 @@ class RankActivity: BaseActivity<ActivityRankBinding, RankViewModel>() {
     private var adapter1 = RankItemAdapter()
     private var adapter2 = RankItemAdapter()
 
+    private var isRaceToFinal = false;
+
     override fun getContentView(): Int = R.layout.activity_rank
 
     override fun createViewModel(): RankViewModel = generateViewModel(RankViewModel::class.java)
@@ -37,6 +39,23 @@ class RankActivity: BaseActivity<ActivityRankBinding, RankViewModel>() {
         mBinding.model = mModel
 
         mBinding.actionbar.setOnBackListener { onBackPressed() }
+        mBinding.actionbar.setOnMenuItemListener {
+            when(it) {
+                R.id.menu_race_to_final -> {
+                    if (isRaceToFinal) {
+                        mBinding.actionbar.updateMenuText(it, "Race to final")
+                        mModel.resetRanks()
+                        isRaceToFinal = false
+                    }
+                    else {
+                        mBinding.actionbar.updateMenuText(it, "Rank by week")
+                        mModel.loadRaceToFinalRanks()
+                        isRaceToFinal = true
+                    }
+                }
+            }
+        }
+
         mBinding.rvRank1.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         mBinding.rvRank1.addItemDecoration(object : RecyclerView.ItemDecoration(){
             override fun getItemOffsets(outRect: Rect, itemPosition: Int, parent: RecyclerView) {

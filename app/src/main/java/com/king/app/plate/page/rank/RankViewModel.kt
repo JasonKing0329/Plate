@@ -8,8 +8,11 @@ import androidx.lifecycle.MutableLiveData
 import com.king.app.plate.base.BaseViewModel
 import com.king.app.plate.base.observer.NextErrorObserver
 import com.king.app.plate.conf.AppConstants
+import com.king.app.plate.model.db.AppDatabase
 import com.king.app.plate.model.db.entity.Match
+import com.king.app.plate.model.db.entity.Rank
 import com.king.app.plate.model.repo.RankRepository
+import com.king.app.plate.model.repo.ScoreRepository
 import io.reactivex.rxjava3.core.Observable
 
 /**
@@ -31,6 +34,7 @@ class RankViewModel(application: Application): BaseViewModel(application) {
     lateinit var matchList: MutableList<Match>
 
     var rankRepository = RankRepository()
+    var scoreRepository = ScoreRepository()
 
     var matchIndex = 0
 
@@ -46,6 +50,11 @@ class RankViewModel(application: Application): BaseViewModel(application) {
 
     fun nextRanks() {
         matchIndex += 1;
+        loadRanks()
+    }
+
+    fun resetRanks() {
+        matchIndex = 0
         loadRanks()
     }
 
@@ -104,4 +113,49 @@ class RankViewModel(application: Application): BaseViewModel(application) {
         }
         return list
     }
+
+    fun loadRaceToFinalRanks() {
+        rank1Title.set("Race to final")
+        rank2Visibility.set(View.INVISIBLE)
+        nextArrowVisibility.set(View.INVISIBLE)
+        lastArrowVisibility.set(View.INVISIBLE)
+        getRaceToFinalRanks()
+            .compose(applySchedulers())
+            .subscribe(object: NextErrorObserver<MutableList<RankItem>>(getComposite()) {
+                override fun onError(e: Throwable) {
+                    e.printStackTrace()
+                    messageObserver.value = "error: $e"
+                }
+
+                override fun onNext(t: MutableList<RankItem>) {
+                    rankList1.value = t
+                }
+            })
+    }
+
+    private fun getRaceToFinalRanks(): Observable<MutableList<RankItem>> = Observable.create {
+        var list = mutableListOf<RankItem>()
+        var lastMatch = getDatabase().getMatchDao().getLastMatch()// 取最近一站，不需要完赛
+        if (lastMatch != null) {
+            var period = lastMatch.period!!
+            var players = getDatabase().getPlayerDao().getPlayers();
+            for (player in players) {
+                var scoreList = scoreRepository.getPeriodScores(player.id, period)
+                var sum = 0
+                for (score in scoreList) {
+                    sum += score.bean.score!!
+                }
+                var rank = Rank(0, lastMatch.id, player.id, 0)
+                var item = RankItem(rank, 0, player, sum)
+                list.add(item)
+            }
+            list.sortByDescending { it -> it.score }
+            for (i in 0 until list.size) {
+                list[i].bean.rank = i + 1
+            }
+        }
+        it.onNext(list)
+        it.onComplete()
+    }
+
 }
