@@ -90,6 +90,10 @@ class RecordRepository: BaseRepository() {
             AppConstants.PERIOD_RANK -> {
                 var lastRankMatch = getDatabase().getMatchDao().getLastRankMatch()
                 var minOrder = lastRankMatch.order - AppConstants.PERIOD_TOTAL_MATCH_NUM + 1
+                // final之前最后一站算积分时不计入上个period的final积分
+                if (lastRankMatch.order % AppConstants.PERIOD_TOTAL_MATCH_NUM == AppConstants.PERIOD_TOTAL_MATCH_NUM - 1) {
+                    minOrder ++;
+                }
                 getDatabase().getRecordDao()
                     .getPlayerRecordsWithin(playerId, minOrder, lastRankMatch.order)
             }
