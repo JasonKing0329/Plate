@@ -58,7 +58,7 @@ class DrawsActivity: BaseActivity<ActivityMatchDrawBinding, DrawViewModel>() {
                 var point: Point? = mBinding.draws.focusPoint
                 if (point != null) {
                     var isFirst = mBinding.draws.focusPoint != mBinding.draws.lastFocusPoint
-                    adapter.updateText(point.x, point.y, key, isFirst)
+                    adapter.updateText(point.x, point.y, key, isFirst, popupKeyboard.isTieBreaking())
                     // 只要发生了输入就同步当前游标，以便下一次是继续输入
                     mBinding.draws.syncLastFocusPoint()
 
@@ -71,6 +71,12 @@ class DrawsActivity: BaseActivity<ActivityMatchDrawBinding, DrawViewModel>() {
                 if (point != null) {
                     adapter.clearText(point.x, point.y)
                     mBinding.draws.invalidate()
+                }
+            }
+
+            override fun onTieBreak(isOn: Boolean) {
+                if (isOn) {
+                    onKey("6()")
                 }
             }
 

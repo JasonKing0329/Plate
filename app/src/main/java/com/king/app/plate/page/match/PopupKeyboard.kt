@@ -21,15 +21,18 @@ class PopupKeyboard {
     var window: PopupWindow? = null
     var onKeyActionListener: DrawKeyboard.OnClickKeyListener? = null
     var popupWidth = 0
+    lateinit var drawKeyboard: DrawKeyboard
 
     fun show(context: Context, focusRect: Rect, scrollX: Int, parentView: View, offsetXToParent: Int) {
         popupWidth = DrawKeyboard.keyHeight * DrawKeyboard.keyTexts.size + context.resources.getDimensionPixelSize(R.dimen.popup_keyboard_margin) * 2
-        var view = LayoutInflater.from(context).inflate(R.layout.layout_popup_keyboard, null)
-        view.findViewById<DrawKeyboard>(R.id.keyboard).setOnClickKeyListener(onKeyActionListener)
         if (window == null) {
+            var view = LayoutInflater.from(context).inflate(R.layout.layout_popup_keyboard, null)
+            drawKeyboard = view.findViewById(R.id.keyboard);
+            drawKeyboard.setOnClickKeyListener(onKeyActionListener)
             window = PopupWindow(view, popupWidth, popupWidth)
             window!!.isOutsideTouchable = true
         }
+        drawKeyboard.isTieBreaking = false
 
         var point = calculatePoint(parentView, focusRect, scrollX, offsetXToParent)
         // 虽然参数1是parent，但是后面的坐标还是以activity的整屏为view参照
@@ -71,5 +74,9 @@ class PopupKeyboard {
         // 若底部区域不足，向上平移相应的位置
         // popupWindow自带超出边界往回自动平移的功能，不需要再处理垂直方向
         return Point(resultX, resultY)
+    }
+
+    fun isTieBreaking(): Boolean {
+        return drawKeyboard.isTieBreaking
     }
 }

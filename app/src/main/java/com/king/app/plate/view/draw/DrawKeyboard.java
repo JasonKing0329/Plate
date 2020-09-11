@@ -23,6 +23,7 @@ public class DrawKeyboard extends View implements View.OnTouchListener {
 
     public static int keyHeight = ScreenUtils.dp2px(32);
     private int textColor = Color.parseColor("#333333");
+    private int textColorFocus = Color.parseColor("#ff0000");
     private int keyBg = Color.WHITE;
     private int dividerColor = Color.parseColor("#cecece");
     private int dividerWidth = ScreenUtils.dp2px(1);
@@ -36,12 +37,15 @@ public class DrawKeyboard extends View implements View.OnTouchListener {
 
     public static final String KEY_DEL = "←";
     public static final String KEY_CLS = "C";
+    public static final String KEY_TIE = "Tie";
+
+    private boolean isTieBreaking;
 
     public static String keyTexts[][] = new String[][] {
             {"7", "8", "9"},
             {"4", "5", "6"},
             {"1", "2", "3"},
-            {"0", "(", ")", KEY_CLS}
+            {"0", KEY_TIE, KEY_CLS}
     };
 
 //    private String keyTexts[][] = new String[][] {
@@ -72,6 +76,14 @@ public class DrawKeyboard extends View implements View.OnTouchListener {
 
     public void setOnClickKeyListener(OnClickKeyListener onClickKeyListener) {
         this.onClickKeyListener = onClickKeyListener;
+    }
+
+    public void setTieBreaking(boolean tieBreaking) {
+        isTieBreaking = tieBreaking;
+    }
+
+    public boolean isTieBreaking() {
+        return isTieBreaking;
     }
 
     @Override
@@ -164,7 +176,12 @@ public class DrawKeyboard extends View implements View.OnTouchListener {
     }
 
     private void drawText(String text, Rect rect, Canvas canvas) {
-        textPaint.setColor(textColor);
+        if (isTieBreaking && KEY_TIE.equals(text)) {
+            textPaint.setColor(textColorFocus);
+        }
+        else {
+            textPaint.setColor(textColor);
+        }
         textPaint.setTextSize(textSize);
         textPaint.setStyle(Paint.Style.FILL);
         //设置基线上点对其方式
@@ -244,10 +261,17 @@ public class DrawKeyboard extends View implements View.OnTouchListener {
         DebugLog.e(x + ", " + y);
         if (onClickKeyListener != null) {
             if (keyTexts[x][y].equals(KEY_CLS)) {
+                isTieBreaking = false;
                 onClickKeyListener.onClear();
+                invalidate();
             }
             else if (keyTexts[x][y].equals(KEY_DEL)) {
                 onClickKeyListener.onDelete();
+            }
+            else if (keyTexts[x][y].equals(KEY_TIE)) {
+                isTieBreaking = !isTieBreaking;
+                onClickKeyListener.onTieBreak(isTieBreaking);
+                invalidate();
             }
             else {
                 onClickKeyListener.onKey(keyTexts[x][y]);
@@ -259,5 +283,6 @@ public class DrawKeyboard extends View implements View.OnTouchListener {
         void onKey(String key);
         void onClear();
         void onDelete();
+        void onTieBreak(boolean isOn);
     }
 }

@@ -135,7 +135,7 @@ class FinalDrawActivity: BaseActivity<ActivityFinalDrawBinding, FinalDrawViewMod
                 var point: Point? = getFocusDraw().focusPoint
                 if (point != null) {
                     var isFirst = getFocusDraw().focusPoint != getFocusDraw().lastFocusPoint
-                    getFocusAdapter().updateText(point.x, point.y, key, isFirst)
+                    getFocusAdapter().updateText(point.x, point.y, key, isFirst, popupKeyboard.isTieBreaking())
                     // 只要发生了输入就同步当前游标，以便下一次是继续输入
                     getFocusDraw().syncLastFocusPoint()
 
@@ -149,6 +149,10 @@ class FinalDrawActivity: BaseActivity<ActivityFinalDrawBinding, FinalDrawViewMod
                     getFocusAdapter().clearText(point.x, point.y)
                     getFocusDraw().invalidate()
                 }
+            }
+
+            override fun onTieBreak(isOn: Boolean) {
+
             }
 
             override fun onDelete() {

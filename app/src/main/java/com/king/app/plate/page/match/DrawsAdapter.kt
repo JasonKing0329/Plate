@@ -38,14 +38,20 @@ class DrawsAdapter : AbsDrawAdapter() {
         return colorDefault
     }
 
-    fun updateText(x: Int, y: Int, text: String?, isFirst: Boolean) {
+    fun updateText(x: Int, y: Int, text: String?, isFirst: Boolean, isTieBreak: Boolean) {
         try {
             var colList: MutableList<BodyCell> = data?.body?.bodyData!![x]
             if (isFirst) {
                 colList[y].text = text!!
             }
             else {
-                colList[y].text = colList[y].text + text!!
+                if (isTieBreak) {
+                    var index = colList[y].text.lastIndexOf(")")
+                    colList[y].text = StringBuffer(colList[y].text.substring(0, index)).append(text).append(")").toString()
+                }
+                else {
+                    colList[y].text = colList[y].text + text!!
+                }
             }
             colList[y].isModified = true
         } catch (e: Exception) {
