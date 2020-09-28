@@ -27,6 +27,7 @@
     <color name="home_sec_match">#3480B9</color>
     <color name="home_sec_rank">#D54F24</color>
     <color name="home_sec_h2h">#BDB626</color>
+    <color name="home_sec_glory">#45B160</color>
 
     <color name="text_complete">#E95D60</color>
     <color name="ripple_color">#22000000</color>
@@ -35,4 +36,7 @@
     <color name="h2h_win">#FF0000</color>
     <color name="h2h_lose">#999999</color>
     <color name="h2h_tie">#FFE600</color>
+
+    <color name="tab_actionbar_text_focus">#FFD600</color>
+
 </resources>

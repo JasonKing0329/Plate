@@ -11,6 +11,7 @@ import com.king.app.plate.databinding.ActivityHomeBinding
 import com.king.app.plate.model.db.AppDatabase
 import com.king.app.plate.model.db.entity.Match
 import com.king.app.plate.page.SettingsActivity
+import com.king.app.plate.page.glory.GloryActivity
 import com.king.app.plate.page.h2h.H2hActivity
 import com.king.app.plate.page.match.DrawsActivity
 import com.king.app.plate.page.match.FinalDrawActivity
@@ -40,6 +41,7 @@ class HomeActivity: BaseActivity<ActivityHomeBinding, HomeViewModel>() {
         mBinding.tvH2h.setOnClickListener { startPage(H2hActivity::class.java) }
         mBinding.tvMatch.setOnClickListener { startPage(MatchActivity::class.java) }
         mBinding.tvRank.setOnClickListener { startPage(RankActivity::class.java) }
+        mBinding.tvGlory.setOnClickListener { startPage(GloryActivity::class.java) }
         mBinding.groupMatch.setOnClickListener {
             if (mModel.lastMatchObserver.value != null) {
                 showLastDraw(mModel.lastMatchObserver.value!!.match)
@@ -50,6 +52,7 @@ class HomeActivity: BaseActivity<ActivityHomeBinding, HomeViewModel>() {
         DrawableUtil.setRippleBackground(mBinding.tvMatch, resources.getColor(R.color.home_sec_match), resources.getColor(R.color.ripple_gray))
         DrawableUtil.setRippleBackground(mBinding.tvRank, resources.getColor(R.color.home_sec_rank), resources.getColor(R.color.ripple_gray))
         DrawableUtil.setRippleBackground(mBinding.tvH2h, resources.getColor(R.color.home_sec_h2h), resources.getColor(R.color.ripple_gray))
+        DrawableUtil.setRippleBackground(mBinding.tvGlory, resources.getColor(R.color.home_sec_glory), resources.getColor(R.color.ripple_gray))
 
         mBinding.actionbar.setOnMenuItemListener { menuId ->
             when (menuId) {

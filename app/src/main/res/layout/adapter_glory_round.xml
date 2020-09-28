@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+            name="bean"
+            type="com.king.app.plate.page.glory.RoundItem" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp">
+
+        <TextView
+            android:id="@+id/tv_player"
+            style="@style/TvPlayerCircle"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="16dp"
+            android:textSize="20dp"
+            android:text="@{bean.player.name}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="A"/>
+
+        <TextView
+            android:id="@+id/tv_champion"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="26dp"
+            android:textColor="@color/text_complete"
+            android:textSize="@dimen/glory_round_count_text"
+            android:textStyle="bold"
+            android:gravity="right"
+            android:text="@{String.valueOf(bean.champion)}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_player"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="5" />
+
+        <TextView
+            android:id="@+id/tv_runner_up"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/home_sec_h2h"
+            android:textSize="@dimen/glory_round_count_text"
+            android:gravity="right"
+            android:text="@{String.valueOf(bean.runnerUp)}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_champion"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="5" />
+
+        <TextView
+            android:id="@+id/tv_sf"
+            android:layout_width="@dimen/glory_round_count_width"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/glory_round_count_text"
+            android:gravity="right"
+            android:text="@{String.valueOf(bean.sf)}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_runner_up"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="5" />
+
+        <TextView
+            android:id="@+id/tv_qf"
+            android:layout_width="@dimen/glory_round_count_width"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/glory_round_count_text"
+            android:gravity="right"
+            android:text="@{String.valueOf(bean.qf)}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_sf"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="5" />
+
+        <TextView
+            android:id="@+id/tv_r16"
+            android:layout_width="@dimen/glory_round_count_width"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/glory_round_count_text"
+            android:gravity="right"
+            android:text="@{String.valueOf(bean.r16)}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_qf"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="5" />
+
+        <TextView
+            android:id="@+id/tv_r32"
+            android:layout_width="@dimen/glory_round_count_width"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/glory_round_count_text"
+            android:gravity="right"
+            android:text="@{String.valueOf(bean.r32)}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_r16"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="5" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

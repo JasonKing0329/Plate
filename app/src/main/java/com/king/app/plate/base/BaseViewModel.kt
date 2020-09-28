@@ -10,6 +10,9 @@ import io.reactivex.rxjava3.core.ObservableTransformer
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 
 /**
  * 描述:
@@ -24,6 +27,9 @@ abstract class BaseViewModel(application: Application) : AndroidViewModel(applic
 
     var loadingObserver = MutableLiveData<Boolean>()
     var messageObserver = MutableLiveData<String>()
+
+    var job = SupervisorJob(null)
+    protected var viewModelScope = CoroutineScope(Dispatchers.Main.plus(job))
 
     fun addDisposable(disposable: Disposable) {
         compositeDisposable.add(disposable)
@@ -41,6 +47,7 @@ abstract class BaseViewModel(application: Application) : AndroidViewModel(applic
 
     fun onDestroy() {
         compositeDisposable.clear()
+        job.cancel(null)
     }
 
     fun showLoading(show: Boolean){

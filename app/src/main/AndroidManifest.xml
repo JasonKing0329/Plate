@@ -69,6 +69,8 @@
         </activity>
         <activity android:name=".page.match.FinalDrawActivity">
         </activity>
+        <activity android:name=".page.glory.GloryActivity">
+        </activity>
     </application>
 
 </manifest>
