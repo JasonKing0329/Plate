@@ -11,6 +11,7 @@ import com.king.app.plate.model.db.entity.Match
 data class H2hItem(
     var recordPack: RecordPack,
     var match: Match,
+    var date: String,
     var level: String,
     var round: String,
     var result: String,

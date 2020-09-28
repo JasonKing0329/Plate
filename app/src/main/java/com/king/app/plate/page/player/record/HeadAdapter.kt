@@ -35,7 +35,7 @@ class HeadAdapter: AbstractExpandableAdapterItem() {
     override fun onUpdateViews(model: Any?, position: Int) {
         super.onUpdateViews(model, position)
         var item = model as HeadItem
-        tvName.text = item.match!!.name
+        tvName.text = "S${item.match!!.period}-${item.match!!.orderInPeriod} ${item.match!!.name}"
         tvResult.text = item.result
     }
 }

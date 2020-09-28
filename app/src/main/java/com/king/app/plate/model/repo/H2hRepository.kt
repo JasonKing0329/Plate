@@ -19,11 +19,12 @@ class H2hRepository: BaseRepository() {
         for (record in records) {
             var pack = RecordParser.getRecordPack(record, getDatabase())
             var match = getDatabase().getMatchDao().getMatchById(record.matchId)
+            var date = "S${match.period}-${match.orderInPeriod}\n${match.date}"
             var round = RecordParser.getRoundSimpleText(record.round, match.level)
             var result = RecordParser.getH2hResult(pack)
             var score = RecordParser.getScoreText(pack)
             var level = MatchParser.getLevelText(match.level)
-            var item = H2hItem(pack, match, level, round, result, score)
+            var item = H2hItem(pack, match, date, level, round, result, score)
             list.add(item)
         }
         it.onNext(list)
