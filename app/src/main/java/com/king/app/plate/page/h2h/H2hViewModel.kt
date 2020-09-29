@@ -142,6 +142,8 @@ class H2hViewModel(application: Application): BaseViewModel(application) {
         var h2hResult = getDatabase().getRecordDao().getH2hResult(player1Id, player2Id)
         player1Win.set(h2hResult.player1Win.toString())
         player2Win.set(h2hResult.player2Win.toString())
+        var player1ItemBg: Int = getResource().getColor(R.color.h2h_bg_more)
+        var player2ItemBg: Int = getResource().getColor(R.color.h2h_bg_less)
         when {
             h2hResult.player1Win > h2hResult.player2Win -> {
                 player1WinColor.set(player1CircleColor.value!!)
@@ -150,10 +152,20 @@ class H2hViewModel(application: Application): BaseViewModel(application) {
             h2hResult.player2Win > h2hResult.player1Win -> {
                 player2WinColor.set(player2CircleColor.value!!)
                 player1WinColor.set(getResource().getColor(R.color.text_sub))
+                player2ItemBg = getResource().getColor(R.color.h2h_bg_more);
+                player1ItemBg = getResource().getColor(R.color.h2h_bg_less);
             }
             else -> {
                 player1WinColor.set(getResource().getColor(R.color.text_sub))
                 player2WinColor.set(getResource().getColor(R.color.text_sub))
+            }
+        }
+        for (item in list) {
+            item.bgColor = if (item.recordPack.record!!.winnerId == player1Id) {
+                player1ItemBg
+            }
+            else {
+                player2ItemBg
             }
         }
         it.onNext(list)

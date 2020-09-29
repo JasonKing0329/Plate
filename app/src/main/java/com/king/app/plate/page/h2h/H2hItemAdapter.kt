@@ -16,5 +16,6 @@ class H2hItemAdapter: BaseBindingAdapter<AdapterH2hItemBinding, H2hItem>() {
 
     override fun onBindItem(binding: AdapterH2hItemBinding?, position: Int, bean: H2hItem) {
         binding!!.bean = bean
+        binding!!.group.setBackgroundColor(bean.bgColor)
     }
 }

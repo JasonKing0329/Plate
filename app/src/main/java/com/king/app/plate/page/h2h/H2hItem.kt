@@ -15,5 +15,6 @@ data class H2hItem(
     var level: String,
     var round: String,
     var result: String,
-    var score: String
+    var score: String,
+    var bgColor: Int = 0
 )
