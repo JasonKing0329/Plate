@@ -137,6 +137,10 @@ class ScoreRepository: BaseRepository() {
     fun sumPlayerScore(playerId: Long): Int {
         var lastMatch = getDatabase().getMatchDao().getLastRankMatch()
         var orderMin = lastMatch.order - AppConstants.PERIOD_TOTAL_MATCH_NUM + 1
+        // final之前最后一站算积分时不计入上个period的final积分
+        if (lastMatch.order % AppConstants.PERIOD_TOTAL_MATCH_NUM == AppConstants.PERIOD_TOTAL_MATCH_NUM - 1) {
+            orderMin ++;
+        }
         return getDatabase().getScoreDao().sumRankScore(playerId, orderMin, lastMatch.order)
     }
 
