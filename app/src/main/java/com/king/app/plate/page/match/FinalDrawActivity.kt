@@ -152,7 +152,9 @@ class FinalDrawActivity: BaseActivity<ActivityFinalDrawBinding, FinalDrawViewMod
             }
 
             override fun onTieBreak(isOn: Boolean) {
-
+                if (isOn) {
+                    onKey("6()")
+                }
             }
 
             override fun onDelete() {
