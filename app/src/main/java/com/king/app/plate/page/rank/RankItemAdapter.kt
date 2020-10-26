@@ -28,12 +28,26 @@ class RankItemAdapter: BaseBindingAdapter<AdapterRankItemBinding, RankItem>() {
                 binding!!.tvRankChange.setTextColor(binding!!.tvRankChange.resources.getColor(R.color.green34A350))
             }
             bean.change > 0 -> {
-                binding!!.tvRankChange.text = "+${bean.change.toString()}"
+                binding!!.tvRankChange.text = "+${bean.change}"
                 binding!!.tvRankChange.setTextColor(binding!!.tvRankChange.resources.getColor(R.color.red))
             }
             else -> {
                 binding!!.tvRankChange.text = "0"
                 binding!!.tvRankChange.setTextColor(binding!!.tvRankChange.resources.getColor(R.color.text_sub))
+            }
+        }
+        when {
+            bean.changeScore < 0 -> {
+                binding!!.tvScoreChange.text = bean.changeScore.toString()
+                binding!!.tvScoreChange.setTextColor(binding!!.tvScoreChange.resources.getColor(R.color.green34A350))
+            }
+            bean.changeScore > 0 -> {
+                binding!!.tvScoreChange.text = "+${bean.changeScore}"
+                binding!!.tvScoreChange.setTextColor(binding!!.tvScoreChange.resources.getColor(R.color.red))
+            }
+            else -> {
+                binding!!.tvScoreChange.text = "0"
+                binding!!.tvScoreChange.setTextColor(binding!!.tvScoreChange.resources.getColor(R.color.text_sub))
             }
         }
         var color = if (bean.player.defColor == null) ColorUtils.randomWhiteTextBgColor()

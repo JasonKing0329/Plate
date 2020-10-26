@@ -16,38 +16,41 @@
             android:id="@+id/tv_rank"
             android:layout_width="20dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="8dp"
             android:text="@{String.valueOf(bean.bean.rank)}"
             android:textSize="14dp"
             android:gravity="right"
             app:layout_constraintBottom_toBottomOf="@+id/tv_name"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/tv_name" />
+            app:layout_constraintTop_toTopOf="@+id/tv_name"
+            tools:text="25"/>
 
         <TextView
             android:id="@+id/tv_rank_change"
             android:layout_width="20dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="4dp"
             android:gravity="right"
             android:textSize="12dp"
             app:layout_constraintBottom_toBottomOf="@+id/tv_name"
             app:layout_constraintStart_toEndOf="@+id/tv_rank"
-            app:layout_constraintTop_toTopOf="@+id/tv_name" />
+            app:layout_constraintTop_toTopOf="@+id/tv_name"
+            tools:text="+15" />
 
         <TextView
             android:id="@+id/tv_name"
             style="@style/TvPlayerCircle"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:text="@{bean.player.name}"
             android:textSize="14dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/tv_rank_change"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="A" />
 
         <TextView
             android:id="@+id/tv_score"
@@ -57,9 +60,49 @@
             android:layout_marginEnd="16dp"
             android:text="@{String.valueOf(bean.score)}"
             android:textSize="14dp"
-            app:layout_constraintBottom_toBottomOf="@+id/tv_name"
+            app:layout_constraintVertical_chainStyle="packed"
+            app:layout_constraintBottom_toTopOf="@+id/tv_score_next"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/tv_name" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="4120" />
+
+        <TextView
+            android:id="@+id/tv_score_cur"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{String.valueOf(bean.curScore)}"
+            android:textSize="10dp"
+            android:textColor="#FF8707"
+            android:gravity="right"
+            android:layout_marginEnd="5dp"
+            app:layout_constraintEnd_toStartOf="@+id/tv_score_change"
+            app:layout_constraintTop_toTopOf="@+id/tv_score_next"
+            tools:text="500" />
+
+        <TextView
+            android:id="@+id/tv_score_change"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="10dp"
+            android:textColor="@color/red"
+            android:layout_marginEnd="5dp"
+            android:gravity="right"
+            app:layout_constraintEnd_toStartOf="@+id/tv_score_next"
+            app:layout_constraintTop_toTopOf="@+id/tv_score_next"
+            tools:text="+320" />
+
+        <TextView
+            android:id="@+id/tv_score_next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{String.valueOf(bean.nextScore)}"
+            android:textSize="10dp"
+            android:textColor="@color/blue375BF1"
+            android:gravity="right"
+            app:layout_constraintEnd_toEndOf="@+id/tv_score"
+            app:layout_constraintTop_toBottomOf="@+id/tv_score"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:text="500" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

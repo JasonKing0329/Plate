@@ -12,5 +12,8 @@ data class RankItem (
     var bean: Rank,
     var change: Int,
     var player: Player,
-    var score: Int
+    var score: Int,
+    var curScore: Int =0,
+    var changeScore: Int = 0,
+    var nextScore: Int = 0
 )

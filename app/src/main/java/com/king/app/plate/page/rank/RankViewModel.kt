@@ -8,7 +8,6 @@ import androidx.lifecycle.MutableLiveData
 import com.king.app.plate.base.BaseViewModel
 import com.king.app.plate.base.observer.NextErrorObserver
 import com.king.app.plate.conf.AppConstants
-import com.king.app.plate.model.db.AppDatabase
 import com.king.app.plate.model.db.entity.Match
 import com.king.app.plate.model.db.entity.Rank
 import com.king.app.plate.model.repo.RankRepository
@@ -97,7 +96,7 @@ class RankViewModel(application: Application): BaseViewModel(application) {
         var thisMatch = matchList[index]
         var lastMatchId = if (index + 1 < matchList.size) matchList[index + 1].id else 0.toLong()
         var ranks = getDatabase().getRankDao().getMatchRanks(thisMatch.id)
-        for (rank in ranks) {
+        for ((index, rank) in ranks.withIndex()) {
             var player = getDatabase().getPlayerDao().getPlayerById(rank.playerId)
             var minOrder = thisMatch.order - AppConstants.PERIOD_TOTAL_MATCH_NUM + 1
             // final之前最后一站算积分时不计入上个period的final积分
@@ -113,9 +112,38 @@ class RankViewModel(application: Application): BaseViewModel(application) {
                 }
             }
             var item = RankItem(rank, change, player, score)
+            countScoreDetail(item, rank)
             list.add(item)
         }
         return list
+    }
+
+    private fun countScoreDetail(item: RankItem, rank: Rank) {
+        var curMatch = getDatabase().getMatchDao().getMatchById(rank.matchId)
+        item.curScore = getDatabase().getScoreDao().getScore(curMatch.id, rank.playerId)
+        // 相比上个周期本站增加/扣掉的积分
+        var lastPeriod = curMatch.period!! - 1
+        if (lastPeriod > 0) {
+            var lastPeriodMatch = getDatabase().getMatchDao().getMatchByOrder(lastPeriod, curMatch.orderInPeriod!!)
+            if (lastPeriodMatch != null) {
+                var lastPeriodScore = getDatabase().getScoreDao().getScore(lastPeriodMatch.id, rank.playerId)
+                item.changeScore = item.curScore - lastPeriodScore
+            }
+        }
+        // 下一个待保积分
+        var toSaveOrderInPeriod = curMatch.orderInPeriod!! + 1
+        var toSavePeriod = curMatch.period!! - 1
+        if (toSaveOrderInPeriod > AppConstants.PERIOD_TOTAL_MATCH_NUM) {
+            toSaveOrderInPeriod = 1
+            toSavePeriod ++
+        }
+        if (toSavePeriod >= 0) {
+            var toSaveMatch = getDatabase().getMatchDao().getMatchByOrder(toSavePeriod, toSaveOrderInPeriod)
+            if (toSaveMatch != null) {
+                var toSaveScore = getDatabase().getScoreDao().getScore(toSaveMatch.id, rank.playerId)
+                item.nextScore = toSaveScore
+            }
+        }
     }
 
     fun loadRaceToFinalRanks() {
@@ -139,7 +167,7 @@ class RankViewModel(application: Application): BaseViewModel(application) {
 
     private fun getRaceToFinalRanks(): Observable<MutableList<RankItem>> = Observable.create {
         var list = mutableListOf<RankItem>()
-        var lastMatch = getDatabase().getMatchDao().getLastMatch()// 取最近一站，不需要完赛
+        var lastMatch = getDatabase().getMatchDao().getLastRankMatch()// 取最近完赛的一站
         if (lastMatch != null) {
             var period = lastMatch.period!!
             var players = getDatabase().getPlayerDao().getPlayers();
@@ -151,6 +179,7 @@ class RankViewModel(application: Application): BaseViewModel(application) {
                 }
                 var rank = Rank(0, lastMatch.id, player.id, 0)
                 var item = RankItem(rank, 0, player, sum)
+                countScoreDetail(item, rank)
                 list.add(item)
             }
             list.sortByDescending { it -> it.score }
