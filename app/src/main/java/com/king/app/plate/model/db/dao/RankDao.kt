@@ -24,6 +24,12 @@ interface RankDao:BaseDao<Rank> {
     @Query("select min(rank) from `rank` where playerId =:playerId")
     fun getPlayerHighRank(playerId: Long): Int
 
+    @Query("select count(rank) from `rank` where playerId =:playerId and rank=:rank")
+    fun countRankWeek(playerId: Long, rank: Int): Int
+
+    @Query("select count(rank) from `rank` where playerId =:playerId and rank>=:rankHigh and rank<=:rankLow")
+    fun countRankRegionWeek(playerId: Long, rankLow: Int, rankHigh: Int): Int
+
     @Query("select max(rank) from `rank` where playerId =:playerId")
     fun getPlayerLowRank(playerId: Long): Int
 

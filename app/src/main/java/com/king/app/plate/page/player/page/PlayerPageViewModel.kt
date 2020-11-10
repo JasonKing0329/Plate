@@ -30,6 +30,7 @@ class PlayerPageViewModel(application: Application): BaseViewModel(application) 
     var playerScore = ObservableField<String>()
     var highestRank = ObservableField<String>()
     var lowestRank = ObservableField<String>()
+    var top8Weeks = ObservableField<String>()
     var bestResult = ObservableField<String>()
     var recordText = ObservableField<String>()
     var championTimesVisibility = ObservableInt()
@@ -186,15 +187,22 @@ class PlayerPageViewModel(application: Application): BaseViewModel(application) 
         var curRank = rankRepository.getPlayerCurrentRank(player.id)
         playerRank.set(curRank.toString())
         var high = rankRepository.getPlayerHighRank(player.id)
+        var highWeek = rankRepository.getRankWeek(player.id, high)
         // pick the first time
         var matchId = getDatabase().getRankDao().getRankFirstMatch(high, player.id)
         var highDate = getDatabase().getMatchDao().getMatchById(matchId).date
-        highestRank.set("$high ($highDate)")
+        var weekTxt = if (highWeek > 1) "Weeks" else "Week"
+        highestRank.set("$high ($highDate), $highWeek $weekTxt")
         var low = rankRepository.getPlayerLowRank(player.id)
+        var lowWeek = rankRepository.getRankWeek(player.id, low)
+        weekTxt = if (lowWeek > 1) "Weeks" else "Week"
         // pick the first time
         matchId = getDatabase().getRankDao().getRankFirstMatch(low, player.id)
         var lowDate = getDatabase().getMatchDao().getMatchById(matchId).date
-        lowestRank.set("$low ($lowDate)")
+        lowestRank.set("$low ($lowDate), $lowWeek $weekTxt")
+        var top8week = rankRepository.getTop8RankWeek(player.id)
+        weekTxt = if (top8week > 1) "Weeks" else "Week"
+        top8Weeks.set("$top8week $weekTxt")
 
         var ranks = getDatabase().getRankDao().getPlayerRanks(player.id)
         var max = getDatabase().getPlayerDao().getCount() + 1// 避免x轴上连出线

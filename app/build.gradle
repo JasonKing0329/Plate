@@ -9,8 +9,8 @@ android {
         applicationId "com.king.app.plate"
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 44
-        versionName "2.7.5"
+        versionCode 45
+        versionName "2.7.6"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {

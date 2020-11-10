@@ -158,6 +158,26 @@
                         android:layout_height="wrap_content"
                         android:text="@{model.lowestRank}"/>
                 </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/ll_top8"
+                    style="@style/GroupKeyValue"
+                    android:layout_marginTop="1dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/ll_low">
+                    <TextView
+                        style="@style/TvGroupKey"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Weeks at top 8"/>
+                    <TextView
+                        android:id="@+id/tv_top8"
+                        style="@style/TvGroupValue"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="@{model.top8Weeks}"/>
+                </LinearLayout>
 
                 <com.king.app.plate.view.widget.chart.LineChart
                     android:id="@+id/chart_rank"
@@ -173,7 +193,7 @@
                     app:valueTextSize="8dp"
                     app:lineColor="#3399ff"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/ll_low"/>
+                    app:layout_constraintTop_toBottomOf="@id/ll_top8"/>
 
                 <LinearLayout
                     android:id="@+id/ll_period"

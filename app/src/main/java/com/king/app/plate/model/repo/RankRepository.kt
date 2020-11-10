@@ -77,6 +77,14 @@ class RankRepository: BaseRepository() {
         return getDatabase().getRankDao().getPlayerLowRank(playerId)
     }
 
+    fun getRankWeek(playerId: Long, rank: Int): Int {
+        return getDatabase().getRankDao().countRankWeek(playerId, rank)
+    }
+
+    fun getTop8RankWeek(playerId: Long): Int {
+        return getDatabase().getRankDao().countRankRegionWeek(playerId, 8, 1)
+    }
+
     class ScoreComparator: Comparator<RankPlayer> {
         override fun compare(o1: RankPlayer?, o2: RankPlayer?): Int {
             var result = o2?.score!! - o1?.score!!
