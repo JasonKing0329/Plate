@@ -41,14 +41,14 @@ interface RecordDao:BaseDao<Record> {
      * player对应match.period的records
      */
     @Query("select r.* from record_player rp " +
-            "join record r on rp.recordId=r.id " +
+            "join record r on rp.recordId=r.id and r.isBye=0 " +
             "join 'match' m on r.matchId=m.id and m.period=:period " +
             "where rp.playerId=:playerId " +
             "order by r.matchId")
     fun getPlayerRecordsWithin(playerId: Long, period: Int): MutableList<Record>
 
     @Query("select r.* from record_player rp " +
-            "join record r on rp.recordId=r.id " +
+            "join record r on rp.recordId=r.id and r.isBye=0 " +
             "join 'match' m on r.matchId=m.id and m.[order]<=:orderMax and m.[order]>=:orderMin " +
             "where rp.playerId=:playerId " +
             "order by r.matchId")

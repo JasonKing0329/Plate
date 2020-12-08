@@ -119,7 +119,7 @@ class PlayerPageViewModel(application: Application): BaseViewModel(application) 
                 win ++
             }
             // don't count record not completed
-            else if (record.winnerId != 0.toLong()) {
+            else if (record.winnerId != null) {
                 lose ++
             }
         }
