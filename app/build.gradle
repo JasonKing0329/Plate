@@ -9,8 +9,8 @@ android {
         applicationId "com.king.app.plate"
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 46
-        versionName "2.7.7"
+        versionCode 47
+        versionName "2.7.8"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {
@@ -57,9 +57,10 @@ dependencies {
 
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
 
-    implementation 'android.arch.persistence.room:runtime:1.1.1'
-    kapt 'android.arch.persistence.room:compiler:1.1.1'
-    implementation 'android.arch.persistence.room:rxjava2:1.1.1'
+    implementation "androidx.room:room-runtime:${ROOM_VERSION}"
+    kapt "androidx.room:room-compiler:${ROOM_VERSION}"
+    // optional - Kotlin Extensions and Coroutines support for Room
+    implementation "androidx.room:room-ktx:${ROOM_VERSION}"
 
     /*gson*/
     implementation "com.google.code.gson:gson:${GSON_VERSION}"
@@ -69,7 +70,7 @@ dependencies {
     implementation "io.reactivex.rxjava3:rxandroid:${RXANDROID_VERSION}"
 
     /*rx permission*/
-    implementation "com.tbruyelle.rxpermissions2:rxpermissions:${RXPERMISSION_VERSION}"
+    implementation "com.github.tbruyelle:rxpermissions:0.12"
 
     implementation 'com.king.lib:jactionbar:1.1.0'
     implementation 'com.zaihuishou:expandablerecycleradapter:1.0.3'
