@@ -1,6 +1,7 @@
 package com.king.app.plate.page.player.page
 
 import android.app.Application
+import android.graphics.Color
 import android.view.View
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
@@ -211,8 +212,22 @@ class PlayerPageViewModel(application: Application): BaseViewModel(application) 
         lineData.endX = ranks.size - 1
         lineData.values = mutableListOf()
         lineData.valuesText = mutableListOf()
+        lineData.colors = mutableListOf()
         var lastRank = 0
+
+        // 颜色采用按周期，3色交替的方案
+        var colors = listOf(Color.parseColor("#3399ff"), Color.parseColor("#C93437"), Color.parseColor("#BDB626"))
+        var lastPeriod = -1
+        var colorPack = ColorPack(0, -1)
         for (i in ranks.indices) {
+            // 线条颜色
+            var match = getDatabase().getMatchDao().getMatchById(ranks[i].matchId)
+            if (match.period != lastPeriod) {
+                lastPeriod = match.period!!
+                nextColor(colors, colorPack)
+            }
+            lineData.colors.add(colorPack.color)
+
             // 取反，排名高的权值大
             lineData.values.add(max - ranks[i].rank)
             if (ranks[i].rank != lastRank) {
@@ -240,6 +255,19 @@ class PlayerPageViewModel(application: Application): BaseViewModel(application) 
             }
         }
         rankChartData.postValue(RankChartData(ranks, max, lineData, xText))
+    }
+
+    data class ColorPack (
+        var color: Int,
+        var index: Int
+    )
+
+    private fun nextColor(colors: List<Int>, pack: ColorPack) {
+        pack.index ++
+        if (pack.index >= colors.size) {
+            pack.index = 0
+        }
+        pack.color = colors[pack.index]
     }
 
     fun getLastMatch(): Match {
